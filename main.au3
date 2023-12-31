@@ -3,7 +3,7 @@
 #include <WindowsConstants.au3>
 #include <EditConstants.au3>
 #include "shell/pwsh.au3"
-$exePath = "to be updated :D"
+$exePath = "D:\TAD\bds-ui\BDS\bedrock_server.exe"
 
 $gui = GUICreate("BDS GUI", 500, 250)
 
