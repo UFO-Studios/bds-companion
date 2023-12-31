@@ -1,32 +1,4 @@
 ; #FUNCTION# ====================================================================================================================
-; Name...........: InstallBDL
-; Description ...: This function installs BDL.
-; Syntax.........: InstallBDL([$path = "C:/UFO-Studios/BDS-UI/BDS"], [$version = ""])
-; Parameters ....: $path    - The path where BDL should be installed. Default is "C:/UFO-Studios/BDS-UI/BDS".
-;                  $version - The version of BDL to install. If not specified, an error is returned.
-; Return values .: Returns an error message if $version is not specified.
-; Example .......: InstallBDL("C:/UFO-Studios/BDS-UI/BDS", "1.20.50")
-; ===============================================================================================================================
-Func InstallBDL($path="C:/UFO-Studios/BDS-UI/BDS", $version="")
-    $error = "Error: "
-    if $version = "" Then
-        Return $error & "No version specified"
-    EndIf
-    $url = "https://minecraft.azureedge.net/bin-win/bedrock-server-" & $version & ".zip"
-EndFunc
-
-Func StartBDL($path="C:/UFO-Studios/BDS-UI/BDS")
-    $error = "Error: "
-    if $path = "" Then
-        Return $error & "No path specified"
-    EndIf
-    $cmd = "pwsh -c " & $path & "/bedrock_server.exe"
-    RunWait($cmd)
-    return 1
-EndFunc
-
-
-; #FUNCTION# ====================================================================================================================
 ; Name...........: ConfigureBDL
 ; Description ...: This function configures BDL. (Server.properties). Leave second parameter blank to use default path.
 ; Example........: ConfigureBDL(["survival", "Bedrock level", "Welcome to my server!", "19132", "true", "normal", "10", "10"])
@@ -59,5 +31,6 @@ Func ConfigureBDL($config, $path="C:/UFO-Studios/BDS-UI/BDS")
     FileWriteLine($file, "view-distance=" & $view_distance)
     FileClose($file)
     return 1
-    
 EndFunc
+
+;IGNORE THIS FOR NOW!
