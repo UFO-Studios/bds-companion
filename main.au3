@@ -2,27 +2,29 @@
 #include <AutoItConstants.au3>
 #include <WindowsConstants.au3>
 #include <EditConstants.au3>
-#include "shell/pwsh.au3"
+#include "cfg.au3"
+;#include "backup.au3"
 $exePath = "D:\TAD\bds-ui\BDS\bedrock_server.exe"
 
 Global $buttonText = ""
 
-func buttonText() ;for the start/stop button
-    if $buttonText = "Run" then
-        $buttonText = "Stop"
-    else
-        $buttonText = "Run"
-    endif
-    return $buttonText
-endfunc
+;~ Func buttonText()
+;~     if $buttonText = "Run" then
+;~         $buttonText = "Stop"
+;~     else
+;~         $buttonText = "Run"
+;~     endif
+;~     return $buttonText
+;~ EndFunc
 
 $gui = GUICreate("BDS GUI", 600, 300)
 
-$label = GUICtrlCreateLabel("Bedrock Dedicated Server UI  - V: Alpha 0.1", 10, 10)
+$title = GUICtrlCreateLabel("Bedrock Dedicated Server UI  - V: Alpha 0.1", 10, 10)
 
-$edit = GUICtrlCreateEdit("", 10, 40, 480, 200, $ES_AUTOVSCROLL + $WS_VSCROLL + $WS_BORDER) ;main console output
+$console = GUICtrlCreateEdit("", 10, 40, 480, 200, $ES_AUTOVSCROLL + $WS_VSCROLL + $WS_BORDER) ;main console output
+$runButton = GUICtrlCreateButton("Start/Stop", 10, 240) ;run/stop button
 
-$button = GUICtrlCreateButton(buttonText(), 10, 240) ;run/stop button
+$manualBackupButton = GUICtrlCreateButton("Manual Backup", 70, 240) ;manual backup button
 
 GUISetState(@SW_SHOW, $gui)
 $startStop = false
@@ -31,19 +33,22 @@ While 1
     Switch $nMsg
         Case $GUI_EVENT_CLOSE
             Exit
-        Case $button
+        Case $runButton
             $startStop = not $startStop
             if $startStop = true then
-                GUICtrlSetData($edit, "Starting server..." & @CRLF)
+                $exePath = "D:\TAD\bds-ui\BDS\bedrock_server.exe"
+                GUICtrlSetData($console, "Starting server..." & @CRLF)
                 $process = Run($exePath, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD)
-                While 1
+                While ProcessExists($process)
                     $line = StdoutRead($process)
                     if @error then exitloop
-                    GUICtrlSetData($edit, $line, 1)
+                    GUICtrlSetData($console, $line, 1)
                 WEnd
             else
-                GUICtrlSetData($edit, "Stopping server..." & @CRLF)
+                $tmp = StdinWrite($process, "stop" & @CRLF)
+                MsgBox(0, "test", $tmp)
+                GUICtrlSetData($console, "Stopping server..." & @CRLF)
                 ProcessClose($process)
             endif
     EndSwitch
-wend
+WEnd

@@ -33,4 +33,17 @@ Func ConfigureBDL($config, $path="C:/UFO-Studios/BDS-UI/BDS")
     return 1
 EndFunc
 
-;IGNORE THIS FOR NOW!
+Func writeCfg($CFGline, $value)
+    $file = @MyDocumentsDir & "BDS-UI.txt"
+    $fileHandle = FileOpen($file, 0) 
+    $lines = FileReadToArray($fileHandle) ; Read into array
+    FileClose($fileHandle) 
+
+    $lines[$CFGline - 1] = StringReplace($lines[$CFGline - 1], "", $value) 
+
+    $fileHandle = FileOpen($file, 2) 
+    For $line In $lines
+        FileWriteLine($fileHandle, $line) 
+    Next
+    FileClose($fileHandle) 
+EndFunc
