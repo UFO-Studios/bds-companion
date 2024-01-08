@@ -44,37 +44,70 @@ GUISetState(@SW_SHOW)
 
 Global $gui_console = GUICtrlCreateEdit("Server Console" & @CRLF, 16, 64, 577, 225, $ES_AUTOVSCROLL + $WS_VSCROLL)
 Global $bdsFolder = @ScriptDir & "\BDS"
-Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
-
+Global $bdsExe = "C:\Windows\System32\cmd.exe /C " & $bdsFolder & "\bedrock_server.exe"
+Global $serverRunning = False
+Global $BDS_process = null
+Global $i = 0
 ;Functions #####
 
+
 Func startServer()
-    Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD)
-    While ProcessExists($BDS_process)
-       Global $line = StdoutRead($BDS_process)
-        If @error Then ExitLoop
-        GUICtrlSetData($gui_console, $line, 1)
-        Sleep(1000)
-    Wend
+    Global $BDS_process = Run("C:\Program Files\PowerShell\7\pwsh.exe", "", $STDERR_CHILD + $STDOUT_CHILD)
+    MsgBox("", "text", $BDS_process)
+    $serverRunning = True
+    AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
 EndFunc
 
-Func stopServer(); Send Stop > Wait 30s > if process still exists, the shoot it, else return
-    StdinWrite($BDS_process, "save hold")
-	;Sleep(30000) ;30s, aka a timeout. WIll kill the PID after this
-	
+Func updateConsole()
+    If ProcessExists($BDS_process) Then
+        Global $line = StdoutRead($BDS_process)
+        If @error Then 
+            $serverRunning = False
+            AdlibUnRegister("updateConsole")
+        Else
+            GUICtrlSetData($gui_console, $line, 1)
+        EndIf
+    EndIf
+EndFunc
+
+Func stopServer()
+    StdinWrite($BDS_process, "stop" & Chr(13))
+    Sleep(1000) ; Wait for a while to give the process time to read the input
+    StdinWrite($BDS_process) ; Close the stream
+    $serverRunning = False
+    Sleep(3000)
+    AdlibUnRegister("updateConsole")
+    If ProcessExists($BDS_process) Then
+        MsgBox("s", "NOTICE", "Failed to stop server")
+    else
+        MsgBox("s", "NOTICE", "Server Stopped")
+    endif
+EndFunc
+
+Func sendBDScmd($cmd)
+    $tmp = StdinWrite($BDS_process, $cmd)
+    MsgBox("", "text", $tmp)
+    Return
 EndFunc
 
 While 1
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
-			Exit
-
+            if $BDS_process == null Then ;if everything goes pear-shaped it will shoot it when closed
+			    Exit
+            Else
+                If ProcessExists($BDS_process) Then
+                    ProcessClose($BDS_process)
+                endif
+            endif
+            exit
         Case $gui_startServerBtn
             startServer()
 
         Case $gui_stopServerBtn
             stopServer()
+        
 
 	EndSwitch
 WEnd

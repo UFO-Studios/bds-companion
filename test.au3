@@ -1,0 +1,1 @@
+StdinWrite(19144, "help \r\n" & @CRLF)
