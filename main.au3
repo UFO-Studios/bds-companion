@@ -7,6 +7,7 @@
 #pragma compile(CompanyName, UFO Studios)
 #pragma compile(OriginalFilename, BDS_UI-V1.0.0)
 
+#include <Array.au3>
 #include <ButtonConstants.au3>
 #include <StaticConstants.au3>
 #include <TabConstants.au3>
@@ -14,6 +15,7 @@
 #include <AutoItConstants.au3>
 #include <WindowsConstants.au3>
 #include <EditConstants.au3>
+#include <Date.au3>
 
 #include "cfg.au3"
 
@@ -44,11 +46,24 @@ GUISetState(@SW_SHOW)
 
 Global $gui_console = GUICtrlCreateEdit("Server Console" & @CRLF, 16, 64, 577, 225, $ES_AUTOVSCROLL + $WS_VSCROLL)
 Global $bdsFolder = @ScriptDir & "\BDS"
-Global $bdsExe = "C:\Windows\System32\cmd.exe /C " & $bdsFolder & "\bedrock_server.exe"
+Global $bdsExe = "C:\Windows\System32\cmd.exe /C " & $bdsFolder & "\bedrock_server.exe" ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False
 Global $BDS_process = null
 Global $i = 0
-;Functions #####
+
+;Functions (Background services) ########
+
+Func ScheduleBackup($time); 24h time!
+
+EndFunc
+
+Func Backup()
+    $BackupDir = FileRead(@ScriptDir&"/config.txt")[1] ;master directory (E.G: /backups/)
+    $BackupDirName = StringReplace(_NowDate(), "/", "-") ;day-spesific directory (E.G: /backups/12-10-24/)
+    
+Endfunc
+
+;Functions (Server Management) #####
 
 
 Func startServer()
@@ -70,6 +85,14 @@ Func updateConsole()
     EndIf
 EndFunc
 
+Func SendCommand($CMD)
+    If ProcessExists($BDS_process) Then
+        StdinWrite($CMD)
+    Else
+        GUICtrlSetData($gui_console, "[BDS-UI]: Command failed to send! Maybe try restarting BDS?")
+    endif
+EndFunc
+
 Func stopServer()
     StdinWrite($BDS_process, "stop" & Chr(13))
     Sleep(1000) ; Wait for a while to give the process time to read the input
@@ -78,6 +101,7 @@ Func stopServer()
     Sleep(3000)
     AdlibUnRegister("updateConsole")
     If ProcessExists($BDS_process) Then
+        GUICtrlSetData($gui_console, "Server Offline", 1)
         MsgBox("s", "NOTICE", "Failed to stop server")
     else
         MsgBox("s", "NOTICE", "Server Stopped")
@@ -89,6 +113,8 @@ Func sendBDScmd($cmd)
     MsgBox("", "text", $tmp)
     Return
 EndFunc
+
+;Main GUI Loop
 
 While 1
 	$nMsg = GUIGetMsg()
@@ -107,6 +133,7 @@ While 1
 
         Case $gui_stopServerBtn
             stopServer()
+
         
 
 	EndSwitch
