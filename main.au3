@@ -52,7 +52,7 @@ Global $i = 0
 
 
 Func startServer()
-    Global $BDS_process = Run("C:\Program Files\PowerShell\7\pwsh.exe", "", $STDERR_CHILD + $STDOUT_CHILD)
+    Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
     MsgBox("", "text", $BDS_process)
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s

@@ -1,8 +1,10 @@
 import queue
 import subprocess
+import sys
 import threading
 from time import sleep
 
+ARGS = sys.argv[1]
 
 def startExe(q):
     print("Thread_exe started")
@@ -40,14 +42,8 @@ def getInput(q):
             break
 
 def main():
-    print("Loading...")
-    q = queue.Queue()
-    t1 = threading.Thread(target=startExe, args=(q,))
-    t2 = threading.Thread(target=getInput, args=(q,))
-    t1.start()
-    t2.start()
-    t1.join()
-    t2.join()
+    match ARGS:
+        
     
     
 main()
