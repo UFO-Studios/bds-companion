@@ -94,24 +94,25 @@ Func SendCommand($CMD)
 EndFunc
 
 Func stopServer()
-    StdinWrite($BDS_process, "stop")
+    StdinWrite($BDS_process, "stop" & @CRLF)
     Sleep(1000) ; Wait for a while to give the process time to read the input
     StdinWrite($BDS_process) ; Close the stream
     $serverRunning = False
     Sleep(3000)
     AdlibUnRegister("updateConsole")
     If ProcessExists($BDS_process) Then
-        MsgBox("s", "NOTICE", "Failed to stop server")
+        MsgBox("", "NOTICE", "Failed to stop server")
     else
         GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline", 1)
-        MsgBox("s", "NOTICE", "Server Stopped")
+        MsgBox("", "NOTICE", "Server Stopped")
     endif
 EndFunc
 
 Func sendBDScmd()
     $cmd = GUICtrlRead($gui_commandIInput) ;cmd input box
     StdinWrite($BDS_process, $cmd & @CRLF)
-    ;GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1) ;for debug for now
+    GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1) ;for debug for now
+    GUICtrlSetData($gui_commandIInput, "") ;emptys box
     Return
 EndFunc
 
@@ -137,8 +138,5 @@ While 1
 
         Case $gui_sendCmdBtn
             sendBDScmd()
-
-        
-
 	EndSwitch
 WEnd
