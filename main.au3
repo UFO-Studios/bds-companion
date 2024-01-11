@@ -128,6 +128,6 @@ While 1
             stopServer()
 
         Case $gui_sendCmdBtn
-            sendBDScmd()
+            sendServerCommand()
 	EndSwitch
 WEnd
