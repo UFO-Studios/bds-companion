@@ -85,14 +85,6 @@ Func updateConsole()
     EndIf
 EndFunc
 
-Func SendCommand($CMD)
-    If ProcessExists($BDS_process) Then
-        StdinWrite($CMD)
-    Else
-        GUICtrlSetData($gui_console, "[BDS-UI]: Command failed to send! Maybe try restarting BDS?")
-    endif
-EndFunc
-
 Func stopServer()
     StdinWrite($BDS_process, "stop" & @CRLF)
     Sleep(1000) ; Wait for a while to give the process time to read the input
@@ -108,7 +100,7 @@ Func stopServer()
     endif
 EndFunc
 
-Func sendBDScmd()
+Func sendServerCommand()
     $cmd = GUICtrlRead($gui_commandIInput) ;cmd input box
     StdinWrite($BDS_process, $cmd & @CRLF)
     GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1) ;for debug for now
