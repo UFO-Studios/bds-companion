@@ -27,9 +27,8 @@ Global Const $guiTitle = "BDS UI - V1.0.0"
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 905, 459)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
-GUICtrlSetData(-1, "gui_console")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status", 16, 40, 68, 17)
-Global $gui_commandIInput = GUICtrlCreateInput("", 16, 296, 481, 21)
+Global $gui_commandInput = GUICtrlCreateInput("", 16, 296, 481, 21)
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 296, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 328, 75, 57)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
@@ -101,10 +100,10 @@ Func stopServer()
 EndFunc
 
 Func sendServerCommand()
-    $cmd = GUICtrlRead($gui_commandIInput) ;cmd input box
+    $cmd = GUICtrlRead($gui_commandInput) ;cmd input box
     StdinWrite($BDS_process, $cmd & @CRLF)
     GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1) ;for debug for now
-    GUICtrlSetData($gui_commandIInput, "") ;emptys box
+    GUICtrlSetData($gui_commandInput, "") ;emptys box
     Return
 EndFunc
 

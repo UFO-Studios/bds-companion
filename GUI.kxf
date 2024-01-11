@@ -76,7 +76,7 @@
 							</properties>
 							<components/>
 						</object>
-						<object type="TAInput" name="gui_commandIInput">
+						<object type="TAInput" name="gui_commandInput">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
 								<property name="Top" vt="Int16">263</property>
