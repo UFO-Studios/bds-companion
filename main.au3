@@ -45,25 +45,24 @@ GUISetState(@SW_SHOW)
 
 Global $gui_console = GUICtrlCreateEdit("Server Console" & @CRLF, 16, 64, 577, 225, $ES_AUTOVSCROLL + $WS_VSCROLL)
 Global $bdsFolder = @ScriptDir & "\BDS"
-Global $bdsExe = "C:\Windows\System32\cmd.exe /C " & $bdsFolder & "\bedrock_server.exe" ;We use cmd.exe otherwise bds freaks out. idk why
+Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False
 Global $BDS_process = null
 Global $i = 0
 
 ;Functions (Background services) ########
 
-Func ScheduleBackup($time); 24h time!
+Func scheduleBackup($time); 24h time!
 
 EndFunc
 
-Func Backup()
+Func backup()
     $BackupDir = FileRead(@ScriptDir&"/config.txt")[1] ;master directory (E.G: /backups/)
     $BackupDirName = StringReplace(_NowDate(), "/", "-") ;day-spesific directory (E.G: /backups/12-10-24/)
     
 Endfunc
 
 ;Functions (Server Management) #####
-
 
 Func startServer()
     Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
