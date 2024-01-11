@@ -57,13 +57,22 @@ Func scheduleBackup($time); 24h time!
 EndFunc
 
 Func backupServer()
+    SetError(0)
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
     $backupTime = @MDAY & "." & @MON & "." & @YEAR
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
-    _Zip_Create($backupDir & "\Backup" & ".zip")
+    $ZIPname = $backupDir & "\Backup-" & $backupTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+    _Zip_Create($ZIPname)
     Sleep(100)
-    _Zip_AddFolderContents($backupDir & "\" & $backupTime & ".zip", $bdsFolder, 1) ;alien will brb
+    _Zip_AddFolderContents($ZIPname, $bdsFolder, 1)
+    Sleep(5000)
+    If @error Then 
+        MsgBox("", "BDS-UI: Error!", "There has been an error with your backup! (Error: " & @error & ")")
+    Else
+        GUICtrlSetData($gui_console, "[BDS-UI]: Backup Complete")
+    EndIf
+    StdinWrite($BDS_process, "save resume" & @CRLF)
 Endfunc
 
 ;Functions (Server Management) #####
@@ -140,7 +149,11 @@ While 1
         Case $gui_restartBtn
             restartServer()
 
+        Case $gui_backupBtn
+            backupServer()
+
         Case $gui_sendCmdBtn
             sendServerCommand()
+
 	EndSwitch
 WEnd
