@@ -15,7 +15,7 @@
 #include <AutoItConstants.au3>
 #include <WindowsConstants.au3>
 #include <EditConstants.au3>
-#include <Date.au3>
+#include <File.au3>
 
 #include "cfg.au3"
 
@@ -32,8 +32,8 @@ Global $gui_commandInput = GUICtrlCreateInput("", 16, 296, 481, 21)
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 296, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 328, 75, 57)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
-Global $gui_restartBtn = GUICtrlCreateButton("Restart Button", 176, 328, 75, 57)
-Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
+Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
+Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 328, 75, 57)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
@@ -48,7 +48,7 @@ Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False
 Global $BDS_process = null
-Global $i = 0
+Global $backDir = @ScriptDir & "\backups\"
 
 ;Functions (Background services) ########
 
@@ -56,10 +56,9 @@ Func scheduleBackup($time); 24h time!
 
 EndFunc
 
-Func backup()
-    $BackupDir = FileRead(@ScriptDir&"/config.txt")[1] ;master directory (E.G: /backups/)
-    $BackupDirName = StringReplace(_NowDate(), "/", "-") ;day-spesific directory (E.G: /backups/12-10-24/)
-    
+Func backupServer()
+    $backupTime = @MDAY & "." & @MON & "." & @YEAR
+
 Endfunc
 
 ;Functions (Server Management) #####
@@ -69,6 +68,7 @@ Func startServer()
     MsgBox("", "text", $BDS_process)
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered" & @CRLF, 1)
 EndFunc
 
 Func updateConsole()
@@ -83,7 +83,14 @@ Func updateConsole()
     EndIf
 EndFunc
 
+Func restartServer()
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
+    stopServer()
+    startServer()
+EndFunc
+
 Func stopServer()
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Stop Triggered" & @CRLF, 1)
     StdinWrite($BDS_process, "stop" & @CRLF)
     Sleep(1000) ; Wait for a while to give the process time to read the input
     StdinWrite($BDS_process) ; Close the stream
@@ -93,7 +100,6 @@ Func stopServer()
     If ProcessExists($BDS_process) Then
         MsgBox("", "NOTICE", "Failed to stop server")
     else
-        GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline", 1)
         MsgBox("", "NOTICE", "Server Stopped")
     endif
 EndFunc
@@ -101,7 +107,7 @@ EndFunc
 Func sendServerCommand()
     $cmd = GUICtrlRead($gui_commandInput) ;cmd input box
     StdinWrite($BDS_process, $cmd & @CRLF)
-    GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1) ;for debug for now
+    GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1)
     GUICtrlSetData($gui_commandInput, "") ;emptys box
     Return
 EndFunc
@@ -125,6 +131,9 @@ While 1
 
         Case $gui_stopServerBtn
             stopServer()
+
+        Case $gui_restartBtn
+            restartServer()
 
         Case $gui_sendCmdBtn
             sendServerCommand()
