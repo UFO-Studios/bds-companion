@@ -18,7 +18,6 @@
 #include <File.au3>
 
 #include "UDF/Zip.au3"
-
 ;GUI #####
 
 Global Const $guiTitle = "BDS UI - V1.0.0"
@@ -48,32 +47,13 @@ Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False
 Global $BDS_process = null
-Global $backupDir = @ScriptDir & "\backups\"
+Global $backupDir = @ScriptDir & "\backups"
 
-;Functions (Background services) ########
+;Functions ########
 
 Func scheduleBackup($time); 24h time!
 
 EndFunc
-
-Func backupServer()
-    SetError(0)
-    GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
-    $backupTime = @MDAY & "." & @MON & "." & @YEAR
-    StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
-    Sleep(5000) ;5s
-    $ZIPname = $backupDir & "\Backup-" & $backupTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
-    _Zip_Create($ZIPname)
-    Sleep(100)
-    _Zip_AddFolderContents($ZIPname, $bdsFolder, 1)
-    Sleep(5000)
-    If @error Then 
-        MsgBox("", "BDS-UI: Error!", "There has been an error with your backup! (Error: " & @error & ")")
-    Else
-        GUICtrlSetData($gui_console, "[BDS-UI]: Backup Complete")
-    EndIf
-    StdinWrite($BDS_process, "save resume" & @CRLF)
-Endfunc
 
 ;Functions (Server Management) #####
 
@@ -117,6 +97,22 @@ Func stopServer()
         MsgBox("", "NOTICE", "Server Stopped")
     endif
 EndFunc
+
+Func backupServer()
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
+    $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
+
+    StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
+    Sleep(5000) ;5s
+    StdinWrite($BDS_process, "save query" & @CRLF)
+
+    Global $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+    _Zip_Create($ZIPname)
+    Sleep(100)
+    _Zip_AddFolderContents($ZIPname, $bdsFolder, 1)
+    StdinWrite($BDS_process, "save resume" & @CRLF)
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
+Endfunc
 
 Func sendServerCommand()
     $cmd = GUICtrlRead($gui_commandInput) ;cmd input box
