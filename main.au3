@@ -17,7 +17,7 @@
 #include <EditConstants.au3>
 #include <File.au3>
 
-#include "cfg.au3"
+#include "UDF/Zip.au3"
 
 ;GUI #####
 
@@ -37,7 +37,7 @@ Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 328, 75, 57)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.1", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -48,7 +48,7 @@ Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False
 Global $BDS_process = null
-Global $backDir = @ScriptDir & "\backups\"
+Global $backupDir = @ScriptDir & "\backups\"
 
 ;Functions (Background services) ########
 
@@ -57,14 +57,19 @@ Func scheduleBackup($time); 24h time!
 EndFunc
 
 Func backupServer()
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
     $backupTime = @MDAY & "." & @MON & "." & @YEAR
-
+    StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
+    Sleep(5000) ;5s
+    _Zip_Create($backupDir & "\Backup" & ".zip")
+    Sleep(100)
+    _Zip_AddFolderContents($backupDir & "\" & $backupTime & ".zip", $bdsFolder, 1) ;alien will brb
 Endfunc
 
 ;Functions (Server Management) #####
 
 Func startServer()
-    Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
+    Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD);DO NOT forget $STDIN_CHILD
     MsgBox("", "text", $BDS_process)
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
