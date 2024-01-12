@@ -83,7 +83,13 @@ EndFunc
 Func CopyToTemp();Copys non-empty directories to a temporay folder. To avoid the "cant copy empty folder" error
 DirCopy($bdsFolder, $backupDir & "\temp")
 
+Sleep(1000)
 
+Global $fileList = _FileListToArray($bdsFolder, $backupDir & "\temp")
+
+Global $arrayDisplay = _ArrayDisplay($fileList)
+
+MsgBox(0, "test", $arrayDisplay)
 EndFunc
  
 
@@ -142,10 +148,10 @@ Func backupServer()
     Sleep(5000) ;5s
     StdinWrite($BDS_process, "save query" & @CRLF)
     CopyToTemp()
-    Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
-    _Zip_Create($ZIPname)
-    Sleep(100)
-    _Zip_AddFolderContents($ZIPname, @ScriptDir & "/backups/temp", 1); see CopyToTemp()
+    ;Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+    ;_Zip_Create($ZIPname)
+    ;Sleep(100)
+    ;_Zip_AddFolderContents($ZIPname, @ScriptDir & "/backups/temp", 1); see CopyToTemp()
     ;EmptyTempDir(); Emptys the temp dir
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
