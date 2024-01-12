@@ -90,8 +90,8 @@ Func CopyToTemp();Copys non-empty directories to a temporay folder. To avoid the
     While 1
         Local $sFile = FileFindNextFile($hSearch)
         If @error Then 
-            MsgBox("", "BDS-UI: Error!", "Error! Backup failed ("& @error &")")
-            return 0
+            ;MsgBox("", "BDS-UI: Error!", "Error! Backup failed ("& @error & ", " &  $sFile &")")
+            return; do NOT remove!
         EndIf
         If StringInStr(FileGetAttrib($sFile), "D") Then;is it a folder
             DirCopy($sFile, @ScriptDir & "/Backup/temp")
@@ -168,10 +168,10 @@ Func backupServer()
     Sleep(5000) ;5s
     StdinWrite($BDS_process, "save query" & @CRLF)
     CopyToTemp()
-    Global $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
-    _Zip_Create($ZIPname)
+    Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+    ;_Zip_Create($ZIPname)
     Sleep(100)
-    _Zip_AddFolderContents($ZIPname, $bdsFolder & "/backups/temp", 1); see CopyToTemp()
+    ;_Zip_AddFolderContents($ZIPname, $bdsFolder & "/backups/temp", 1); see CopyToTemp()
     ;EmptyTempDir(); Emptys the temp dir
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
