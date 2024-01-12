@@ -55,14 +55,65 @@ Func scheduleBackup($time); 24h time!
 
 EndFunc
 
+
+;Functions (Misc)
+
+;Thanks to https://www.autoitscript.com/forum/topic/1900-check-if-a-folder-is-empty/
+Func DirIsEmpty($Dir)
+    Local $Search, $i, $File
+    If StringRight($Dir,1) <> "\" then $Dir = $Dir & "\"
+    $Search = FileFindFirstFile($Dir & "*.*")
+    If $Search = -1 Then Return -1
+    While 1
+        $File = FileFindNextFile($Search)
+        If @error Then ExitLoop
+        $i= $i + 1
+        If $i > 2 then ExitLoop
+    WEnd
+    FileClose($Search)
+    If $i = 2 then Return 1; returns 1 if empty, 0 if not, and -1 if directory does not exist.
+EndFunc
+
+Func CopyToTemp();Copys non-empty directories to a temporay folder. To avoid the "cant copy empty folder" error
+    Local $hSearch = FileFindFirstFile($bdsFolder)
+
+    If $hSearch = -1 Then
+        MsgBox(0, "Error", "No files/directories found.")
+        Exit
+    EndIf
+    While 1
+        Local $sFile = FileFindNextFile($hSearch)
+        If @error Then 
+            MsgBox("", "BDS-UI: Error!", "Error! Backup failed ("& @error &")")
+            return 0
+        EndIf
+        If StringInStr(FileGetAttrib($sFile), "D") Then;is it a folder
+            DirCopy($sFile, @ScriptDir & "/Backup/temp")
+        EndIf
+    WEnd
+    FileClose($hSearch)
+    return 1
+EndFunc
+
+Func EmptyTempDir()
+    While 1
+        Local $sFile = FileFindNextFile(@ScriptDir & "/backups/temp")
+        If @error Then ExitLoop
+        If StringInStr(FileGetAttrib($sFile), "D") Then
+            DirRemove($sFile, 1)
+        Else
+            FileDelete($sFile)
+        EndIf
+    WEnd
+EndFunc    
+
 ;Functions (Server Management) #####
 
 Func startServer()
     Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD);DO NOT forget $STDIN_CHILD
-    MsgBox("", "text", $BDS_process)
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
-    GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered" & @CRLF, 1)
+    GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
 EndFunc
 
 Func updateConsole()
@@ -101,15 +152,13 @@ EndFunc
 Func backupServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
     $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
-
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
     StdinWrite($BDS_process, "save query" & @CRLF)
-
     Global $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
     _Zip_Create($ZIPname)
     Sleep(100)
-    _Zip_AddFolderContents($ZIPname, $bdsFolder, 1)
+    _Zip_AddFolderContents($ZIPname, $bdsFolder & "/backups/temp", 1); see CopyToTemp()
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
 Endfunc
