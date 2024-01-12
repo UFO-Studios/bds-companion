@@ -81,37 +81,11 @@ Func DirIsEmpty($Dir)
 EndFunc
 
 Func CopyToTemp();Copys non-empty directories to a temporay folder. To avoid the "cant copy empty folder" error
-    Local $hSearch = FileFindFirstFile($bdsFolder)
+DirCopy($bdsFolder, $backupDir & "\temp")
 
-    If $hSearch = -1 Then
-        MsgBox(0, "Error", "No files/directories found.")
-        Exit
-    EndIf
-    While 1
-        Local $sFile = FileFindNextFile($hSearch)
-        If @error Then 
-            ;MsgBox("", "BDS-UI: Error!", "Error! Backup failed ("& @error & ", " &  $sFile &")")
-            return; do NOT remove!
-        EndIf
-        If StringInStr(FileGetAttrib($sFile), "D") Then;is it a folder
-            DirCopy($sFile, @ScriptDir & "/Backup/temp")
-        EndIf
-    WEnd
-    FileClose($hSearch)
-    return 1
+
 EndFunc
-
-Func EmptyTempDir()
-    While 1
-        Local $sFile = FileFindNextFile(@ScriptDir & "/backups/temp")
-        If @error Then ExitLoop
-        If StringInStr(FileGetAttrib($sFile), "D") Then
-            DirRemove($sFile, 1)
-        Else
-            FileDelete($sFile)
-        EndIf
-    WEnd
-EndFunc    
+ 
 
 ;Functions (Server Management) #####
 
@@ -169,9 +143,9 @@ Func backupServer()
     StdinWrite($BDS_process, "save query" & @CRLF)
     CopyToTemp()
     Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
-    ;_Zip_Create($ZIPname)
+    _Zip_Create($ZIPname)
     Sleep(100)
-    ;_Zip_AddFolderContents($ZIPname, $bdsFolder & "/backups/temp", 1); see CopyToTemp()
+    _Zip_AddFolderContents($ZIPname, @ScriptDir & "/backups/temp", 1); see CopyToTemp()
     ;EmptyTempDir(); Emptys the temp dir
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
