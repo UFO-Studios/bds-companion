@@ -161,6 +161,8 @@ EndFunc
 
 Func backupServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
+    GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_ORANGE)
+    GUICtrlSetData($gui_ServerStatusLabel, "Backing Up")
     $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
@@ -172,6 +174,8 @@ Func backupServer()
     _Zip_AddFolderContents($ZIPname, $bdsFolder & "/backups/temp", 1); see CopyToTemp()
     ;EmptyTempDir(); Emptys the temp dir
     StdinWrite($BDS_process, "save resume" & @CRLF)
+    GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
+    GUICtrlSetData($gui_ServerStatusLabel, "Online")
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
 Endfunc
 
