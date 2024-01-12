@@ -11,6 +11,7 @@
 #include <ButtonConstants.au3>
 #include <StaticConstants.au3>
 #include <TabConstants.au3>
+#include <ColorConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <AutoItConstants.au3>
 #include <WindowsConstants.au3>
@@ -22,21 +23,22 @@
 
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 905, 459)
+#Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 199, 314)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
-Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status", 16, 40, 68, 17)
+Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status: ", 16, 40, 68, 17)
 Global $gui_commandInput = GUICtrlCreateInput("", 16, 296, 481, 21)
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 296, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 328, 75, 57)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
-Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
-Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 328, 75, 57)
+Global $gui_restartBtn = GUICtrlCreateButton("Restart Button", 176, 328, 75, 57)
+Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
+Global $gui_ServerStatusLabel = GUICtrlCreateLabel("Offline", 88, 40, 84, 17)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.1", 528, 408, 69, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -48,6 +50,10 @@ Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedroc
 Global $serverRunning = False
 Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
+
+;Presets ##########
+
+GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_RED)
 
 ;Functions ########
 
@@ -114,6 +120,8 @@ Func startServer()
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
+    GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
+    GUICtrlSetData($gui_ServerStatusLabel, "Online")
 EndFunc
 
 Func updateConsole()
@@ -145,7 +153,9 @@ Func stopServer()
     If ProcessExists($BDS_process) Then
         MsgBox("", "NOTICE", "Failed to stop server")
     else
-        MsgBox("", "NOTICE", "Server Stopped")
+        GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline")
+        GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_RED)
+        GUICtrlSetData($gui_ServerStatusLabel, "Offline")
     endif
 EndFunc
 
@@ -155,10 +165,12 @@ Func backupServer()
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
     StdinWrite($BDS_process, "save query" & @CRLF)
+    CopyToTemp()
     Global $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
     _Zip_Create($ZIPname)
     Sleep(100)
     _Zip_AddFolderContents($ZIPname, $bdsFolder & "/backups/temp", 1); see CopyToTemp()
+    ;EmptyTempDir(); Emptys the temp dir
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
 Endfunc
@@ -172,6 +184,7 @@ Func sendServerCommand()
 EndFunc
 
 ;Main GUI Loop
+
 
 While 1
 	$nMsg = GUIGetMsg()
