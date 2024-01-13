@@ -36,15 +36,16 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
 Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
 Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 225)
+GUICtrlSetData(-1, "gui_console")
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $BDSUI_Settings = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
 Global $SettingsApplyBtn = GUICtrlCreateButton("Apply", 480, 120, 75, 25)
 Global $AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups", 24, 72, 97, 17)
 Global $AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restart", 24, 90, 97, 17)
-Global $DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute:Not Used)", 136, 72, 204, 17)
-Global $DateTimeSelect = _GUICtrlIpAddress_Create($gui_mainWindow, 136, 88, 202, 21)
-_GUICtrlIpAddress_Set($DateTimeSelect, "0.0.0.0")
+Global $DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 136, 72, 156, 17)
+Global $BackupDateTime = GUICtrlCreateInput("7:12:00", 136, 88, 201, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $AboutGroup = GUICtrlCreateGroup("About", 16, 152, 545, 129)
 Global $VersionLabel = GUICtrlCreateLabel("Version:", 24, 176, 42, 17)
@@ -58,7 +59,7 @@ GUISetState(@SW_SHOW)
 
 ;Variables #####
 
-Global $gui_console = GUICtrlCreateEdit("Server Console" & @CRLF, 16, 64, 577, 225, $ES_AUTOVSCROLL + $WS_VSCROLL)
+;Global $gui_console = GUICtrlCreateEdit("Server Console" & @CRLF, 16, 64, 577, 225, $ES_AUTOVSCROLL + $WS_VSCROLL)
 Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False

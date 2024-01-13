@@ -180,6 +180,24 @@
 							</properties>
 							<components/>
 						</object>
+						<object type="TAEdit" name="gui_console">
+							<properties>
+								<property name="Left" vt="Int8">4</property>
+								<property name="Top" vt="Int8">31</property>
+								<property name="Width" vt="Int16">577</property>
+								<property name="Height" vt="Int16">225</property>
+								<property name="Lines.Strings" vt="List">
+									<list>
+										<li vt="String">gui_console</li>
+									</list>
+								</property>
+								<property name="TabOrder" vt="Int8">8</property>
+								<property name="CtrlStyle" vt="Int32">1345523908</property>
+								<property name="CtrlExStyle" vt="Int16">512</property>
+								<property name="Resizing" vt="Set"/>
+							</properties>
+							<components/>
+						</object>
 					</components>
 				</object>
 				<object type="TTabSheet" name="gui_serverSettingsTab">
@@ -254,9 +272,9 @@
 									<properties>
 										<property name="Left" vt="Int8">120</property>
 										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int16">204</property>
+										<property name="Width" vt="Int16">156</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Backup Time (Day:Hour:Minute:Not Used)</property>
+										<property name="Caption" vt="String">Backup Time (Day:Hour:Minute)</property>
 										<property name="TabOrder" vt="Int8">3</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342308608</property>
@@ -265,21 +283,17 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TAIPAddress" name="DateTimeSelect">
+								<object type="TAInput" name="BackupDateTime">
 									<properties>
 										<property name="Left" vt="Int8">120</property>
 										<property name="Top" vt="Int8">40</property>
-										<property name="Width" vt="Int16">202</property>
+										<property name="Width" vt="Int16">201</property>
 										<property name="Height" vt="Int8">21</property>
-										<property name="Ctl3D" vt="True">True</property>
-										<property name="Text" vt="String">0.0.0.0</property>
-										<property name="Value" vt="Int8">0</property>
-										<property name="BorderStyle" vt="Ident">bsSingle</property>
-										<property name="Color" vt="Ident">clWindow</property>
-										<property name="Enabled" vt="True">True</property>
 										<property name="TabOrder" vt="Int8">4</property>
-										<property name="CtrlStyle" vt="Int32">1342242816</property>
+										<property name="Text" vt="String">7:12:00</property>
+										<property name="CtrlStyle" vt="Int32">1342374016</property>
 										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockHeight</property>
 									</properties>
 									<components/>
 								</object>
