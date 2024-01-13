@@ -65,8 +65,10 @@ EndFunc
 ;Functions (Misc)
 
 Func DelEmptyDirs();Deletes empty directorys.
-    $cmd = "ROBOCOPY BDS BDS /S /MOVE";we can use relative dirs 
-    RunWait($cmd, @ScriptDir)
+    $cmd = "ROBOCOPY BDS BDS /S /MOVE";we can use relative dirs
+    GUICtrlSetData($gui_ServerStatusLabel, "Backing up (Checking server files...)") 
+    RunWait($cmd, @ScriptDir, @SW_HIDE)
+
     return 0
 EndFunc
 
@@ -120,7 +122,7 @@ EndFunc
 Func backupServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
     GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_ORANGE)
-    GUICtrlSetData($gui_ServerStatusLabel, "Backing Up")
+    GUICtrlSetData($gui_ServerStatusLabel, "Backing Up (Pre Processing...)")
     $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
@@ -129,7 +131,8 @@ Func backupServer()
     Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
     _Zip_Create($ZIPname)
     Sleep(100)
-    _Zip_AddFolderContents($ZIPname, @ScriptDir & "BDS", 1); see CopyToTemp()
+    GUICtrlSetData($gui_ServerStatusLabel, "Backing up (Compressing files...)") 
+    _Zip_AddFolder($ZIPname, @ScriptDir & "\BDS", 0); see CopyToTemp()
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
     GUICtrlSetData($gui_ServerStatusLabel, "Online")
