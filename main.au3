@@ -32,7 +32,7 @@ Global $gui_commandInput = GUICtrlCreateInput("", 16, 296, 481, 21)
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 296, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 328, 75, 57)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
-Global $gui_restartBtn = GUICtrlCreateButton("Restart Button", 176, 328, 75, 57)
+Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
 Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
 Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 234, 17)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
@@ -53,14 +53,8 @@ Global $backupDir = @ScriptDir & "\backups"
 
 ;Presets ##########
 
-GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_RED)
 
 ;Functions ########
-
-Func scheduleBackup($time); 24h time!
-
-EndFunc
-
 
 ;Functions (Misc)
 
@@ -68,7 +62,6 @@ Func DelEmptyDirs();Deletes empty directorys.
     $cmd = "ROBOCOPY BDS BDS /S /MOVE";we can use relative dirs
     GUICtrlSetData($gui_ServerStatusIndicator, "Backing up (Checking server files...)") 
     RunWait($cmd, @ScriptDir, @SW_HIDE)
-
     return 0
 EndFunc
 

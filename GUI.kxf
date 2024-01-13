@@ -83,6 +83,7 @@
 								<property name="Width" vt="Int16">481</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="TabOrder" vt="Int8">1</property>
+								<property name="OnChange" vt="String">gui_commandInputChange</property>
 								<property name="CtrlStyle" vt="Int32">1342374016</property>
 								<property name="CtrlExStyle" vt="Int16">512</property>
 								<property name="Resizing" vt="Set">DockHeight</property>
@@ -140,7 +141,7 @@
 								<property name="Top" vt="Int16">295</property>
 								<property name="Width" vt="Int8">75</property>
 								<property name="Height" vt="Int8">57</property>
-								<property name="Caption" vt="String">Restart Button</property>
+								<property name="Caption" vt="String">Restart Server</property>
 								<property name="TabOrder" vt="Int8">5</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342373888</property>
