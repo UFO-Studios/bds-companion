@@ -17,6 +17,7 @@
 #include <WindowsConstants.au3>
 #include <EditConstants.au3>
 #include <File.au3>
+#include <GuiIPAddress.au3>
 
 #include "UDF/Zip.au3"
 ;GUI #####
@@ -24,7 +25,7 @@
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 1108, 382)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 198, 137)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status", 16, 40, 68, 17)
@@ -34,8 +35,21 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 328, 75, 57
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
 Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
-Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 234, 17)
+Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
+GUICtrlSetState(-1,$GUI_SHOW)
+Global $BDSUI_Settings = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
+Global $SettingsApplyBtn = GUICtrlCreateButton("Apply", 480, 120, 75, 25)
+Global $AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups", 24, 72, 97, 17)
+Global $AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restart", 24, 90, 97, 17)
+Global $DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute:Not Used)", 136, 72, 204, 17)
+Global $DateTimeSelect = _GUICtrlIpAddress_Create($gui_mainWindow, 136, 88, 202, 21)
+_GUICtrlIpAddress_Set($DateTimeSelect, "0.0.0.0")
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $AboutGroup = GUICtrlCreateGroup("About", 16, 152, 545, 129)
+Global $VersionLabel = GUICtrlCreateLabel("Version:", 24, 176, 42, 17)
+Global $VersionLabelText = GUICtrlCreateLabel("V???", 72, 176, 29, 17)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 112, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
@@ -51,15 +65,34 @@ Global $serverRunning = False
 Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
 
-;Presets ##########
 
+;Functions (World & packs)
 
-;Functions ########
+Func ListPacks()
+    $BpackDir = $bdsFolder & "/behavior_packs"
+    Local $FolderArray[]
+    Local $hSearch = FileFindFirstFile($BpackDir)
+    While 1
+        Local $sFile = FileFindNextFile($hSearch)
+        If @error Then ExitLoop
+    
+        ; Check if the file is actually a directory
+        If StringInStr(FileGetAttrib($sFile), "D") Then
+            _ArrayAdd($FolderArray, FileGetAttrib($sFile))            
+        EndIf
+    WEnd
+    return $FolderArray
+Endfunc
 
 ;Functions (Misc)
 
-Func DelEmptyDirs();Deletes empty directorys.
-    $cmd = "ROBOCOPY BDS BDS /S /MOVE";we can use relative dirs
+Func IsBackupTime()
+    Sleep(60000); 1m
+    
+Endfunc
+
+Func DelEmptyDirs()
+    $cmd = "ROBOCOPY BDS BDS /S /MOVE";cmd.exe func to copy to the same dir, but deletes empty folders in the process
     GUICtrlSetData($gui_ServerStatusIndicator, "Backing up (Checking server files...)") 
     RunWait($cmd, @ScriptDir, @SW_HIDE)
     return 0
