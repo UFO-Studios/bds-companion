@@ -164,6 +164,7 @@ Func stopServer()
         GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_RED)
         GUICtrlSetData($gui_ServerStatusIndicator, "Offline")
     endif
+    Global $BDS_process == Null
 EndFunc
 
 Func backupServer()
@@ -171,9 +172,13 @@ Func backupServer()
     GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_ORANGE)
     GUICtrlSetData($gui_ServerStatusIndicator, "Backing Up (Pre Processing...)")
     $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
-    StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
-    Sleep(5000) ;5s
-    StdinWrite($BDS_process, "save query" & @CRLF)
+    If $BDS_process = Null Then; bds isnt running
+        Sleep(10);aka do nothing
+    Else;bds is running
+        StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
+        Sleep(5000) ;5s
+        StdinWrite($BDS_process, "save query" & @CRLF)
+    Endif
     DelEmptyDirs()
     Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
     _Zip_Create($ZIPname)
