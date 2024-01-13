@@ -37,36 +37,60 @@ Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
 Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
 Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 225)
-GUICtrlSetData(-1, "[BDS-UI]: Server Offline " & @CRLF)
+GUICtrlSetData(-1, "gui_console")
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
-Global $BDSUI_Settings = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
-Global $SettingsApplyBtn = GUICtrlCreateButton("Apply", 480, 120, 75, 25)
-Global $AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups", 24, 72, 97, 17)
-Global $AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restart", 24, 90, 97, 17)
-Global $DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 136, 72, 156, 17)
-Global $BackupDateTime = GUICtrlCreateInput("7:12:00", 136, 88, 201, 21)
+Global $gui_settingsTab = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
+Global $gui_SettingsApplyBtn = GUICtrlCreateButton("Apply", 480, 120, 75, 25)
+Global $gui_AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups", 24, 72, 97, 17)
+Global $gui_AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restart", 24, 90, 97, 17)
+Global $gui_DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 136, 72, 156, 17)
+Global $gui_BackupDateTime = GUICtrlCreateInput("7:12:00", 136, 88, 201, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $AboutGroup = GUICtrlCreateGroup("About", 16, 152, 545, 129)
-Global $VersionLabel = GUICtrlCreateLabel("Version:", 24, 176, 42, 17)
-Global $VersionLabelText = GUICtrlCreateLabel("V???", 72, 176, 29, 17)
+Global $gui_AboutGroup = GUICtrlCreateGroup("About", 16, 152, 545, 129)
+Global $gui_VersionLabel = GUICtrlCreateLabel("Version:", 24, 176, 42, 17)
+Global $gui_VersionLabelText = GUICtrlCreateLabel("V???", 72, 176, 29, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 112, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
-GUICtrlSetState($gui_serverCtrlTab, $GUI_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 ;Variables #####
 
-;Global $gui_console = GUICtrlCreateEdit("Server Console" & @CRLF, 16, 64, 577, 225, $ES_AUTOVSCROLL + $WS_VSCROLL)
 Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $serverRunning = False
 Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
+Global $SettingsFile = @ScriptDir & "\settings.ini"
 
+;Functions (Config)
+
+Func LoadConf()
+    Global $cfg_AutoRestart = IniRead($SettingsFile, "general", "AutoRestart", "empty")
+    If $cfg_AutoRestart = "True" Then
+        GUICtrlSetState($gui_AutoRestartCheck, $GUI_CHECKED)
+    Else
+        GUICtrlSetState($gui_AutoRestartCheck, $GUI_UNCHECKED)
+    Endif
+
+    Global $cfg_AutoBackup = IniRead($SettingsFile, "general", "AutoBackup", "empty")
+    If $cfg_AutoBackup = "True" Then
+        GUICtrlSetState($gui_AutoBackupSelect, $GUI_CHECKED)
+    Else
+        GUICtrlSetState($gui_AutoBackupSelect, $GUI_UNCHECKED)
+    Endif
+
+    Global $cfg_AutoBackupTime = IniRead($SettingsFile, "general", "AutoBackupTime", "empty")
+    If $cfg_AutoBackupTime = "True" Then
+        GUICtrlSetState($gui_DateTimeLabel, $GUI_CHECKED)
+    Else
+        GUICtrlSetState($gui_DateTimeLabel, $GUI_UNCHECKED)
+    Endif
+
+EndFunc
 
 ;Functions (World & packs)
 
@@ -177,6 +201,8 @@ EndFunc
 
 ;Main GUI Loop
 
+
+LoadConf(); load conf at first start
 
 While 1
 	$nMsg = GUIGetMsg()
