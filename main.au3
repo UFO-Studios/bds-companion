@@ -64,34 +64,12 @@ EndFunc
 
 ;Functions (Misc)
 
-;Thanks to https://www.autoitscript.com/forum/topic/1900-check-if-a-folder-is-empty/
-Func DirIsEmpty($Dir)
-    Local $Search, $i, $File
-    If StringRight($Dir,1) <> "\" then $Dir = $Dir & "\"
-    $Search = FileFindFirstFile($Dir & "*.*")
-    If $Search = -1 Then Return -1
-    While 1
-        $File = FileFindNextFile($Search)
-        If @error Then ExitLoop
-        $i= $i + 1
-        If $i > 2 then ExitLoop
-    WEnd
-    FileClose($Search)
-    If $i = 2 then Return 1; returns 1 if empty, 0 if not, and -1 if directory does not exist.
+Func DelEmptyDirs();Deletes empty directorys.
+    $cmd = "ROBOCOPY BDS BDS /S /MOVE";we can use relative dirs 
+    RunWait($cmd, @ScriptDir)
+    return 0
 EndFunc
 
-Func CopyToTemp();Copys non-empty directories to a temporay folder. To avoid the "cant copy empty folder" error
-DirCopy($bdsFolder, $backupDir & "\temp")
-
-Sleep(1000)
-
-Global $fileList = _FileListToArray($bdsFolder, $backupDir & "\temp")
-
-Global $arrayDisplay = _ArrayDisplay($fileList)
-
-MsgBox(0, "test", $arrayDisplay)
-EndFunc
- 
 
 ;Functions (Server Management) #####
 
@@ -147,12 +125,11 @@ Func backupServer()
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
     StdinWrite($BDS_process, "save query" & @CRLF)
-    CopyToTemp()
-    ;Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
-    ;_Zip_Create($ZIPname)
-    ;Sleep(100)
-    ;_Zip_AddFolderContents($ZIPname, @ScriptDir & "/backups/temp", 1); see CopyToTemp()
-    ;EmptyTempDir(); Emptys the temp dir
+    DelEmptyDirs()
+    Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+    _Zip_Create($ZIPname)
+    Sleep(100)
+    _Zip_AddFolderContents($ZIPname, @ScriptDir & "BDS", 1); see CopyToTemp()
     StdinWrite($BDS_process, "save resume" & @CRLF)
     GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
     GUICtrlSetData($gui_ServerStatusLabel, "Online")
