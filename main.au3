@@ -66,33 +66,28 @@ Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
 Global $SettingsFile = @ScriptDir & "\settings.ini"
 
-;Functions (Config)
+;Functions (Config) #############################################################################
 
 Func LoadConf()
-    Global $cfg_AutoRestart = IniRead($SettingsFile, "general", "AutoRestart", "empty")
+    Global $cfg_AutoRestart = IniRead($SettingsFile, "general", "AutoRestart", "False")
     If $cfg_AutoRestart = "True" Then
         GUICtrlSetState($gui_AutoRestartCheck, $GUI_CHECKED)
     Else
         GUICtrlSetState($gui_AutoRestartCheck, $GUI_UNCHECKED)
     Endif
 
-    Global $cfg_AutoBackup = IniRead($SettingsFile, "general", "AutoBackup", "empty")
+    Global $cfg_AutoBackup = IniRead($SettingsFile, "general", "AutoBackup", "False")
     If $cfg_AutoBackup = "True" Then
         GUICtrlSetState($gui_AutoBackupSelect, $GUI_CHECKED)
     Else
         GUICtrlSetState($gui_AutoBackupSelect, $GUI_UNCHECKED)
     Endif
 
-    Global $cfg_AutoBackupTime = IniRead($SettingsFile, "general", "AutoBackupTime", "empty")
-    If $cfg_AutoBackupTime = "True" Then
-        GUICtrlSetState($gui_DateTimeLabel, $GUI_CHECKED)
-    Else
-        GUICtrlSetState($gui_DateTimeLabel, $GUI_UNCHECKED)
-    Endif
-
+    Global $cfg_AutoBackupTime = IniRead($SettingsFile, "general", "AutoBackupTime", "7:12:00")
+    GUICtrlSetData($gui_BackupDateTime, $cfg_AutoBackupTime)
 EndFunc
 
-;Functions (World & packs)
+;Functions (World & packs) ########################################################################
 
 Func ListPacks()
     $BpackDir = $bdsFolder & "/behavior_packs"
