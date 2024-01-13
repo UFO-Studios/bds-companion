@@ -37,7 +37,7 @@ Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 328, 75, 57)
 Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
 Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 225)
-GUICtrlSetData(-1, "gui_console")
+GUICtrlSetData(-1, "[BDS-UI]: Server Offline " & @CRLF)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $BDSUI_Settings = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
@@ -55,6 +55,7 @@ GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 112, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
+GUICtrlSetState($gui_serverCtrlTab, $GUI_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 ;Variables #####
