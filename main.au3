@@ -24,20 +24,20 @@
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 199, 314)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 1108, 382)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
-Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status: ", 16, 40, 68, 17)
+Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status", 16, 40, 68, 17)
 Global $gui_commandInput = GUICtrlCreateInput("", 16, 296, 481, 21)
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 296, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 328, 75, 57)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 328, 75, 57)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Button", 176, 328, 75, 57)
 Global $gui_backupBtn = GUICtrlCreateButton("Start Backup", 256, 328, 75, 57)
-Global $gui_ServerStatusLabel = GUICtrlCreateLabel("Offline", 88, 40, 84, 17)
+Global $gui_ServerStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 234, 17)
 Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
+Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 112, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -53,7 +53,7 @@ Global $backupDir = @ScriptDir & "\backups"
 
 ;Presets ##########
 
-GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_RED)
+GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_RED)
 
 ;Functions ########
 
@@ -66,7 +66,7 @@ EndFunc
 
 Func DelEmptyDirs();Deletes empty directorys.
     $cmd = "ROBOCOPY BDS BDS /S /MOVE";we can use relative dirs
-    GUICtrlSetData($gui_ServerStatusLabel, "Backing up (Checking server files...)") 
+    GUICtrlSetData($gui_ServerStatusIndicator, "Backing up (Checking server files...)") 
     RunWait($cmd, @ScriptDir, @SW_HIDE)
 
     return 0
@@ -80,8 +80,8 @@ Func startServer()
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
-    GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
-    GUICtrlSetData($gui_ServerStatusLabel, "Online")
+    GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_GREEN)
+    GUICtrlSetData($gui_ServerStatusIndicator, "Online")
 EndFunc
 
 Func updateConsole()
@@ -114,15 +114,15 @@ Func stopServer()
         MsgBox("", "NOTICE", "Failed to stop server")
     else
         GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline")
-        GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_RED)
-        GUICtrlSetData($gui_ServerStatusLabel, "Offline")
+        GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_RED)
+        GUICtrlSetData($gui_ServerStatusIndicator, "Offline")
     endif
 EndFunc
 
 Func backupServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
-    GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_ORANGE)
-    GUICtrlSetData($gui_ServerStatusLabel, "Backing Up (Pre Processing...)")
+    GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_ORANGE)
+    GUICtrlSetData($gui_ServerStatusIndicator, "Backing Up (Pre Processing...)")
     $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
     StdinWrite($BDS_process, "save hold" & @CRLF);releases BDS's lock on the file
     Sleep(5000) ;5s
@@ -131,11 +131,11 @@ Func backupServer()
     Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
     _Zip_Create($ZIPname)
     Sleep(100)
-    GUICtrlSetData($gui_ServerStatusLabel, "Backing up (Compressing files...)") 
+    GUICtrlSetData($gui_ServerStatusIndicator, "Backing up (Compressing files...)") 
     _Zip_AddFolder($ZIPname, @ScriptDir & "\BDS", 0); see CopyToTemp()
     StdinWrite($BDS_process, "save resume" & @CRLF)
-    GUICtrlSetColor($gui_ServerStatusLabel, $COLOR_GREEN)
-    GUICtrlSetData($gui_ServerStatusLabel, "Online")
+    GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_GREEN)
+    GUICtrlSetData($gui_ServerStatusIndicator, "Online")
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
 Endfunc
 

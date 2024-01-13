@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="gui_mainWindow">
 	<properties>
-		<property name="Left" vt="Int16">199</property>
-		<property name="Top" vt="Int16">314</property>
+		<property name="Left" vt="Int16">1108</property>
+		<property name="Top" vt="Int16">382</property>
 		<property name="Width" vt="Int16">630</property>
 		<property name="Height" vt="Int16">465</property>
 		<property name="Caption" vt="String">&quot; &amp; $guiTitle &amp; &quot;</property>
@@ -164,13 +164,13 @@
 							</properties>
 							<components/>
 						</object>
-						<object type="TALabel" name="Label1">
+						<object type="TALabel" name="gui_ServerStatusIndicator">
 							<properties>
 								<property name="Left" vt="Int8">76</property>
 								<property name="Top" vt="Int8">7</property>
-								<property name="Width" vt="Int8">84</property>
+								<property name="Width" vt="Int16">234</property>
 								<property name="Height" vt="Int8">17</property>
-								<property name="Caption" vt="String">Label1</property>
+								<property name="Caption" vt="String">Offline</property>
 								<property name="TabOrder" vt="Int8">7</property>
 								<property name="HaveVariable" vt="False">False</property>
 								<property name="CtrlStyle" vt="Int32">1342308608</property>
@@ -200,9 +200,9 @@
 			<properties>
 				<property name="Left" vt="Int8">8</property>
 				<property name="Top" vt="Int16">408</property>
-				<property name="Width" vt="Int8">103</property>
+				<property name="Width" vt="Int8">112</property>
 				<property name="Height" vt="Int8">17</property>
-				<property name="Caption" vt="UTF8String">© UFO Studios 2024</property>
+				<property name="Caption" vt="UTF8String">пїЅ UFO Studios 2024</property>
 				<property name="TabOrder" vt="Int8">1</property>
 				<property name="HaveVariable" vt="False">False</property>
 				<property name="CtrlStyle" vt="Int32">1342308608</property>
