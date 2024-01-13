@@ -164,7 +164,7 @@ Func stopServer()
         GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_RED)
         GUICtrlSetData($gui_ServerStatusIndicator, "Offline")
     endif
-    Global $BDS_process == Null
+    Global $BDS_process = Null
 EndFunc
 
 Func backupServer()
