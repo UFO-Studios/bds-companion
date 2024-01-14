@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="gui_mainWindow">
 	<properties>
-		<property name="Left" vt="Int16">198</property>
-		<property name="Top" vt="Int16">137</property>
+		<property name="Left" vt="Int16">1006</property>
+		<property name="Top" vt="Int16">536</property>
 		<property name="Width" vt="Int16">630</property>
 		<property name="Height" vt="Int16">465</property>
 		<property name="Caption" vt="String">&quot; &amp; $guiTitle &amp; &quot;</property>
@@ -79,7 +79,7 @@
 						<object type="TAInput" name="gui_commandInput">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int16">263</property>
+								<property name="Top" vt="Int16">295</property>
 								<property name="Width" vt="Int16">481</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="TabOrder" vt="Int8">1</property>
@@ -93,7 +93,7 @@
 						<object type="TAButton" name="gui_sendCmdBtn">
 							<properties>
 								<property name="Left" vt="Int16">492</property>
-								<property name="Top" vt="Int16">263</property>
+								<property name="Top" vt="Int16">295</property>
 								<property name="Width" vt="Int8">91</property>
 								<property name="Height" vt="Int8">25</property>
 								<property name="Caption" vt="String">Send Command</property>
@@ -108,9 +108,9 @@
 						<object type="TAButton" name="gui_startServerBtn">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int16">295</property>
+								<property name="Top" vt="Int16">327</property>
 								<property name="Width" vt="Int8">75</property>
-								<property name="Height" vt="Int8">57</property>
+								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Start Server</property>
 								<property name="TabOrder" vt="Int8">3</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
@@ -123,9 +123,9 @@
 						<object type="TAButton" name="gui_stopServerBtn">
 							<properties>
 								<property name="Left" vt="Int8">84</property>
-								<property name="Top" vt="Int16">295</property>
+								<property name="Top" vt="Int16">327</property>
 								<property name="Width" vt="Int8">75</property>
-								<property name="Height" vt="Int8">57</property>
+								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Stop Server</property>
 								<property name="TabOrder" vt="Int8">4</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
@@ -138,9 +138,9 @@
 						<object type="TAButton" name="gui_restartBtn">
 							<properties>
 								<property name="Left" vt="Int16">164</property>
-								<property name="Top" vt="Int16">295</property>
+								<property name="Top" vt="Int16">327</property>
 								<property name="Width" vt="Int8">75</property>
-								<property name="Height" vt="Int8">57</property>
+								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Restart Server</property>
 								<property name="TabOrder" vt="Int8">5</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
@@ -153,10 +153,10 @@
 						<object type="TAButton" name="gui_backupBtn">
 							<properties>
 								<property name="Left" vt="Int16">244</property>
-								<property name="Top" vt="Int16">295</property>
-								<property name="Width" vt="Int8">75</property>
-								<property name="Height" vt="Int8">57</property>
-								<property name="Caption" vt="String">Start Backup</property>
+								<property name="Top" vt="Int16">327</property>
+								<property name="Width" vt="Int8">83</property>
+								<property name="Height" vt="Int8">33</property>
+								<property name="Caption" vt="String">Backup Server</property>
 								<property name="TabOrder" vt="Int8">6</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342373888</property>
@@ -165,7 +165,7 @@
 							</properties>
 							<components/>
 						</object>
-						<object type="TALabel" name="gui_ServerStatusIndicator">
+						<object type="TALabel" name="gui_serverStatusIndicator">
 							<properties>
 								<property name="Left" vt="Int8">76</property>
 								<property name="Top" vt="Int8">7</property>
@@ -185,14 +185,14 @@
 								<property name="Left" vt="Int8">4</property>
 								<property name="Top" vt="Int8">31</property>
 								<property name="Width" vt="Int16">577</property>
-								<property name="Height" vt="Int16">225</property>
+								<property name="Height" vt="Int16">257</property>
 								<property name="Lines.Strings" vt="List">
 									<list>
 										<li vt="String">gui_console</li>
 									</list>
 								</property>
 								<property name="TabOrder" vt="Int8">8</property>
-								<property name="CtrlStyle" vt="Int32">1345523908</property>
+								<property name="CtrlStyle" vt="Int32">1345525956</property>
 								<property name="CtrlExStyle" vt="Int16">512</property>
 								<property name="Resizing" vt="Set"/>
 							</properties>
@@ -200,9 +200,9 @@
 						</object>
 					</components>
 				</object>
-				<object type="TTabSheet" name="gui_serverSettingsTab">
+				<object type="TTabSheet" name="gui_settingsTab">
 					<properties>
-						<property name="Caption" vt="String">Server Settings</property>
+						<property name="Caption" vt="String">Settings</property>
 						<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 						<property name="Font.Color" vt="Ident">clWindowText</property>
 						<property name="Font.Height" vt="Int8">-11</property>
@@ -212,41 +212,40 @@
 						<property name="ParentFont" vt="False">False</property>
 					</properties>
 					<components>
-						<object type="TAGroup" name="gui_settingsTab">
+						<object type="TAGroup" name="gui_backupSettingsGroup">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int8">15</property>
-								<property name="Width" vt="Int16">545</property>
-								<property name="Height" vt="Int8">105</property>
+								<property name="Top" vt="Int8">7</property>
+								<property name="Width" vt="Int16">577</property>
+								<property name="Height" vt="Int8">121</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Caption" vt="String">Settings</property>
+								<property name="Caption" vt="String">Backup Settings</property>
 								<property name="TabOrder" vt="Int8">0</property>
 								<property name="Resizing" vt="Set"/>
 							</properties>
 							<components>
-								<object type="TAButton" name="gui_SettingsApplyBtn">
-									<properties>
-										<property name="Left" vt="Int16">464</property>
-										<property name="Top" vt="Int8">72</property>
-										<property name="Width" vt="Int8">75</property>
-										<property name="Height" vt="Int8">25</property>
-										<property name="Caption" vt="String">Apply</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="Color" vt="Ident">clBtnFace</property>
-										<property name="CtrlStyle" vt="Int32">1342373888</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACheckbox" name="gui_AutoBackupSelect">
+								<object type="TACheckbox" name="gui_autoBackupSelect">
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">24</property>
 										<property name="Width" vt="Int16">129</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Auto Backups Enabled</property>
+										<property name="TabOrder" vt="Int8">0</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="gui_autoRestartCheck">
+									<properties>
+										<property name="Left" vt="Int8">8</property>
+										<property name="Top" vt="Int8">42</property>
+										<property name="Width" vt="Int16">129</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Auto Restarts Enabled</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="CtrlStyle" vt="Int32">1342242819</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
@@ -254,10 +253,98 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="gui_AutoRestartCheck">
+								<object type="TALabel" name="gui_dateTimeLabel">
 									<properties>
-										<property name="Left" vt="Int8">8</property>
-										<property name="Top" vt="Int8">42</property>
+										<property name="Left" vt="Int16">160</property>
+										<property name="Top" vt="Int8">24</property>
+										<property name="Width" vt="Int16">156</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Backup Time (Day:Hour:Minute)</property>
+										<property name="TabOrder" vt="Int8">2</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342308608</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set"/>
+									</properties>
+									<components/>
+								</object>
+								<object type="TAInput" name="gui_backupDateTime">
+									<properties>
+										<property name="Left" vt="Int16">160</property>
+										<property name="Top" vt="Int8">40</property>
+										<property name="Width" vt="Int16">153</property>
+										<property name="Height" vt="Int8">21</property>
+										<property name="TabOrder" vt="Int8">3</property>
+										<property name="Text" vt="String">7:12:00</property>
+										<property name="CtrlStyle" vt="Int32">1342374016</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TALabel" name="gui_dateTimeExplain">
+									<properties>
+										<property name="Left" vt="Int16">160</property>
+										<property name="Top" vt="Int8">72</property>
+										<property name="Width" vt="Int16">227</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Days 1-7 Is Sunday-Saturday. Hours are in 24H</property>
+										<property name="TabOrder" vt="Int8">4</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342308608</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set"/>
+									</properties>
+									<components/>
+								</object>
+							</components>
+						</object>
+						<object type="TAGroup" name="gui_restartSettingsGroup">
+							<properties>
+								<property name="Left" vt="Int8">4</property>
+								<property name="Top" vt="Int16">132</property>
+								<property name="Width" vt="Int16">577</property>
+								<property name="Height" vt="Int8">121</property>
+								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Caption" vt="String">Restart Settings</property>
+								<property name="TabOrder" vt="Int8">1</property>
+								<property name="Resizing" vt="Set"/>
+							</properties>
+							<components>
+								<object type="TAInput" name="gui_autoRestartTimeInput">
+									<properties>
+										<property name="Left" vt="Int16">157</property>
+										<property name="Top" vt="Int8">35</property>
+										<property name="Width" vt="Int16">153</property>
+										<property name="Height" vt="Int8">21</property>
+										<property name="TabOrder" vt="Int8">0</property>
+										<property name="Text" vt="String">7:12:00</property>
+										<property name="CtrlStyle" vt="Int32">1342374016</property>
+										<property name="CtrlExStyle" vt="Int16">512</property>
+										<property name="Resizing" vt="Set">DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TALabel" name="gui_autoRestartTimeLabel">
+									<properties>
+										<property name="Left" vt="Int16">157</property>
+										<property name="Top" vt="Int8">19</property>
+										<property name="Width" vt="Int16">153</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Restart Time (Day:Hour:Minute)</property>
+										<property name="TabOrder" vt="Int8">1</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342308608</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set"/>
+									</properties>
+									<components/>
+								</object>
+								<object type="TACheckbox" name="gui_autoRestartCheck1">
+									<properties>
+										<property name="Left" vt="Int8">5</property>
+										<property name="Top" vt="Int8">19</property>
 										<property name="Width" vt="Int16">129</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Auto Restarts Enabled</property>
@@ -268,142 +355,37 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TALabel" name="gui_DateTimeLabel">
-									<properties>
-										<property name="Left" vt="Int16">160</property>
-										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int16">156</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Backup Time (Day:Hour:Minute)</property>
-										<property name="TabOrder" vt="Int8">3</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
-								<object type="TAInput" name="gui_BackupDateTime">
-									<properties>
-										<property name="Left" vt="Int16">160</property>
-										<property name="Top" vt="Int8">40</property>
-										<property name="Width" vt="Int16">153</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="TabOrder" vt="Int8">4</property>
-										<property name="Text" vt="String">7:12:00</property>
-										<property name="CtrlStyle" vt="Int32">1342374016</property>
-										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TAInput" name="gui_AutoRestartTime">
-									<properties>
-										<property name="Left" vt="Int16">342</property>
-										<property name="Top" vt="Int8">41</property>
-										<property name="Width" vt="Int16">153</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="TabOrder" vt="Int8">5</property>
-										<property name="Text" vt="String">7:12:00</property>
-										<property name="CtrlStyle" vt="Int32">1342374016</property>
-										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TALabel" name="gui_RestartTimeLabel">
-									<properties>
-										<property name="Left" vt="Int16">343</property>
-										<property name="Top" vt="Int8">21</property>
-										<property name="Width" vt="Int16">153</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Restart Time (Day:Hour:Minute)</property>
-										<property name="TabOrder" vt="Int8">6</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
-								<object type="TALabel" name="gui_DateTimeExplain">
-									<properties>
-										<property name="Left" vt="Int16">160</property>
-										<property name="Top" vt="Int8">64</property>
-										<property name="Width" vt="Int16">227</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Days 1-7 Is Sunday-Saturday. Hours are in 24H</property>
-										<property name="TabOrder" vt="Int8">7</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
-								<object type="TALabel" name="Label1">
-									<properties>
-										<property name="Left" vt="Int16">160</property>
-										<property name="Top" vt="Int8">85</property>
-										<property name="Width" vt="Int16">257</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Do NOT Set Backup and Restart Time As The Same!</property>
-										<property name="TabOrder" vt="Int8">8</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
 							</components>
 						</object>
-						<object type="TAGroup" name="gui_AboutGroup">
+						<object type="TAButton" name="gui_saveSettingsBtn">
 							<properties>
-								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int8">119</property>
-								<property name="Width" vt="Int16">545</property>
-								<property name="Height" vt="Int16">129</property>
-								<property name="CtrlStyle" vt="Int32">1342308359</property>
+								<property name="Left" vt="Int16">476</property>
+								<property name="Top" vt="Int16">319</property>
+								<property name="Width" vt="Int8">107</property>
+								<property name="Height" vt="Int8">41</property>
+								<property name="Caption" vt="String">Save Settings</property>
+								<property name="TabOrder" vt="Int8">2</property>
+								<property name="Color" vt="Ident">clBtnFace</property>
+								<property name="CtrlStyle" vt="Int32">1342373888</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Caption" vt="String">About</property>
-								<property name="TabOrder" vt="Int8">1</property>
-								<property name="Resizing" vt="Set"/>
+								<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
 							</properties>
-							<components>
-								<object type="TALabel" name="gui_VersionLabel">
-									<properties>
-										<property name="Left" vt="Int8">8</property>
-										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int8">42</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Version:</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
-								<object type="TALabel" name="gui_VersionLabelText">
-									<properties>
-										<property name="Left" vt="Int8">56</property>
-										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int8">29</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">V???</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
-							</components>
+							<components/>
 						</object>
 					</components>
+				</object>
+				<object type="TTabSheet" name="gui_serverPropertiesTab">
+					<properties>
+						<property name="Caption" vt="String">Server Properties</property>
+						<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
+						<property name="Font.Color" vt="Ident">clWindowText</property>
+						<property name="Font.Height" vt="Int8">-11</property>
+						<property name="Font.Name" vt="String">MS Sans Serif</property>
+						<property name="Font.Style" vt="Set"/>
+						<property name="ImageIndex" vt="Int8">-1</property>
+						<property name="ParentFont" vt="False">False</property>
+					</properties>
+					<components/>
 				</object>
 			</components>
 		</object>
@@ -411,9 +393,9 @@
 			<properties>
 				<property name="Left" vt="Int8">8</property>
 				<property name="Top" vt="Int16">408</property>
-				<property name="Width" vt="Int8">112</property>
+				<property name="Width" vt="Int8">103</property>
 				<property name="Height" vt="Int8">17</property>
-				<property name="Caption" vt="UTF8String">пїЅ UFO Studios 2024</property>
+				<property name="Caption" vt="UTF8String">© UFO Studios 2024</property>
 				<property name="TabOrder" vt="Int8">1</property>
 				<property name="HaveVariable" vt="False">False</property>
 				<property name="CtrlStyle" vt="Int32">1342308608</property>
