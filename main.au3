@@ -168,6 +168,7 @@ Endfunc
 Func DelEmptyDirs()
     $cmd = "ROBOCOPY BDS BDS /S /MOVE";cmd.exe func to copy to the same dir, but deletes empty folders in the process
     GUICtrlSetData($gui_ServerStatusIndicator, "Backing up (Checking server files...)") 
+    _FileWriteLog($LogFile, "[BDS-UI]: Backup Checking server files...." & @CRLF, 1)
     RunWait($cmd, @ScriptDir, @SW_HIDE)
     return 0
 EndFunc
