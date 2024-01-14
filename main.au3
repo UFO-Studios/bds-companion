@@ -44,8 +44,11 @@ Global $gui_settingsTab = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
 Global $gui_SettingsApplyBtn = GUICtrlCreateButton("Apply", 480, 120, 75, 25)
 Global $gui_AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 72, 129, 17)
 Global $gui_AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 24, 90, 129, 17)
-Global $gui_DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 200, 72, 156, 17)
-Global $gui_BackupDateTime = GUICtrlCreateInput("7:12:00", 200, 88, 153, 21)
+Global $gui_DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 176, 72, 156, 17)
+Global $gui_BackupDateTime = GUICtrlCreateInput("7:12:00", 176, 88, 153, 21)
+Global $Input1 = GUICtrlCreateInput("7:12:00", 358, 89, 153, 21)
+Global $Label1 = GUICtrlCreateLabel("Restart Time (Day:Hour:Minute)", 359, 69, 153, 17)
+Global $DateTimeExplain = GUICtrlCreateLabel("Days 1-7 Is Sunday-Saturday. Hours are in 24H", 176, 120, 227, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_AboutGroup = GUICtrlCreateGroup("About", 16, 152, 545, 129)
 Global $gui_VersionLabel = GUICtrlCreateLabel("Version:", 24, 176, 42, 17)
@@ -55,10 +58,9 @@ GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 112, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
-GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline", -1)
 #EndRegion ### END Koda GUI section ###
 
-;Variables #####
+;Variables ###################################################################################
 
 Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
@@ -66,6 +68,8 @@ Global $serverRunning = False
 Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
 Global $SettingsFile = @ScriptDir & "\settings.ini"
+
+
 
 ;Functions (Config) #############################################################################
 
@@ -103,6 +107,25 @@ Func SaveConf()
 
     IniWrite($SettingsFile, "general", "AutoBackupTime", GUICtrlRead($gui_BackupDateTime))
 EndFunc
+
+;Functions (Scheduled Actions) ##################################################################
+
+Func ScheduledActions()
+    ;Backup
+    Local $ABtimeArr = StringSplit($cfg_AutoBackupTime, ":"); Auto Backup Time Array
+    If $ABtimeArr[0] = @WDAY Then
+        If $ABtimeArr[1] = @HOUR Then
+            If $ABtimeArr[2] = @MIN Then
+                backupServer()
+            EndIf
+        EndIf
+    EndIf
+    ;Restart
+    
+EndFunc
+
+
+AdlibRegister("ScheduledActions", 60*1000); run it every 60s
 
 ;Functions (World & packs) ########################################################################
 
