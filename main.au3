@@ -42,10 +42,10 @@ Global $gui_serverSettingsTab = GUICtrlCreateTabItem("Server Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_settingsTab = GUICtrlCreateGroup("Settings", 16, 48, 545, 105)
 Global $gui_SettingsApplyBtn = GUICtrlCreateButton("Apply", 480, 120, 75, 25)
-Global $gui_AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups", 24, 72, 97, 17)
-Global $gui_AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restart", 24, 90, 97, 17)
-Global $gui_DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 136, 72, 156, 17)
-Global $gui_BackupDateTime = GUICtrlCreateInput("7:12:00", 136, 88, 201, 21)
+Global $gui_AutoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 72, 129, 17)
+Global $gui_AutoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 24, 90, 129, 17)
+Global $gui_DateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 200, 72, 156, 17)
+Global $gui_BackupDateTime = GUICtrlCreateInput("7:12:00", 200, 88, 153, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_AboutGroup = GUICtrlCreateGroup("About", 16, 152, 545, 129)
 Global $gui_VersionLabel = GUICtrlCreateLabel("Version:", 24, 176, 42, 17)
@@ -85,6 +85,22 @@ Func LoadConf()
 
     Global $cfg_AutoBackupTime = IniRead($SettingsFile, "general", "AutoBackupTime", "7:12:00")
     GUICtrlSetData($gui_BackupDateTime, $cfg_AutoBackupTime)
+EndFunc
+
+Func SaveConf()
+    If GUICtrlRead($gui_AutoBackupSelect) = 1 Then
+        IniWrite($SettingsFile, "general", "AutoBackup", "True")
+    Else
+        IniWrite($SettingsFile, "general", "AutoBackup", "False")
+    Endif
+
+    If GUICtrlRead($gui_AutoRestartCheck) = 1 Then
+        IniWrite($SettingsFile, "general", "AutoRestart", "True")
+    Else
+        IniWrite($SettingsFile, "general", "AutoRestart", "False")
+    Endif
+
+    IniWrite($SettingsFile, "general", "AutoBackupTime", GUICtrlRead($gui_BackupDateTime))
 EndFunc
 
 ;Functions (World & packs) ########################################################################
@@ -230,6 +246,9 @@ While 1
 
         Case $gui_sendCmdBtn
             sendServerCommand()
+
+        Case $gui_SettingsApplyBtn
+            SaveConf()
 
 	EndSwitch
 WEnd
