@@ -55,6 +55,7 @@ GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 112, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
+GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline", -1)
 #EndRegion ### END Koda GUI section ###
 
 ;Variables #####
@@ -121,12 +122,7 @@ Func ListPacks()
     return $FolderArray
 Endfunc
 
-;Functions (Misc)
-
-Func IsBackupTime()
-    Sleep(60000); 1m
-    
-Endfunc
+;Functions (Misc) ##################################################################################
 
 Func DelEmptyDirs()
     $cmd = "ROBOCOPY BDS BDS /S /MOVE";cmd.exe func to copy to the same dir, but deletes empty folders in the process
@@ -136,7 +132,7 @@ Func DelEmptyDirs()
 EndFunc
 
 
-;Functions (Server Management) #####
+;Functions (Server Management) ################################################################################
 
 Func startServer()
     Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD);DO NOT forget $STDIN_CHILD
