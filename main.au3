@@ -69,6 +69,8 @@ Global $serverRunning = False
 Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
 Global $SettingsFile = @ScriptDir & "\settings.ini"
+Global $LogFolder = @ScriptDir & "\logs"
+Global $LogFile = $LogFolder & "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "].log"
 
 
 
@@ -122,6 +124,7 @@ Func ScheduledActions()
     If $ABtimeArr[0] = @WDAY Then
         If $ABtimeArr[1] = @HOUR Then
             If $ABtimeArr[2] = @MIN Then
+                _FileWriteLog($LogFile, "[BDS-UI]: Auto Backup Triggered" & @CRLF, 1)
                 backupServer()
             EndIf
         EndIf
@@ -131,6 +134,7 @@ Func ScheduledActions()
     If $ABtimeArr[0] = @WDAY Then
         If $ABtimeArr[1] = @HOUR Then
             If $ABtimeArr[2] = @MIN Then
+                _FileWriteLog($LogFile, "[BDS-UI]: Auto Restart Triggered" & @CRLF, 1)
                 backupServer()
             EndIf
         EndIf
@@ -188,18 +192,21 @@ Func updateConsole()
             AdlibUnRegister("updateConsole")
         Else
             GUICtrlSetData($gui_console, $line, 1)
+            _FileWriteLog($LogFile, $line & @CRLF, 1)
         EndIf
     EndIf
 EndFunc
 
 Func restartServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
+    _FileWriteLog($LogFile, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
     stopServer()
     startServer()
 EndFunc
 
 Func stopServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Stop Triggered" & @CRLF, 1)
+    _FileWriteLog($LogFile, "[BDS-UI]: Server Stop Triggered" & @CRLF, 1)
     StdinWrite($BDS_process, "stop" & @CRLF)
     Sleep(1000) ; Wait for a while to give the process time to read the input
     StdinWrite($BDS_process) ; Close the stream
@@ -218,6 +225,7 @@ EndFunc
 
 Func backupServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
+    _FileWriteLog($LogFile, "[BDS-UI]: Server Backup Triggered" & @CRLF, 1)
     GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_ORANGE)
     GUICtrlSetData($gui_ServerStatusIndicator, "Backing Up (Pre Processing...)")
     $backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
@@ -238,12 +246,14 @@ Func backupServer()
     GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_GREEN)
     GUICtrlSetData($gui_ServerStatusIndicator, "Online")
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
+    _FileWriteLog($LogFile, "[BDS-UI]: Server Backup Done" & @CRLF, 1)
 Endfunc
 
 Func sendServerCommand()
     $cmd = GUICtrlRead($gui_commandInput) ;cmd input box
     StdinWrite($BDS_process, $cmd & @CRLF)
     GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '"& $cmd &"'" & @CRLF, 1)
+    _FileWriteLog($LogFile, "[BDS-UI]: Server Command Sent: '"& $cmd &"'" & @CRLF, 1)
     GUICtrlSetData($gui_commandInput, "") ;emptys box
     Return
 EndFunc
