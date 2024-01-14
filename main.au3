@@ -116,7 +116,7 @@ EndFunc
 
 ;Functions (Scheduled Actions) ##################################################################
 
-Func ScheduledActions()
+Func scheduledActions()
     ;Backup
     Local $ABtimeArr = StringSplit($cfg_autoBackupTime, ":"); Auto Backup Time Array
     If $ABtimeArr[0] = @WDAY Then
@@ -140,12 +140,11 @@ Func ScheduledActions()
     
 EndFunc
 
-
-AdlibRegister("ScheduledActions", 60*1000); run it every 60s
+AdlibRegister("scheduledActions", 60*1000); run it every 60s
 
 ;Functions (World & packs) ########################################################################
 
-Func ListPacks()
+Func listPacks()
     $BpackDir = $bdsFolder & "/behavior_packs"
     Local $FolderArray[]
     Local $hSearch = FileFindFirstFile($BpackDir)
