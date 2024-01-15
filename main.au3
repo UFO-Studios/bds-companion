@@ -128,23 +128,25 @@ EndFunc
 
 Func LoadBDSConf()
     Local $BDSconfFile = $bdsFolder & "/server.properties"
-    local $f = FileOpen($BDSconfFile)
-    $confArr = FileReadToArray($f)
+    local $f = FileOpen($BDSconfFile, 8)
+    local $confArr
+    _FileReadToArray($f, $confArr)
+    MsgBox("", "s", $confArr)
     For $i In $confArr
         if StringInStr("server-name", $confArr[$i]) Then
             Global $BDS_ServerName = StringSplit($confArr[$i], "=")
+            GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
         ElseIf StringInStr("gamemode", $confArr[$i]) Then
             Global $BDS_Gamemode = StringSplit($confArr[$i], "=")
+            GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
         ElseIf StringInStr("server-port", $confArr[$i]) Then
             Global $BDS_ServerPort = StringSplit($confArr[$i], "=")
+            GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
         ElseIf StringInStr("view-distance", $confArr[$i]) Then
             Global $BDS_RenderDist = StringSplit($confArr[$i], "=")
+            GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
         endif
     next
-    GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
-    GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
-    GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
-    GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
 EndFunc
 
 ;Functions (Scheduled Actions) ##################################################################
@@ -278,6 +280,7 @@ EndFunc
 
 
 loadConf(); load conf at first start
+;LoadBDSConf()
 
 While 1
 	$nMsg = GUIGetMsg()
