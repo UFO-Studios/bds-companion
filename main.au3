@@ -25,7 +25,7 @@
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 511, 248)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 359, 243)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
@@ -39,7 +39,6 @@ Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "gui_console")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
 Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
 Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 24, 82, 129, 17)
@@ -53,8 +52,20 @@ Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 2
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
+GUICtrlSetState(-1,$GUI_SHOW)
+Global $ghi_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
+Global $gui_SPname = GUICtrlCreateLabel("Server Name: ", 40, 72, 72, 17)
+Global $gui_ServerModeLabel = GUICtrlCreateLabel("Server Mode: Creative", 42, 103, 110, 17)
+Global $gui_ServerNameInput = GUICtrlCreateInput("Server Name", 120, 72, 121, 21)
+Global $gui_ServerModeList = GUICtrlCreateList("", 40, 120, 113, 45)
+GUICtrlSetData(-1, "Adventure|Creative|Survival")
+Global $gui_ServerPortLabel = GUICtrlCreateLabel("Server Port: ", 40, 184, 63, 17)
+Global $gui_ServerPortInput = GUICtrlCreateInput("19132", 112, 184, 121, 21)
+Global $gui_ServerRenderLabel = GUICtrlCreateLabel("Render Distance: ", 41, 229, 90, 17)
+Global $gui_RenderDistInput = GUICtrlCreateInput("32", 135, 229, 121, 21)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
+Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 103, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -115,6 +126,27 @@ Func saveConf()
 
 EndFunc
 
+Func LoadBDSConf()
+    Local $BDSconfFile = $bdsFolder & "/server.properties"
+    local $f = FileOpen($BDSconfFile)
+    $confArr = FileReadToArray($f)
+    For $i In $confArr
+        if StringInStr("server-name", $confArr[$i]) Then
+            Global $BDS_ServerName = StringSplit($confArr[$i], "=")
+        ElseIf StringInStr("gamemode", $confArr[$i]) Then
+            Global $BDS_Gamemode = StringSplit($confArr[$i], "=")
+        ElseIf StringInStr("server-port", $confArr[$i]) Then
+            Global $BDS_ServerPort = StringSplit($confArr[$i], "=")
+        ElseIf StringInStr("view-distance", $confArr[$i]) Then
+            Global $BDS_RenderDist = StringSplit($confArr[$i], "=")
+        endif
+    next
+    GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
+    GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
+    GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
+    GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
+EndFunc
+
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
@@ -139,6 +171,7 @@ EndFunc
 ;AdlibRegister("scheduledActions", 60*1000); run it every 60s
 
 ;Functions (World & packs) ########################################################################
+
 
 
 ;Functions (Misc) ##################################################################################
