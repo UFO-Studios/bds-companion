@@ -94,6 +94,7 @@ Func loadConf()
 
     Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
     GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
+
 EndFunc
 
 Func saveConf()
@@ -116,12 +117,26 @@ EndFunc
 
 ;Functions (Scheduled Actions) ##################################################################
 
-Func scheduledActions()
+Func ScheduledActions()
+    $ABarr = StringSplit($cfg_autoBackupTime, ","); auto backup array
+    $ARarr = StringSplit($cfg_autoRestartTime, ",");auto restart array
     
+    ;Auto Backup
+    For $i In $ABarr
+        If @HOUR = $ABarr[$i-1] Then; goes through all entries
+            backupServer()
+        endif
+    Next
     
+    ;Auto Restarts
+    For $i In $ARarr
+        If @HOUR = $ARarr[$i-1] Then; goes through all entries
+            RestartServer()
+        endif
+    Next
 EndFunc
 
-AdlibRegister("scheduledActions", 60*1000); run it every 60s
+;AdlibRegister("scheduledActions", 60*1000); run it every 60s
 
 ;Functions (World & packs) ########################################################################
 
@@ -161,7 +176,7 @@ Func updateConsole()
     EndIf
 EndFunc
 
-Func restartServer()
+Func RestartServer()
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
     _FileWriteLog($LogFile, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
     stopServer()
@@ -246,7 +261,7 @@ While 1
             stopServer()
 
         Case $gui_restartBtn
-            restartServer()
+            RestartServer()
 
         Case $gui_backupBtn
             backupServer()
