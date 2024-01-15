@@ -403,9 +403,9 @@
 									<properties>
 										<property name="Left" vt="Int8">10</property>
 										<property name="Top" vt="Int8">63</property>
-										<property name="Width" vt="Int8">110</property>
+										<property name="Width" vt="Int8">71</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Server Mode: Creative</property>
+										<property name="Caption" vt="String">Server Mode: </property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342308608</property>

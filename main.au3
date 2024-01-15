@@ -55,7 +55,7 @@ Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $ghi_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
 Global $gui_SPname = GUICtrlCreateLabel("Server Name: ", 40, 72, 72, 17)
-Global $gui_ServerModeLabel = GUICtrlCreateLabel("Server Mode: Creative", 42, 103, 110, 17)
+Global $gui_ServerModeLabel = GUICtrlCreateLabel("Server Mode: ", 42, 103, 71, 17)
 Global $gui_ServerNameInput = GUICtrlCreateInput("Server Name", 120, 72, 121, 21)
 Global $gui_ServerModeList = GUICtrlCreateList("", 40, 120, 113, 45)
 GUICtrlSetData(-1, "Adventure|Creative|Survival")
@@ -81,7 +81,7 @@ Global $BDS_process = null
 Global $backupDir = @ScriptDir & "\backups"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $LogFolder = @ScriptDir & "\logs"
-Global $LogFile = $LogFolder & "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "].log"
+Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "].log"
 
 ;Functions (Config) #############################################################################
 
@@ -154,21 +154,25 @@ Func ScheduledActions()
     $ARarr = StringSplit($cfg_autoRestartTime, ",");auto restart array
     
     ;Auto Backup
-    For $i In $ABarr
-        If @HOUR = $ABarr[$i-1] Then; goes through all entries
-            backupServer()
-        endif
-    Next
+    if $cfg_autoBackup Then
+        For $i In $ABarr
+            If @HOUR = $ABarr[$i-1] Then; goes through all entries
+                backupServer()
+            endif
+        Next
+    endif
     
     ;Auto Restarts
-    For $i In $ARarr
-        If @HOUR = $ARarr[$i-1] Then; goes through all entries
-            RestartServer()
-        endif
-    Next
+    if $cfg_autoRestart Then
+        For $i In $ARarr
+            If @HOUR = $ARarr[$i-1] Then; goes through all entries
+                RestartServer()
+            endif
+        Next
+    endif
 EndFunc
 
-;AdlibRegister("scheduledActions", 60*1000); run it every 60s
+AdlibRegister("ScheduledActions", 60*1000); run it every 60s
 
 ;Functions (World & packs) ########################################################################
 
