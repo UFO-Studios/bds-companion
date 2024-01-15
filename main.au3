@@ -24,8 +24,8 @@
 
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 1006, 536)
+#Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 511, 248)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
@@ -39,16 +39,16 @@ Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "gui_console")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
+GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
 Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
 Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 24, 82, 129, 17)
-Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Time (Day:Hour:Minute)", 176, 64, 156, 17)
-Global $gui_backupDateTime = GUICtrlCreateInput("7:12:00", 176, 80, 153, 21)
-Global $gui_dateTimeExplain = GUICtrlCreateLabel("Days 1-7 Is Sunday-Saturday. Hours are in 24H", 176, 112, 227, 17)
+Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Interval. E.G: 6,12,18,24", 176, 64, 160, 17)
+Global $gui_backupDateTime = GUICtrlCreateInput("6,12", 176, 80, 153, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 165, 577, 121)
 Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 173, 200, 153, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time (Day:Hour:Minute)", 173, 184, 153, 17)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time. E.G: 6,12,18,24", 173, 184, 145, 17)
 Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 184, 129, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
@@ -89,10 +89,10 @@ Func loadConf()
         GUICtrlSetState($gui_AutoBackupSelect, $GUI_UNCHECKED)
     Endif
 
-    Global $cfg_autoBackupTime = IniRead($settingsFile, "general", "AutoBackupTime", "7:12:00")
+    Global $cfg_autoBackupTime = IniRead($settingsFile, "general", "AutoBackupInterval", "6,12,18,24")
     GUICtrlSetData($gui_BackupDateTime, $cfg_autoBackupTime)
 
-    Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartTime", "7:12:00")
+    Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
     GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
 EndFunc
 
@@ -109,34 +109,15 @@ Func saveConf()
         IniWrite($settingsFile, "general", "AutoRestart", "False")
     Endif
 
-    IniWrite($settingsFile, "general", "AutoBackupTime", GUICtrlRead($gui_BackupDateTime))
-    IniWrite($settingsFile, "general", "AutoRestartTime", GUICtrlRead($gui_autoRestartTimeInput))
+    IniWrite($settingsFile, "general", "AutoBackupInterval", GUICtrlRead($gui_BackupDateTime))
+    IniWrite($settingsFile, "general", "AutoRestartInterval", GUICtrlRead($gui_autoRestartTimeInput))
 
 EndFunc
 
 ;Functions (Scheduled Actions) ##################################################################
 
 Func scheduledActions()
-    ;Backup
-    Local $ABtimeArr = StringSplit($cfg_autoBackupTime, ":"); Auto Backup Time Array
-    If $ABtimeArr[0] = @WDAY Then
-        If $ABtimeArr[1] = @HOUR Then
-            If $ABtimeArr[2] = @MIN Then
-                _FileWriteLog($LogFile, "[BDS-UI]: Auto Backup Triggered" & @CRLF, 1)
-                backupServer()
-            EndIf
-        EndIf
-    EndIf
-    ;Restart
-    Local $ABtimeArr = StringSplit($cfg_autoBackupTime, ":"); Auto Backup Time Array
-    If $ABtimeArr[0] = @WDAY Then
-        If $ABtimeArr[1] = @HOUR Then
-            If $ABtimeArr[2] = @MIN Then
-                _FileWriteLog($LogFile, "[BDS-UI]: Auto Restart Triggered" & @CRLF, 1)
-                backupServer()
-            EndIf
-        EndIf
-    EndIf
+    
     
 EndFunc
 
@@ -144,21 +125,6 @@ AdlibRegister("scheduledActions", 60*1000); run it every 60s
 
 ;Functions (World & packs) ########################################################################
 
-Func listPacks()
-    $BpackDir = $bdsFolder & "/behavior_packs"
-    Local $FolderArray[]
-    Local $hSearch = FileFindFirstFile($BpackDir)
-    While 1
-        Local $sFile = FileFindNextFile($hSearch)
-        If @error Then ExitLoop
-    
-        ; Check if the file is actually a directory
-        If StringInStr(FileGetAttrib($sFile), "D") Then
-            _ArrayAdd($FolderArray, FileGetAttrib($sFile))            
-        EndIf
-    WEnd
-    return $FolderArray
-Endfunc
 
 ;Functions (Misc) ##################################################################################
 
