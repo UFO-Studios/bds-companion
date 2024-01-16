@@ -25,7 +25,7 @@
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 359, 243)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 188, 192)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
@@ -39,9 +39,9 @@ Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "gui_console")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
+GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
 Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
-Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 24, 82, 129, 17)
 Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Interval. E.G: 6,12,18,24", 176, 64, 160, 17)
 Global $gui_backupDateTime = GUICtrlCreateInput("6,12", 176, 80, 153, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -52,7 +52,6 @@ Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 2
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
-GUICtrlSetState(-1,$GUI_SHOW)
 Global $ghi_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
 Global $gui_SPname = GUICtrlCreateLabel("Server Name: ", 40, 72, 72, 17)
 Global $gui_ServerModeLabel = GUICtrlCreateLabel("Server Mode: ", 42, 103, 71, 17)
@@ -65,7 +64,7 @@ Global $gui_ServerRenderLabel = GUICtrlCreateLabel("Render Distance: ", 41, 229,
 Global $gui_RenderDistInput = GUICtrlCreateInput("32", 135, 229, 121, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("ï¿½ UFO Studios 2024", 8, 408, 103, 17)
+Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -128,25 +127,43 @@ EndFunc
 
 Func LoadBDSConf()
     Local $BDSconfFile = $bdsFolder & "/server.properties"
-    local $f = FileOpen($BDSconfFile, 8)
-    local $confArr
-    _FileReadToArray($f, $confArr)
-    MsgBox("", "s", $confArr)
-    For $i In $confArr
-        if StringInStr("server-name", $confArr[$i]) Then
-            Global $BDS_ServerName = StringSplit($confArr[$i], "=")
+    Local $LineCount = 0
+    ; Check if the file exists
+    If Not FileExists($BDSconfFile) Then
+        MsgBox(0, "Error", "File not found: " & $BDSconfFile)
+        Return False
+    EndIf
+
+    ; Open the file for reading
+    Local $hFile = FileOpen($BDSconfFile, 0)
+
+    ; Check if the file was opened successfully
+    If $hFile = -1 Then
+        MsgBox(0, "Error", "Failed to open file: " & $BDSconfFile)
+        Return False
+    Else
+        MsgBox("", "t", $hFile)
+    endif
+
+    local $i = 0
+    While 1
+        Local $sLine = FileReadLine($hFile)
+        If @error Then ExitLoop
+        if StringInStr("server-name", $sLine) Then
+            Global $BDS_ServerName = StringSplit($sLine, "=")
             GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
-        ElseIf StringInStr("gamemode", $confArr[$i]) Then
-            Global $BDS_Gamemode = StringSplit($confArr[$i], "=")
+        ElseIf StringInStr("gamemode", $sLine) Then
+            Global $BDS_Gamemode = StringSplit($sLine, "=")
             GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
-        ElseIf StringInStr("server-port", $confArr[$i]) Then
-            Global $BDS_ServerPort = StringSplit($confArr[$i], "=")
+        ElseIf StringInStr("server-port", $sLine) Then
+            Global $BDS_ServerPort = StringSplit($sLine, "=")
             GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
-        ElseIf StringInStr("view-distance", $confArr[$i]) Then
-            Global $BDS_RenderDist = StringSplit($confArr[$i], "=")
+        ElseIf StringInStr("view-distance", $sLine) Then
+            Global $BDS_RenderDist = StringSplit($sLine, "=")
             GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
         endif
-    next
+        $i = $i + 1
+    wend
 EndFunc
 
 ;Functions (Scheduled Actions) ##################################################################
@@ -154,11 +171,12 @@ EndFunc
 Func ScheduledActions()
     $ABarr = StringSplit($cfg_autoBackupTime, ","); auto backup array
     $ARarr = StringSplit($cfg_autoRestartTime, ",");auto restart array
+    MsgBox("", "DEBUG", $ABarr & $ARarr)
     
     ;Auto Backup
     if $cfg_autoBackup Then
         For $i In $ABarr
-            If @HOUR = $ABarr[$i-1] Then; goes through all entries
+            If @HOUR = $ABarr[$i] Then; goes through all entries
                 backupServer()
             endif
         Next
@@ -167,7 +185,7 @@ Func ScheduledActions()
     ;Auto Restarts
     if $cfg_autoRestart Then
         For $i In $ARarr
-            If @HOUR = $ARarr[$i-1] Then; goes through all entries
+            If @HOUR = $ARarr[$i] Then; goes through all entries
                 RestartServer()
             endif
         Next
@@ -280,7 +298,7 @@ EndFunc
 
 
 loadConf(); load conf at first start
-;LoadBDSConf()
+LoadBDSConf()
 
 While 1
 	$nMsg = GUIGetMsg()
