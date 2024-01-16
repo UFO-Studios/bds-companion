@@ -64,7 +64,7 @@ Global $gui_ServerRenderLabel = GUICtrlCreateLabel("Render Distance: ", 41, 229,
 Global $gui_RenderDistInput = GUICtrlCreateInput("32", 135, 229, 121, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
+Global $gui_copyright = GUICtrlCreateLabel("ï¿½ UFO Studios 2024", 8, 408, 103, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -87,9 +87,9 @@ Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @
 Func loadConf()
     Global $cfg_autoRestart = IniRead($settingsFile, "general", "AutoRestart", "False")
     If $cfg_autoRestart = "True" Then
-        GUICtrlSetState($gui_AutoRestartCheck, $GUI_CHECKED)
+        GUICtrlSetState($gui_AutoRestartCheck1, $GUI_CHECKED)
     Else
-        GUICtrlSetState($gui_AutoRestartCheck, $GUI_UNCHECKED)
+        GUICtrlSetState($gui_AutoRestartCheck1, $GUI_UNCHECKED)
     Endif
 
     Global $cfg_autoBackup = IniRead($settingsFile, "general", "AutoBackup", "False")
@@ -100,6 +100,7 @@ Func loadConf()
     Endif
 
     Global $cfg_autoBackupTime = IniRead($settingsFile, "general", "AutoBackupInterval", "6,12,18,24")
+    MsgBox("", "TEST", $cfg_autoBackupTime)
     GUICtrlSetData($gui_BackupDateTime, $cfg_autoBackupTime)
 
     Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
@@ -114,7 +115,7 @@ Func saveConf()
         IniWrite($settingsFile, "general", "AutoBackup", "False")
     Endif
 
-    If GUICtrlRead($gui_AutoRestartCheck) = 1 Then
+    If GUICtrlRead($gui_AutoRestartCheck1) = 1 Then
         IniWrite($settingsFile, "general", "AutoRestart", "True")
     Else
         IniWrite($settingsFile, "general", "AutoRestart", "False")
@@ -150,7 +151,7 @@ Func LoadBDSConf()
         Local $sLine = FileReadLine($hFile)
         If @error Then ExitLoop
         if StringInStr("server-name", $sLine) Then
-            Global $BDS_ServerName = StringSplit($sLine, "=")
+            Global $BDS_ServerName = StringSplit($sLine, "=")[1]
             GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
         ElseIf StringInStr("gamemode", $sLine) Then
             Global $BDS_Gamemode = StringSplit($sLine, "=")
@@ -172,6 +173,8 @@ Func ScheduledActions()
     $ABarr = StringSplit($cfg_autoBackupTime, ","); auto backup array
     $ARarr = StringSplit($cfg_autoRestartTime, ",");auto restart array
     MsgBox("", "DEBUG", $ABarr & $ARarr)
+    MsgBox("", "DEBUG", @HOUR)
+    MsgBox("", "DEBUG", $cfg_autoRestart, $cfg_autoBackup)
     
     ;Auto Backup
     if $cfg_autoBackup Then
