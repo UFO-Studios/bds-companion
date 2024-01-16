@@ -84,6 +84,49 @@ Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @
 
 ;Functions (Config) #############################################################################
 
+
+Func LoadBDSConf()
+    MsgBox("", "TTT", "TTT")
+    Local $BDSconfFile = $bdsFolder & "/server.properties"
+    Local $LineCount = 0
+    ; Check if the file exists
+    If Not FileExists($BDSconfFile) Then
+        MsgBox(0, "Error", "File not found: " & $BDSconfFile)
+        Return False
+    EndIf
+
+    ; Open the file for reading
+    Local $hFile = FileOpen($BDSconfFile, 0)
+
+    ; Check if the file was opened successfully
+    If $hFile = -1 Then
+        MsgBox(0, "Error", "Failed to open file: " & $BDSconfFile)
+        Return False
+    endif
+    MsgBox("", "TTT", "TTT")
+
+    local $i = 0
+    While 1
+        Local $sLine = FileReadLine($hFile)
+        If @error Then ExitLoop
+        if StringInStr("server-name", $sLine) Then
+            Global $BDS_ServerName = StringSplit($sLine, "=")[1]
+            MsgBox("", "TEST", $BDS_ServerName)
+            GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
+        ElseIf StringInStr("gamemode", $sLine) Then
+            Global $BDS_Gamemode = StringSplit($sLine, "=")
+            GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
+        ElseIf StringInStr("server-port", $sLine) Then
+            Global $BDS_ServerPort = StringSplit($sLine, "=")
+            GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
+        ElseIf StringInStr("view-distance", $sLine) Then
+            Global $BDS_RenderDist = StringSplit($sLine, "=")
+            GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
+        endif
+        $i = $i + 1
+    wend
+EndFunc
+
 Func loadConf()
     Global $cfg_autoRestart = IniRead($settingsFile, "general", "AutoRestart", "False")
     If $cfg_autoRestart = "True" Then
@@ -124,48 +167,9 @@ Func saveConf()
     IniWrite($settingsFile, "general", "AutoBackupInterval", GUICtrlRead($gui_BackupDateTime))
     IniWrite($settingsFile, "general", "AutoRestartInterval", GUICtrlRead($gui_autoRestartTimeInput))
 
+    LoadBDSConf()
 EndFunc
 
-Func LoadBDSConf()
-    Local $BDSconfFile = $bdsFolder & "/server.properties"
-    Local $LineCount = 0
-    ; Check if the file exists
-    If Not FileExists($BDSconfFile) Then
-        MsgBox(0, "Error", "File not found: " & $BDSconfFile)
-        Return False
-    EndIf
-
-    ; Open the file for reading
-    Local $hFile = FileOpen($BDSconfFile, 0)
-
-    ; Check if the file was opened successfully
-    If $hFile = -1 Then
-        MsgBox(0, "Error", "Failed to open file: " & $BDSconfFile)
-        Return False
-    Else
-        MsgBox("", "t", $hFile)
-    endif
-
-    local $i = 0
-    While 1
-        Local $sLine = FileReadLine($hFile)
-        If @error Then ExitLoop
-        if StringInStr("server-name", $sLine) Then
-            Global $BDS_ServerName = StringSplit($sLine, "=")[1]
-            GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
-        ElseIf StringInStr("gamemode", $sLine) Then
-            Global $BDS_Gamemode = StringSplit($sLine, "=")
-            GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
-        ElseIf StringInStr("server-port", $sLine) Then
-            Global $BDS_ServerPort = StringSplit($sLine, "=")
-            GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
-        ElseIf StringInStr("view-distance", $sLine) Then
-            Global $BDS_RenderDist = StringSplit($sLine, "=")
-            GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
-        endif
-        $i = $i + 1
-    wend
-EndFunc
 
 ;Functions (Scheduled Actions) ##################################################################
 
@@ -301,7 +305,7 @@ EndFunc
 
 
 loadConf(); load conf at first start
-LoadBDSConf()
+
 
 While 1
 	$nMsg = GUIGetMsg()
