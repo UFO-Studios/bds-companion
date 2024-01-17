@@ -84,47 +84,14 @@ Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @
 
 ;Functions (Config) #############################################################################
 
-
 Func LoadBDSConf()
-    MsgBox("", "TTT", "TTT")
-    Local $BDSconfFile = $bdsFolder & "/server.properties"
-    Local $LineCount = 0
-    ; Check if the file exists
-    If Not FileExists($BDSconfFile) Then
-        MsgBox(0, "Error", "File not found: " & $BDSconfFile)
-        Return False
-    EndIf
-
-    ; Open the file for reading
-    Local $hFile = FileOpen($BDSconfFile, 0)
-
-    ; Check if the file was opened successfully
-    If $hFile = -1 Then
-        MsgBox(0, "Error", "Failed to open file: " & $BDSconfFile)
-        Return False
+    Local $BDSconfFile = $bdsFolder & "/server.txt"
+    $FileOpened = FileRead($BDSconfFile)
+    If @error Then
+        MsgBox(0, "ERROR!", @error)
+    else
+        MsgBox(0, "file:", $FileOpened)
     endif
-    MsgBox("", "TTT", "TTT")
-
-    local $i = 0
-    While 1
-        Local $sLine = FileReadLine($hFile)
-        If @error Then ExitLoop
-        if StringInStr("server-name", $sLine) Then
-            Global $BDS_ServerName = StringSplit($sLine, "=")[1]
-            MsgBox("", "TEST", $BDS_ServerName)
-            GUICtrlSetData($gui_ServerNameInput, $BDS_ServerName)
-        ElseIf StringInStr("gamemode", $sLine) Then
-            Global $BDS_Gamemode = StringSplit($sLine, "=")
-            GUICtrlSetData($gui_ServerModeList, "Adventure|Creative|Survival", $BDS_Gamemode)
-        ElseIf StringInStr("server-port", $sLine) Then
-            Global $BDS_ServerPort = StringSplit($sLine, "=")
-            GUICtrlSetData($gui_ServerPortInput, $BDS_ServerPort)
-        ElseIf StringInStr("view-distance", $sLine) Then
-            Global $BDS_RenderDist = StringSplit($sLine, "=")
-            GUICtrlSetData($gui_RenderDistInput, $BDS_RenderDist)
-        endif
-        $i = $i + 1
-    wend
 EndFunc
 
 Func loadConf()
@@ -149,6 +116,7 @@ Func loadConf()
     Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
     GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
 
+    LoadBDSConf()
 EndFunc
 
 Func saveConf()
@@ -167,7 +135,7 @@ Func saveConf()
     IniWrite($settingsFile, "general", "AutoBackupInterval", GUICtrlRead($gui_BackupDateTime))
     IniWrite($settingsFile, "general", "AutoRestartInterval", GUICtrlRead($gui_autoRestartTimeInput))
 
-    LoadBDSConf()
+    
 EndFunc
 
 
@@ -303,6 +271,7 @@ EndFunc
 
 ;Main GUI Loop
 
+LoadBDSConf()
 
 loadConf(); load conf at first start
 
