@@ -38,7 +38,7 @@ Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
-GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
+GUICtrlSetData(-1, "[BDS-UI]: Server Offline" & @CRLF)
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
@@ -74,12 +74,12 @@ GUICtrlSetColor($gui_ServerStatusIndicator, $COLOR_RED)
 
 ;Variables ###################################################################################
 
-Global $bdsFolder = @ScriptDir & "\BDS"
-Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
+Global const $bdsFolder = @ScriptDir & "\BDS"
+Global const $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
+Global const $backupDir = @ScriptDir & "\backups"
+Global const $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
-Global $backupDir = @ScriptDir & "\backups"
-Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $LogFolder = @ScriptDir & "\logs"
 Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "].log"
 
