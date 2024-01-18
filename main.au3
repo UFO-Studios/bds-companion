@@ -22,15 +22,15 @@
 #include "UDF/Zip.au3"
 ;GUI #####
 
-Global Const $guiTitle = "BDS UI - V1.0.0"
+Global Const $currentVersionNumber = "1.0.2"
+Global Const $guiTitle = "BDS UI - " & $currentVersionNumber
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 188, 192)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 646, 165)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
 Global $gui_commandInput = GUICtrlCreateInput("", 16, 328, 481, 21)
-GUICtrlSetOnEvent($gui_commandInput, "sendServerCommand"); when the user presses enter, cmd will be sent
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 328, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 360, 75, 33)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
@@ -38,7 +38,7 @@ Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
-GUICtrlSetData(-1, "[BDS-UI]: Server Offline" & @CRLF)
+GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
@@ -52,17 +52,12 @@ Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time. E.G: 6,12,1
 Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 184, 129, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
+Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
-Global $ghi_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
-Global $gui_SPname = GUICtrlCreateLabel("Server Name: ", 40, 72, 72, 17)
-Global $gui_ServerModeLabel = GUICtrlCreateLabel("Server Mode: ", 42, 103, 71, 17)
-Global $gui_ServerNameInput = GUICtrlCreateInput("Server Name", 120, 72, 121, 21)
-Global $gui_ServerModeList = GUICtrlCreateList("", 40, 120, 113, 45)
-GUICtrlSetData(-1, "Adventure|Creative|Survival")
-Global $gui_ServerPortLabel = GUICtrlCreateLabel("Server Port: ", 40, 184, 63, 17)
-Global $gui_ServerPortInput = GUICtrlCreateInput("19132", 112, 184, 121, 21)
-Global $gui_ServerRenderLabel = GUICtrlCreateLabel("Render Distance: ", 41, 229, 90, 17)
-Global $gui_RenderDistInput = GUICtrlCreateInput("32", 135, 229, 121, 21)
+Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
+Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 64, 529, 281)
+GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
+Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 352, 75, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 103, 17)
@@ -182,11 +177,52 @@ Func DelEmptyDirs()
     return 0
 EndFunc
 
+Func checkForUpdates($updateCheckOutputMsg); from alien's pack converter. Thanks TAD ;D
+	Local $ping = Ping("TheAlienDoctor.com")
+	Local $NoInternetMsgBox = 0
+
+	If $ping > 0 Then
+		DirCreate(@ScriptDir & "\temp\")
+		InetGet("https://thealiendoctor.com/software-versions/bds-ui-versions.ini", @ScriptDir & "\temp\versions.ini", 1)
+		Global $latestVersionNum = IniRead(@ScriptDir & "\temp\versions.ini", "latest", "latest-version-num", "100")
+
+		If $latestVersionNum > $currentVersionNumber Then
+			Global $updateMsg = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "update-message", "(updated message undefined)")
+			Global $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
+
+			If $updateMsgBox = 6 Then
+				Global $versionPage = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "version-page", "https://www.thealiendoctor.com/downloads/bds-ui")
+				ShellExecute($versionPage)
+				Exit
+			EndIf
+		Else
+			If $updateCheckOutputMsg = 1 Then
+				MsgBox(0, $guiTitle, "No new updates found." & @CRLF & "You're up-to-date!")
+			EndIf
+
+		EndIf
+
+	Else ;If ping is below 0 then update server is down, or user is not connected to the internet
+		$NoInternetMsgBox = "clear variable"
+		$NoInternetMsgBox = MsgBox(6, $guiTitle, "Warning: You are not connected to the internet or TheAlienDoctor.com is down. This means the update checker could not run. Continue?")
+	EndIf
+
+	If $NoInternetMsgBox = 2 Then ;Cancel
+		Exit
+
+	ElseIf $NoInternetMsgBox = 10 Then ;Try again
+		checkForUpdates(1)
+
+	ElseIf $NoInternetMsgBox = 11 Then ;Continue
+	EndIf
+
+	DirRemove(@ScriptDir & "\temp\", 1)
+EndFunc
 
 ;Functions (Server Management) ################################################################################
 
 Func startServer()
-    Global $BDS_process = Run($bdsExe, "", @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD);DO NOT forget $STDIN_CHILD
+    Global $BDS_process = Run($bdsExe, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD);DO NOT forget $STDIN_CHILD
     $serverRunning = True
     AdlibRegister("updateConsole", 1000) ; Call updateConsole every 1s
     GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
@@ -305,5 +341,7 @@ While 1
         Case $gui_saveSettingsBtn
             saveConf()
 
+        Case $gui_UpdateCheckBtn
+            checkForUpdates(1)
 	EndSwitch
 WEnd

@@ -15,9 +15,13 @@ Func _MC_ListFolders($dir)
     return $FolderArray
 EndFunc
 
-;~ Func _MC_ListPacks($PackDir)
-;~     Local $FolderArray = _MC_ListFolders($PackDir)
-;~     For $i In $FolderArray
-        
-;~     Next
-;WIP
+Func _MC_ListBackups($dir)
+    local $ZipArr[]
+    Local $hSearch = FileFindFirstFile($dir)
+    While 1
+        Local $sFile = FileFindNextFile($hSearch)
+        If @error Then ExitLoop       
+        _ArrayAdd($ZipArr, FileGetAttrib($sFile))          
+    WEnd
+    
+EndFunc  
