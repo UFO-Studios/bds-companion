@@ -30,6 +30,7 @@ Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
 Global $gui_commandInput = GUICtrlCreateInput("", 16, 328, 481, 21)
+GUICtrlSetOnEvent($gui_commandInput, "sendServerCommand"); when the user presses enter, cmd will be sent
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 328, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 360, 75, 33)
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
@@ -37,7 +38,7 @@ Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
-GUICtrlSetData(-1, "gui_console")
+GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
@@ -84,8 +85,8 @@ Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @
 
 ;Functions (Config) #############################################################################
 
-Func LoadBDSConf()
-    Local $BDSconfFile = $bdsFolder & "/server.txt"
+Func LoadBDSConf(); broken for some unknown reason. hmph
+    Local $BDSconfFile = $bdsFolder & "/server.properties"
     $FileOpened = FileRead($BDSconfFile)
     If @error Then
         MsgBox(0, "ERROR!", @error)
@@ -110,7 +111,6 @@ Func loadConf()
     Endif
 
     Global $cfg_autoBackupTime = IniRead($settingsFile, "general", "AutoBackupInterval", "6,12,18,24")
-    MsgBox("", "TEST", $cfg_autoBackupTime)
     GUICtrlSetData($gui_BackupDateTime, $cfg_autoBackupTime)
 
     Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
@@ -142,29 +142,28 @@ EndFunc
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
-    $ABarr = StringSplit($cfg_autoBackupTime, ","); auto backup array
-    $ARarr = StringSplit($cfg_autoRestartTime, ",");auto restart array
-    MsgBox("", "DEBUG", $ABarr & $ARarr)
-    MsgBox("", "DEBUG", @HOUR)
-    MsgBox("", "DEBUG", $cfg_autoRestart, $cfg_autoBackup)
-    
-    ;Auto Backup
+    $ABarr = StringSplit($cfg_autoBackupTime, ",") ; auto backup array
+    $ARarr = StringSplit($cfg_autoRestartTime, ",") ; auto restart array
+    $done = False
+    ; Auto Backup
     if $cfg_autoBackup Then
         For $i In $ABarr
-            If @HOUR = $ABarr[$i] Then; goes through all entries
+            If @HOUR = $i Then ; goes through all entries
                 backupServer()
-            endif
+                $done = True
+            EndIf
         Next
-    endif
-    
-    ;Auto Restarts
+    EndIf
+    MsgBox(0, "debug", $done)
+
+    ; Auto Restarts
     if $cfg_autoRestart Then
         For $i In $ARarr
-            If @HOUR = $ARarr[$i] Then; goes through all entries
+            If @HOUR = $i Then ; goes through all entries
                 RestartServer()
-            endif
+            EndIf
         Next
-    endif
+    EndIf
 EndFunc
 
 AdlibRegister("ScheduledActions", 60*1000); run it every 60s
