@@ -116,7 +116,7 @@ Func loadConf()
     Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
     GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
 
-    LoadBDSConf()
+    ;LoadBDSConf()
 EndFunc
 
 Func saveConf()
@@ -271,7 +271,7 @@ EndFunc
 
 ;Main GUI Loop
 
-LoadBDSConf()
+;LoadBDSConf()
 
 loadConf(); load conf at first start
 
