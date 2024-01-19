@@ -25,8 +25,8 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - 1.0.0"
 
-#Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 646, 165)
+#Region ### START Koda GUI section ###
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 997, 461)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
@@ -40,7 +40,6 @@ Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-GUICtrlSetState(-1, $GUI_SHOW)
 Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
 Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
 Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Interval. E.G: 6,12,18,24", 176, 64, 160, 17)
@@ -60,7 +59,7 @@ GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
 Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 352, 75, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("� UFO Studios 2024", 8, 408, 103, 17)
+Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
