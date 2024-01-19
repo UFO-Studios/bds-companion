@@ -22,8 +22,8 @@
 #include "UDF/Zip.au3"
 ;GUI #####
 
-Global $currentVersionNumber = "102"
-Global $guiTitle = "BDS UI - 1.0.2"
+Global Const $currentVersionNumber = "100"
+Global Const $guiTitle = "BDS UI - 1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 646, 165)
