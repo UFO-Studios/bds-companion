@@ -22,8 +22,8 @@
 #include "UDF/Zip.au3"
 ;GUI #####
 
-Global Const $currentVersionNumber = "102"
-Global Const $guiTitle = "BDS UI - 1.0.2"
+Global $currentVersionNumber = "102"
+Global $guiTitle = "BDS UI - 1.0.2"
 
 #Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 646, 165)
@@ -69,10 +69,10 @@ GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 
 ;Variables ###################################################################################
 
-Global const $bdsFolder = @ScriptDir & "\BDS"
-Global const $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
-Global const $backupDir = @ScriptDir & "\backups"
-Global const $settingsFile = @ScriptDir & "\settings.ini"
+Global $bdsFolder = @ScriptDir & "\BDS"
+Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
+Global $backupDir = @ScriptDir & "\backups"
+Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
 Global $LogFolder = @ScriptDir & "\logs"
