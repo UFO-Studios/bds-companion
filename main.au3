@@ -86,8 +86,9 @@ Func LoadBDSConf(); broken for some unknown reason. hmph
     If @error Then
         MsgBox(0, "ERROR!", @error)
     else
-        MsgBox(0, "file:", $FileOpened)
+        GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
     endif
+    ;GUICtrlSetData($gui_ServerPropertiesEdit, $BDSconfFile)
 EndFunc
 
 Func loadConf()
@@ -149,7 +150,7 @@ Func ScheduledActions()
             EndIf
         Next
     EndIf
-    MsgBox(0, "debug", $done)
+    ;MsgBox(0, "debug", $done)
 
     ; Auto Restarts
     if $cfg_autoRestart Then
@@ -306,7 +307,7 @@ EndFunc
 
 ;Main GUI Loop
 
-;LoadBDSConf()
+LoadBDSConf()
 
 loadConf(); load conf at first start
 
