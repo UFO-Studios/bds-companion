@@ -23,7 +23,7 @@
 ;GUI #####
 
 Global Const $currentVersionNumber = "100"
-Global Const $guiTitle = "BDS UI - 1.0.0"
+Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ###
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 997, 461)
@@ -83,11 +83,11 @@ Func LoadBDSConf() ; broken for some unknown reason. hmph
 	Local $BDSconfFile = $bdsFolder & "/server.properties"
 	$FileOpened = FileRead($BDSconfFile)
 	If @error Then
-		MsgBox(0, "ERROR!", @error)
+		MsgBox(0, $guiTitle, @error)
 	else
 		GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
 	endif
-    ;GUICtrlSetData($gui_ServerPropertiesEdit, $BDSconfFile)
+	;GUICtrlSetData($gui_ServerPropertiesEdit, $BDSconfFile)
 EndFunc   ;==>LoadBDSConf
 
 Func loadConf()
@@ -149,7 +149,7 @@ Func ScheduledActions()
 			EndIf
 		Next
 	EndIf
-	MsgBox(0, "debug", $done)
+	MsgBox(0, $guiTitle, $done)
 
 	; Auto Restarts
 	if $cfg_autoRestart Then
@@ -179,7 +179,7 @@ EndFunc   ;==>DelEmptyDirs
 
 Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thanks TAD ;D
 	Local $ping = Ping("TheAlienDoctor.com")
-	Local $NoInternetMsgBox = 0
+	Local $noInternetMsgBox = 0
 
 	If $ping > 0 Then
 		DirCreate(@ScriptDir & "\temp\")
@@ -188,7 +188,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 
 		If $latestVersionNum > $currentVersionNumber Then
 			Global $updateMsg = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "update-message", "(updated message undefined)")
-			Global $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
+			Local $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
 
 			If $updateMsgBox = 6 Then
 				Global $versionPage = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "version-page", "https://www.thealiendoctor.com/downloads/bds-ui")
@@ -203,17 +203,17 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 		EndIf
 
 	Else ;If ping is below 0 then update server is down, or user is not connected to the internet
-		$NoInternetMsgBox = "clear variable"
-		$NoInternetMsgBox = MsgBox(6, $guiTitle, "Warning: You are not connected to the internet or TheAlienDoctor.com is down. This means the update checker could not run. Continue?")
+		$noInternetMsgBox = "clear variable"
+		$noInternetMsgBox = MsgBox(6, $guiTitle, "Warning: You are not connected to the internet or TheAlienDoctor.com is unavailable. This means the update checker could not run. Continue?")
 	EndIf
 
-	If $NoInternetMsgBox = 2 Then ;Cancel
+	If $noInternetMsgBox = 2 Then ;Cancel
 		Exit
 
-	ElseIf $NoInternetMsgBox = 10 Then ;Try again
+	ElseIf $noInternetMsgBox = 10 Then ;Try again
 		checkForUpdates(1)
 
-	ElseIf $NoInternetMsgBox = 11 Then ;Continue
+	ElseIf $noInternetMsgBox = 11 Then ;Continue
 	EndIf
 
 	DirRemove(@ScriptDir & "\temp\", 1)
@@ -260,7 +260,7 @@ Func stopServer()
 	Sleep(3000)
 	AdlibUnRegister("updateConsole")
 	If ProcessExists($BDS_process) Then
-		MsgBox("", "NOTICE", "Failed to stop server")
+		MsgBox("", $guiTitle, "Failed to stop server")
 	else
 		GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
@@ -323,6 +323,7 @@ While 1
 				endif
 			endif
 			exit
+
 		Case $gui_startServerBtn
 			startServer()
 
