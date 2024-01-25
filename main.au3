@@ -25,8 +25,8 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ###
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 997, 461)
+#Region ### START Koda GUI section ### Form=d:\code\bds-ui\gui.kxf
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 758, 350)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
@@ -37,18 +37,15 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
-Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
-Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Interval. E.G: 6,12,18,24", 176, 64, 160, 17)
-Global $gui_backupDateTime = GUICtrlCreateInput("6,12", 176, 80, 153, 21)
-GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 165, 577, 121)
-Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 173, 200, 153, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time. E.G: 6,12,18,24", 173, 184, 145, 17)
-Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 184, 129, 17)
+Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
+Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 253, 56, 153, 21)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time(s):", 173, 56, 78, 17)
+Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 56, 129, 17)
+Global $gui_backupDuringRestart = GUICtrlCreateCheckbox("Backup During Restart", 21, 80, 129, 17)
+Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 408, 56, 79, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
@@ -137,13 +134,13 @@ EndFunc   ;==>saveConf
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
-	$ABarr = StringSplit($cfg_autoBackupTime, ",")     ; auto backup array
-	$ARarr = StringSplit($cfg_autoRestartTime, ",")     ; auto restart array
+	$ABarr = StringSplit($cfg_autoBackupTime, ",") ; auto backup array
+	$ARarr = StringSplit($cfg_autoRestartTime, ",") ; auto restart array
 	$done = False
 	; Auto Backup
 	if $cfg_autoBackup Then
 		For $i In $ABarr
-			If @HOUR = $i Then             ; goes through all entries
+			If @HOUR = $i Then ; goes through all entries
 				backupServer()
 				$done = True
 			EndIf
@@ -154,7 +151,7 @@ Func ScheduledActions()
 	; Auto Restarts
 	if $cfg_autoRestart Then
 		For $i In $ARarr
-			If @HOUR = $i Then             ; goes through all entries
+			If @HOUR = $i Then ; goes through all entries
 				RestartServer()
 			EndIf
 		Next

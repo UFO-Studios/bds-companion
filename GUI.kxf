@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="gui_mainWindow">
 	<properties>
-		<property name="Left" vt="Int16">997</property>
-		<property name="Top" vt="Int16">461</property>
+		<property name="Left" vt="Int16">758</property>
+		<property name="Top" vt="Int16">350</property>
 		<property name="Width" vt="Int16">630</property>
 		<property name="Height" vt="Int16">465</property>
 		<property name="Caption" vt="String">&quot; &amp; $guiTitle &amp; &quot;</property>
@@ -212,81 +212,23 @@
 						<property name="ParentFont" vt="False">False</property>
 					</properties>
 					<components>
-						<object type="TAGroup" name="gui_backupSettingsGroup">
-							<properties>
-								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int8">7</property>
-								<property name="Width" vt="Int16">577</property>
-								<property name="Height" vt="Int8">121</property>
-								<property name="CtrlStyle" vt="Int32">1342308359</property>
-								<property name="CtrlExStyle" vt="Int8">0</property>
-								<property name="Caption" vt="String">Backup Settings</property>
-								<property name="TabOrder" vt="Int8">0</property>
-								<property name="Resizing" vt="Set"/>
-							</properties>
-							<components>
-								<object type="TACheckbox" name="gui_autoBackupSelect">
-									<properties>
-										<property name="Left" vt="Int8">8</property>
-										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int16">129</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Auto Backups Enabled</property>
-										<property name="TabOrder" vt="Int8">0</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TALabel" name="gui_dateTimeLabel">
-									<properties>
-										<property name="Left" vt="Int16">160</property>
-										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int16">160</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Backup Interval. E.G: 6,12,18,24</property>
-										<property name="TabOrder" vt="Int8">1</property>
-										<property name="HaveVariable" vt="False">False</property>
-										<property name="CtrlStyle" vt="Int32">1342308608</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set"/>
-									</properties>
-									<components/>
-								</object>
-								<object type="TAInput" name="gui_backupDateTime">
-									<properties>
-										<property name="Left" vt="Int16">160</property>
-										<property name="Top" vt="Int8">40</property>
-										<property name="Width" vt="Int16">153</property>
-										<property name="Height" vt="Int8">21</property>
-										<property name="TabOrder" vt="Int8">2</property>
-										<property name="Text" vt="String">6,12</property>
-										<property name="CtrlStyle" vt="Int32">1342374016</property>
-										<property name="CtrlExStyle" vt="Int16">512</property>
-										<property name="Resizing" vt="Set">DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-							</components>
-						</object>
 						<object type="TAGroup" name="gui_restartSettingsGroup">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int16">132</property>
+								<property name="Top" vt="Int8">4</property>
 								<property name="Width" vt="Int16">577</property>
-								<property name="Height" vt="Int8">121</property>
+								<property name="Height" vt="Int8">73</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">Restart Settings</property>
-								<property name="TabOrder" vt="Int8">1</property>
+								<property name="TabOrder" vt="Int8">0</property>
 								<property name="Resizing" vt="Set"/>
 							</properties>
 							<components>
 								<object type="TAInput" name="gui_autoRestartTimeInput">
 									<properties>
-										<property name="Left" vt="Int16">157</property>
-										<property name="Top" vt="Int8">35</property>
+										<property name="Left" vt="Int16">237</property>
+										<property name="Top" vt="Int8">19</property>
 										<property name="Width" vt="Int16">153</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="TabOrder" vt="Int8">0</property>
@@ -301,9 +243,9 @@
 									<properties>
 										<property name="Left" vt="Int16">157</property>
 										<property name="Top" vt="Int8">19</property>
-										<property name="Width" vt="Int16">145</property>
+										<property name="Width" vt="Int8">78</property>
 										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Restart Time. E.G: 6,12,18,24</property>
+										<property name="Caption" vt="String">Restart Time(s):</property>
 										<property name="TabOrder" vt="Int8">1</property>
 										<property name="HaveVariable" vt="False">False</property>
 										<property name="CtrlStyle" vt="Int32">1342308608</property>
@@ -326,6 +268,35 @@
 									</properties>
 									<components/>
 								</object>
+								<object type="TACheckbox" name="gui_backupDuringRestart">
+									<properties>
+										<property name="Left" vt="Int8">5</property>
+										<property name="Top" vt="Int8">43</property>
+										<property name="Width" vt="Int16">129</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Backup During Restart</property>
+										<property name="TabOrder" vt="Int8">3</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockHeight</property>
+									</properties>
+									<components/>
+								</object>
+								<object type="TALabel" name="gui_autoRestartEgText">
+									<properties>
+										<property name="Left" vt="Int16">392</property>
+										<property name="Top" vt="Int8">19</property>
+										<property name="Width" vt="Int8">79</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">E.G. 6,12,18,24</property>
+										<property name="TabOrder" vt="Int8">4</property>
+										<property name="HaveVariable" vt="False">False</property>
+										<property name="CtrlStyle" vt="Int32">1342308608</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set"/>
+									</properties>
+									<components/>
+								</object>
 							</components>
 						</object>
 						<object type="TAButton" name="gui_saveSettingsBtn">
@@ -335,7 +306,7 @@
 								<property name="Width" vt="Int8">107</property>
 								<property name="Height" vt="Int8">41</property>
 								<property name="Caption" vt="String">Save Settings</property>
-								<property name="TabOrder" vt="Int8">2</property>
+								<property name="TabOrder" vt="Int8">1</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342373888</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -350,7 +321,7 @@
 								<property name="Width" vt="Int8">107</property>
 								<property name="Height" vt="Int8">41</property>
 								<property name="Caption" vt="String">Check For Updates</property>
-								<property name="TabOrder" vt="Int8">3</property>
+								<property name="TabOrder" vt="Int8">2</property>
 								<property name="Color" vt="Ident">clBtnFace</property>
 								<property name="CtrlStyle" vt="Int32">1342373888</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
