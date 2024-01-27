@@ -25,7 +25,7 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - 1.0.0"
 
-#Region ### START Koda GUI section ###
+#Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 997, 461)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
@@ -37,21 +37,27 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 121)
+GUICtrlSetState(-1,$GUI_SHOW)
+Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 97)
 Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
 Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Interval. E.G: 6,12,18,24", 176, 64, 160, 17)
 Global $gui_backupDateTime = GUICtrlCreateInput("6,12", 176, 80, 153, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 165, 577, 121)
-Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 173, 200, 153, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time. E.G: 6,12,18,24", 173, 184, 145, 17)
-Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 184, 129, 17)
+Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 141, 577, 97)
+Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 173, 176, 153, 21)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time. E.G: 6,12,18,24", 173, 160, 145, 17)
+Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 160, 129, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
+Global $gui_RestartBackupBox = GUICtrlCreateGroup("Restart & Backup Settings", 20, 246, 577, 97)
+Global $cfg_autoBackupRestartTimeInput = GUICtrlCreateInput("7:12:00", 177, 281, 153, 21)
+Global $Label1 = GUICtrlCreateLabel("Time. E.G: 6,12,18,24", 177, 265, 108, 17)
+Global $gui_autoRestartBackupTimeCheck = GUICtrlCreateCheckbox("Combined Auto Restarts & Backups Enabled", 25, 265, 129, 17)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
 Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 64, 529, 281)
@@ -79,7 +85,20 @@ Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @
 
 ;Functions (Config) #############################################################################
 
-Func LoadBDSConf() ; broken for some unknown reason. hmph
+Func ReplaceFileContents($sFilePath, $sNewContent)
+    Local $hFile = FileOpen($sFilePath, 2) ; Open the file for write and erase the current content
+    If $hFile = -1 Then
+        MsgBox(0, "Error", "Unable to open file.")
+        Return False
+    EndIf
+
+    FileWrite($hFile, $sNewContent) ; Write the new content to the file
+    FileClose($hFile) ; Close the file
+
+    Return True
+EndFunc
+
+Func LoadBDSConf()
 	Local $BDSconfFile = $bdsFolder & "/server.properties"
 	$FileOpened = FileRead($BDSconfFile)
 	If @error Then
@@ -87,8 +106,14 @@ Func LoadBDSConf() ; broken for some unknown reason. hmph
 	else
 		GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
 	endif
-    ;GUICtrlSetData($gui_ServerPropertiesEdit, $BDSconfFile)
 EndFunc   ;==>LoadBDSConf
+
+Func SaveBDSConf()
+	Local $BDSconfFile = $bdsFolder & "/server.properties"
+	local $NewFileValue = GUICtrlRead($gui_ServerPropertiesEdit)
+	
+	ReplaceFileContents($BDSconfFile, $NewFileValue)
+endfunc
 
 Func loadConf()
 	Global $cfg_autoRestart = IniRead($settingsFile, "general", "AutoRestart", "False")
@@ -110,6 +135,10 @@ Func loadConf()
 
 	Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
 	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
+
+	
+	Global $cfg_autoBackupRestartTime = IniRead($settingsFile, "general", "AutoRestartBackupInterval", "6,12,18,24")
+	GUICtrlSetData($gui_autoRestartBackupTimeCheck, $cfg_autoBackupRestartTime)
 
 	;LoadBDSConf()
 EndFunc   ;==>loadConf
@@ -139,8 +168,21 @@ EndFunc   ;==>saveConf
 Func ScheduledActions()
 	$ABarr = StringSplit($cfg_autoBackupTime, ",")     ; auto backup array
 	$ARarr = StringSplit($cfg_autoRestartTime, ",")     ; auto restart array
+	$ARBarr = StringSplit($cfg_autoBackupRestartTime, ",")
 	$done = False
 	; Auto Backup
+
+	if $cfg_autoBackup And $cfg_autoRestart then
+		For $i In $ARBarr
+			If @HOUR = $i Then
+				stopServer()             ; goes through all entries
+				backupServer()
+				startServer()
+				$done = True
+			EndIf
+		Next
+	endif
+
 	if $cfg_autoBackup Then
 		For $i In $ABarr
 			If @HOUR = $i Then             ; goes through all entries
@@ -343,5 +385,8 @@ While 1
 
 		Case $gui_UpdateCheckBtn
 			checkForUpdates(1)
+		
+		Case $gui_serverPropertiesSaveBtn
+			SaveBDSConf()
 	EndSwitch
 WEnd
