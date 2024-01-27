@@ -25,7 +25,7 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ### Form=d:\code\bds-ui\gui.kxf
+#Region ### START Koda GUI section ###
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 758, 350)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
@@ -36,8 +36,8 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 360, 75, 33
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 100, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
@@ -49,11 +49,6 @@ Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 408, 56, 7
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
-Global $gui_RestartBackupBox = GUICtrlCreateGroup("Restart & Backup Settings", 20, 246, 577, 97)
-Global $cfg_autoBackupRestartTimeInput = GUICtrlCreateInput("7:12:00", 177, 281, 153, 21)
-Global $Label1 = GUICtrlCreateLabel("Time. E.G: 6,12,18,24", 177, 265, 108, 17)
-Global $gui_autoRestartBackupTimeCheck = GUICtrlCreateCheckbox("Combined Auto Restarts & Backups Enabled", 25, 265, 129, 17)
-GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
 Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 64, 529, 281)
@@ -76,16 +71,51 @@ Global $backupDir = @ScriptDir & "\backups"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
-Global $LogFolder = @ScriptDir & "\logs"
-Global $LogFile = $LogFolder & "/[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "].Log"
+Global $logDir = @ScriptDir & "\logs"
 
-;Functions (LogWriting) ############################################################################
+;Functions (Logging) ############################################################################
 
-Func LogWrite($funcName, $message)
-	$time = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "] BDS-UI/"
-	_FileWriteLog($LogFile, $time & " " & $funcName & ": " & $message & @CRLF, 1)
-	return true
-EndFunc   ;==>LogWrite
+Func createLog()
+	If FileExists($logDir & "\latest.log") Then
+		FileMove($logDir & "\log.latest", $logDir & "\log.old")
+	EndIf
+
+	If FileExists($logDir) Then ;If directory exists then begin writing logs
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+	ElseIf FileExists($logDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
+		DirCreate($logDir)
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+		logWrite(0, "Created logging directory!")
+	EndIf
+EndFunc   ;==>createLog
+
+Func logWrite($spaces, $content)
+	If $spaces = 1 Then ;For adding spaces around the content written to the log
+		FileOpen($logDir & "\log.latest", 1)
+		FileWrite($logDir & "\log.latest", @CRLF)
+		FileClose($logDir & "\log.latest")
+	ElseIf $spaces = 2 Then
+		FileOpen($logDir & "\log.latest", 1)
+		FileWrite($logDir & "\log.latest", @CRLF)
+		FileClose($logDir & "\log.latest")
+	EndIf
+
+	FileOpen($logDir & "\log.latest", 1)
+	FileWrite($logDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileClose($logDir & "\log.latest")
+
+	If $spaces = 1 Then
+		FileOpen($logDir & "\log.latest", 1)
+		FileWrite($logDir & "\log.latest", @CRLF)
+		FileClose($logDir & "\log.latest")
+	ElseIf $spaces = 3 Then
+		FileOpen($logDir & "\log.latest", 1)
+		FileWrite($logDir & "\log.latest", @CRLF)
+		FileClose($logDir & "\log.latest")
+	EndIf
+EndFunc   ;==>logWrite
 
 ;Functions (Config) #############################################################################
 
