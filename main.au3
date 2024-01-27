@@ -37,7 +37,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 100, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
@@ -85,23 +85,23 @@ Func LogWrite($funcName, $message)
 	$time = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "] BDS-UI/"
 	_FileWriteLog($LogFile, $time & " " & $funcName & ": " & $message & @CRLF, 1)
 	return true
-EndFunc
+EndFunc   ;==>LogWrite
 
 ;Functions (Config) #############################################################################
 
 Func ReplaceFileContents($sFilePath, $sNewContent)
-    Local $hFile = FileOpen($sFilePath, 2) ; Open the file for write and erase the current content
+	Local $hFile = FileOpen($sFilePath, 2)     ; Open the file for write and erase the current content
 	LogWrite("ReplaceFileContents", "Opening file" & $sFilePath)
-    If $hFile = -1 Then
-        MsgBox(0, "Error", "Unable to open file.")
-        Return False
-    EndIf
+	If $hFile = -1 Then
+		MsgBox(0, "Error", "Unable to open file.")
+		Return False
+	EndIf
 
-    FileWrite($hFile, $sNewContent) ; Write the new content to the file
-    FileClose($hFile) ; Close the file
+	FileWrite($hFile, $sNewContent)     ; Write the new content to the file
+	FileClose($hFile)     ; Close the file
 	LogWrite("ReplaceFileContents", "Contents written to file. Returning...")
-    Return True
-EndFunc
+	Return True
+EndFunc   ;==>ReplaceFileContents
 
 Func LoadBDSConf()
 	Local $BDSconfFile = $bdsFolder & "/server.properties"
@@ -121,7 +121,7 @@ Func SaveBDSConf()
 	local $NewFileValue = GUICtrlRead($gui_ServerPropertiesEdit)
 	LogWrite("SaveBDSConf", "Saved BDS conf file to " & $BDSconfFile)
 	ReplaceFileContents($BDSconfFile, $NewFileValue)
-endfunc
+endfunc   ;==>SaveBDSConf
 
 Func loadConf()
 	Global $cfg_autoRestart = IniRead($settingsFile, "general", "AutoRestart", "False")
@@ -145,7 +145,7 @@ Func loadConf()
 	Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
 	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
 
-	
+
 	Global $cfg_autoBackupRestartTime = IniRead($settingsFile, "general", "AutoRestartBackupInterval", "6,12,18,24")
 	;GUICtrlSetData($gui_autoRestartBackupTimeCheck, $cfg_autoBackupRestartTime)
 	LogWrite("loadConf", "Settings.ini read sucsessfiully! Set GUI data.")
@@ -153,11 +153,11 @@ EndFunc   ;==>loadConf
 
 Func saveConf()
 	LogWrite("saveConf", "Writing Settings.ini...")
-	;~ If GUICtrlRead($gui_autoBackupSelect) = 1 Then
-	;~ 	IniWrite($settingsFile, "general", "AutoBackup", "True")
-	;~ Else
-	;~ 	IniWrite($settingsFile, "general", "AutoBackup", "False")
-	;~ Endif
+;~ If GUICtrlRead($gui_autoBackupSelect) = 1 Then
+;~ 	IniWrite($settingsFile, "general", "AutoBackup", "True")
+;~ Else
+;~ 	IniWrite($settingsFile, "general", "AutoBackup", "False")
+;~ Endif
 
 	If GUICtrlRead($gui_autoRestartCheck1) = 1 Then
 		IniWrite($settingsFile, "general", "AutoRestart", "True")
@@ -287,7 +287,7 @@ Func startServer()
 	LogWrite("startServer", "Server started. BDS PID is " & $BDS_process)
 EndFunc   ;==>startServer
 
-Func updateConsole();not logging for this one
+Func updateConsole() ;not logging for this one
 	If ProcessExists($BDS_process) Then
 		Global $line = StdoutRead($BDS_process)
 		If @error Then
@@ -404,7 +404,7 @@ While 1
 
 		Case $gui_UpdateCheckBtn
 			checkForUpdates(1)
-		
+
 		Case $gui_serverPropertiesSaveBtn
 			SaveBDSConf()
 	EndSwitch
