@@ -200,7 +200,6 @@ Func ScheduledActions()
 			EndIf
 		Next
 	EndIf
-	MsgBox(0, $guiTitle, $done)
 
 	; Auto Restarts
 	if $cfg_autoRestart Then
