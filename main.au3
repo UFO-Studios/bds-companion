@@ -23,10 +23,10 @@
 ;GUI #####
 
 Global Const $currentVersionNumber = "100"
-Global Const $guiTitle = "BDS UI - 1.0.0"
+Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ### Form=d:\tad\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 997, 461)
+#Region ### START Koda GUI section ### Form=d:\code\bds-ui\gui.kxf
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 758, 350)
 Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
@@ -40,16 +40,12 @@ Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-GUICtrlSetState(-1,$GUI_SHOW)
-Global $gui_backupSettingsGroup = GUICtrlCreateGroup("Backup Settings", 16, 40, 577, 97)
-Global $gui_autoBackupSelect = GUICtrlCreateCheckbox("Auto Backups Enabled", 24, 64, 129, 17)
-Global $gui_dateTimeLabel = GUICtrlCreateLabel("Backup Interval. E.G: 6,12,18,24", 176, 64, 160, 17)
-Global $gui_backupDateTime = GUICtrlCreateInput("6,12", 176, 80, 153, 21)
-GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 141, 577, 97)
-Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 173, 176, 153, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time. E.G: 6,12,18,24", 173, 160, 145, 17)
-Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 160, 129, 17)
+Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
+Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 253, 56, 153, 21)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time(s):", 173, 56, 78, 17)
+Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 56, 129, 17)
+Global $gui_backupDuringRestart = GUICtrlCreateCheckbox("Backup During Restart", 21, 80, 129, 17)
+Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 408, 56, 79, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
@@ -102,7 +98,7 @@ Func LoadBDSConf()
 	Local $BDSconfFile = $bdsFolder & "/server.properties"
 	$FileOpened = FileRead($BDSconfFile)
 	If @error Then
-		MsgBox(0, "ERROR!", @error)
+		MsgBox(0, $guiTitle, @error)
 	else
 		GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
 	endif
@@ -166,8 +162,8 @@ EndFunc   ;==>saveConf
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
-	$ABarr = StringSplit($cfg_autoBackupTime, ",")     ; auto backup array
-	$ARarr = StringSplit($cfg_autoRestartTime, ",")     ; auto restart array
+	$ABarr = StringSplit($cfg_autoBackupTime, ",") ; auto backup array
+	$ARarr = StringSplit($cfg_autoRestartTime, ",") ; auto restart array
 	$ARBarr = StringSplit($cfg_autoBackupRestartTime, ",")
 	$done = False
 	; Auto Backup
@@ -185,18 +181,18 @@ Func ScheduledActions()
 
 	if $cfg_autoBackup Then
 		For $i In $ABarr
-			If @HOUR = $i Then             ; goes through all entries
+			If @HOUR = $i Then ; goes through all entries
 				backupServer()
 				$done = True
 			EndIf
 		Next
 	EndIf
-	MsgBox(0, "debug", $done)
+	MsgBox(0, $guiTitle, $done)
 
 	; Auto Restarts
 	if $cfg_autoRestart Then
 		For $i In $ARarr
-			If @HOUR = $i Then             ; goes through all entries
+			If @HOUR = $i Then ; goes through all entries
 				RestartServer()
 			EndIf
 		Next
@@ -221,7 +217,7 @@ EndFunc   ;==>DelEmptyDirs
 
 Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thanks TAD ;D
 	Local $ping = Ping("TheAlienDoctor.com")
-	Local $NoInternetMsgBox = 0
+	Local $noInternetMsgBox = 0
 
 	If $ping > 0 Then
 		DirCreate(@ScriptDir & "\temp\")
@@ -230,7 +226,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 
 		If $latestVersionNum > $currentVersionNumber Then
 			Global $updateMsg = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "update-message", "(updated message undefined)")
-			Global $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
+			Local $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
 
 			If $updateMsgBox = 6 Then
 				Global $versionPage = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "version-page", "https://www.thealiendoctor.com/downloads/bds-ui")
@@ -245,17 +241,17 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 		EndIf
 
 	Else ;If ping is below 0 then update server is down, or user is not connected to the internet
-		$NoInternetMsgBox = "clear variable"
-		$NoInternetMsgBox = MsgBox(6, $guiTitle, "Warning: You are not connected to the internet or TheAlienDoctor.com is down. This means the update checker could not run. Continue?")
+		$noInternetMsgBox = "clear variable"
+		$noInternetMsgBox = MsgBox(6, $guiTitle, "Warning: You are not connected to the internet or TheAlienDoctor.com is unavailable. This means the update checker could not run. Continue?")
 	EndIf
 
-	If $NoInternetMsgBox = 2 Then ;Cancel
+	If $noInternetMsgBox = 2 Then ;Cancel
 		Exit
 
-	ElseIf $NoInternetMsgBox = 10 Then ;Try again
+	ElseIf $noInternetMsgBox = 10 Then ;Try again
 		checkForUpdates(1)
 
-	ElseIf $NoInternetMsgBox = 11 Then ;Continue
+	ElseIf $noInternetMsgBox = 11 Then ;Continue
 	EndIf
 
 	DirRemove(@ScriptDir & "\temp\", 1)
@@ -302,7 +298,7 @@ Func stopServer()
 	Sleep(3000)
 	AdlibUnRegister("updateConsole")
 	If ProcessExists($BDS_process) Then
-		MsgBox("", "NOTICE", "Failed to stop server")
+		MsgBox("", $guiTitle, "Failed to stop server")
 	else
 		GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
@@ -365,6 +361,7 @@ While 1
 				endif
 			endif
 			exit
+
 		Case $gui_startServerBtn
 			startServer()
 
