@@ -69,7 +69,6 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
-GUICtrlSetData(-1, "gui_serverCtrlTab")
 
 ;Variables ###################################################################################
 
@@ -255,39 +254,41 @@ EndFunc   ;==>saveConf
 
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
-	$ARarr = StringSplit($cfg_autoRestartTime, ",") ; auto restart array
-	$ARBarr = StringSplit($cfg_autoBackupRestartTime, ",")
 	$done = False
-	; Auto Backup
-
-	if $cfg_autoBackup then
-		For $i In $ARBarr
-			If @HOUR = $i Then
-				stopServer()             ; goes through all entries
-				backupServer()
-				startServer()
+	GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
+	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
+	If $cfg_autoRestart = "True" Then
+		$times = StringSplit($cfg_autoRestartTime, ",")
+		$currentTime = @HOUR
+		For $i = 1 To $times[0]
+			If $currentTime = $times[$i] Then
+				if cfg_BackupDuringRestart = "True" Then
+					logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
+					stopServer()
+					backupServer()
+					RestartServer()
+					$done = True
+				Else
+				logWrite(0, "Auto restart time reached. Restarting server...")
+				RestartServer()
 				$done = True
+				endif
 			EndIf
 		Next
 	endif
 
-	if $cfg_autoBackup Then
-		For $i In $ABarr
-			If @HOUR = $i Then ; goes through all entries
-				backupServer()
-				$done = True
-			EndIf
-		Next
-	EndIf
-
-	; Auto Restarts
-	if $cfg_autoRestart Then
-		For $i In $ARarr
-			If @HOUR = $i Then ; goes through all entries
-				RestartServer()
-			EndIf
-		Next
-	EndIf
+	if $done = True Then
+		logWrite(0, "Scheduled actions completed.")
+	Else
+		logWrite(0, "No scheduled actions to run. Next run is in 60s")
+	endif
+	if $BDS_process = Null Then
+		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+	Else
+		GUICtrlSetData($gui_serverStatusIndicator, "Online")
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+	endif
 	logWrite(0, "Scheduled actions completed.")
 EndFunc   ;==>ScheduledActions
 
