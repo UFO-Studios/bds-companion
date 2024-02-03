@@ -118,6 +118,49 @@ Func logWrite($spaces, $content)
 	EndIf
 EndFunc   ;==>logWrite
 
+
+Func BDScreateLog()
+	If FileExists($BDSlogDir & "\latest.log") Then
+		FileMove($BDSlogDir & "\log.latest", $BDSlogDir & "\log.old")
+	EndIf
+
+	If FileExists($BDSlogDir) Then ;If directory exists then begin writing logs
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+	ElseIf FileExists($BDSlogDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
+		DirCreate($BDSlogDir)
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+		logWrite(0, "Created logging directory!")
+	EndIf
+EndFunc   ;==>createLog
+
+Func BDSlogWrite($spaces, $content)
+	If $spaces = 1 Then ;For adding spaces around the content written to the log
+		FileOpen($BDSlogDir & "\log.latest", 1)
+		FileWrite($BDSlogDir & "\log.latest", @CRLF)
+		FileClose($BDSlogDir & "\log.latest")
+	ElseIf $spaces = 2 Then
+		FileOpen($BDSlogDir & "\log.latest", 1)
+		FileWrite($BDSlogDir & "\log.latest", @CRLF)
+		FileClose($BDSlogDir & "\log.latest")
+	EndIf
+
+	FileOpen($BDSlogDir & "\log.latest", 1)
+	FileWrite($BDSlogDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileClose($BDSlogDir & "\log.latest")
+
+	If $spaces = 1 Then
+		FileOpen($BDSlogDir & "\log.latest", 1)
+		FileWrite($BDSlogDir & "\log.latest", @CRLF)
+		FileClose($BDSlogDir & "\log.latest")
+	ElseIf $spaces = 3 Then
+		FileOpen($BDSlogDir & "\log.latest", 1)
+		FileWrite($BDSlogDir & "\log.latest", @CRLF)
+		FileClose($BDSlogDir & "\log.latest")
+	EndIf
+EndFunc   ;==>logWrite
+
 ;Functions (Config) #############################################################################
 
 Func ReplaceFileContents($sFilePath, $sNewContent)
