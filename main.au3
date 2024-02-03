@@ -364,6 +364,7 @@ Func startServer()
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
+	BDScreateLog()
 	logWrite(0, "Server started. BDS PID is " & $BDS_process)
 EndFunc   ;==>startServer
 
@@ -375,6 +376,9 @@ Func updateConsole() ;not logging for this one
 			AdlibUnRegister("updateConsole")
 		Else
 			GUICtrlSetData($gui_console, $line, 1)
+			if $line <> "" Then
+			BDSlogWrite(0, $line)
+			EndIf
 		EndIf
 	EndIf
 EndFunc   ;==>updateConsole
