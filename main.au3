@@ -262,7 +262,7 @@ Func ScheduledActions()
 		$currentTime = @HOUR
 		For $i = 1 To $times[0]
 			If $currentTime = $times[$i] Then
-				if cfg_BackupDuringRestart = "True" Then
+				if $cfg_BackupDuringRestart = "True" Then
 					logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
 					stopServer()
 					backupServer()
