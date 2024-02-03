@@ -38,7 +38,7 @@ Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
-GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
+GUICtrlSetData(-1, "[BDS-UI]: Server Offline" & @CRLF)
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
 Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 253, 56, 153, 21)
@@ -72,6 +72,7 @@ Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
 Global $logDir = @ScriptDir & "\logs"
+Global $BDSlogDir = @ScriptDir & "\logs\bds"
 
 ;Functions (Logging) ############################################################################
 
