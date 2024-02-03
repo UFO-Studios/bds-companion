@@ -37,7 +37,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
@@ -121,27 +121,28 @@ EndFunc   ;==>logWrite
 
 Func ReplaceFileContents($sFilePath, $sNewContent)
 	Local $hFile = FileOpen($sFilePath, 2)     ; Open the file for write and erase the current content
-	LogWrite("ReplaceFileContents", "Opening file" & $sFilePath)
+	logWrite(2, "Opening file" & $sFilePath)
 	If $hFile = -1 Then
-		MsgBox(0, "Error", "Unable to open file.")
+		MsgBox(0, $guiTitle, "Unable to open file.")
+		logWrite(0, "Unable to open file.")
 		Return False
 	EndIf
 
 	FileWrite($hFile, $sNewContent)     ; Write the new content to the file
 	FileClose($hFile)     ; Close the file
-	LogWrite("ReplaceFileContents", "Contents written to file. Returning...")
+	logWrite(3, "Contents written to file. Returning...")
 	Return True
 EndFunc   ;==>ReplaceFileContents
 
 Func LoadBDSConf()
 	Local $BDSconfFile = $bdsFolder & "/server.properties"
-	LogWrite("LoadBDSConf", "Loading BDS conf file from " & $BDSconfFile & "...")
+	logWrite(0, "Loading BDS conf file from " & $BDSconfFile & "...")
 	$FileOpened = FileRead($BDSconfFile)
 	If @error Then
-		LogWrite("LoadBDSConf", "Error opening file. Error code: " & @error)
+		logWrite(0, "Error opening file. Error code: " & @error)
 		MsgBox(0, $guiTitle, @error)
 	else
-		LogWrite("LoadBDSConf", "File opened successfully.")
+		logWrite(0, "File opened successfully.")
 		GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
 	endif
 EndFunc   ;==>LoadBDSConf
@@ -149,13 +150,13 @@ EndFunc   ;==>LoadBDSConf
 Func SaveBDSConf()
 	Local $BDSconfFile = $bdsFolder & "/server.properties"
 	local $NewFileValue = GUICtrlRead($gui_ServerPropertiesEdit)
-	LogWrite("SaveBDSConf", "Saved BDS conf file to " & $BDSconfFile)
+	logWrite(0, "Saved BDS conf file to " & $BDSconfFile)
 	ReplaceFileContents($BDSconfFile, $NewFileValue)
 endfunc   ;==>SaveBDSConf
 
 Func loadConf()
 	Global $cfg_autoRestart = IniRead($settingsFile, "general", "AutoRestart", "False")
-	LogWrite("loadConf", "Settings.ini read sucsessfiully! Setting GUI data.")
+	logWrite(0, "Settings.ini read successfully! Setting GUI data.")
 	If $cfg_autoRestart = "True" Then
 		GUICtrlSetState($gui_autoRestartCheck1, $GUI_CHECKED)
 	Else
@@ -178,11 +179,11 @@ Func loadConf()
 
 	Global $cfg_autoBackupRestartTime = IniRead($settingsFile, "general", "AutoRestartBackupInterval", "6,12,18,24")
 	;GUICtrlSetData($gui_autoRestartBackupTimeCheck, $cfg_autoBackupRestartTime)
-	LogWrite("loadConf", "Settings.ini read sucsessfiully! Set GUI data.")
+	logWrite(0, "Settings.ini read sucsessfiully! Set GUI data.")
 EndFunc   ;==>loadConf
 
 Func saveConf()
-	LogWrite("saveConf", "Writing Settings.ini...")
+	logWrite(0, "Writing Settings.ini...")
 ;~ If GUICtrlRead($gui_autoBackupSelect) = 1 Then
 ;~ 	IniWrite($settingsFile, "general", "AutoBackup", "True")
 ;~ Else
@@ -197,14 +198,14 @@ Func saveConf()
 
 	;IniWrite($settingsFile, "general", "AutoBackupInterval", GUICtrlRead($gui_backupDateTime))
 	IniWrite($settingsFile, "general", "AutoRestartInterval", GUICtrlRead($gui_autoRestartTimeInput))
-	LogWrite("saveConf", "Settings.ini written sucsessfiully!")
+	logWrite(0, "Settings.ini written sucsessfiully!")
 EndFunc   ;==>saveConf
 
 
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
-	LogWrite("ScheduledActions", "Running scheduled actions...")
+	logWrite(0, "Running scheduled actions...")
 	$ABarr = StringSplit($cfg_autoBackupTime, ",") ; auto backup array
 	$ARarr = StringSplit($cfg_autoRestartTime, ",") ; auto restart array
 	$ARBarr = StringSplit($cfg_autoBackupRestartTime, ",")
@@ -239,12 +240,12 @@ Func ScheduledActions()
 			EndIf
 		Next
 	EndIf
-	LogWrite("ScheduledActions", "Scheduled actions completed.")
+	logWrite(0, "Scheduled actions completed.")
 EndFunc   ;==>ScheduledActions
 
-LogWrite("Main Loop", "Starting scheduled actions...")
+logWrite(0, "Starting scheduled actions...")
 AdlibRegister("ScheduledActions", 60 * 1000) ; run it every 60s
-LogWrite("Main Loop", "Scheduled actions started Next run in 60s.")
+logWrite(0, "Scheduled actions started Next run in 60s.")
 
 ;Functions (World & packs) ########################################################################
 
@@ -253,12 +254,12 @@ LogWrite("Main Loop", "Scheduled actions started Next run in 60s.")
 ;Functions (Misc) ##################################################################################
 
 Func DelEmptyDirs()
-	LogWrite("DelEmptyDirs", "Deleting empty directories...")
+	logWrite(0, "Deleting empty directories...")
 	$cmd = "ROBOCOPY BDS BDS /S /MOVE"    ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Checking server files...)")
-	LogWrite("DelEmptyDirs", "Running ROBOCOPY command to delete empty directories")
+	logWrite(0, "Running ROBOCOPY command to delete empty directories")
 	RunWait($cmd, @ScriptDir, @SW_HIDE)
-	LogWrite("DelEmptyDirs", "Empty directories deleted.")
+	logWrite(0, "Empty directories deleted.")
 	return 0
 EndFunc   ;==>DelEmptyDirs
 
@@ -307,14 +308,14 @@ EndFunc   ;==>checkForUpdates
 ;Functions (Server Management) ################################################################################
 
 Func startServer()
-	LogWrite("startServer", "Starting bedrock dedicated server...")
+	logWrite(0, "Starting BDS...")
 	Global $BDS_process = Run($bdsExe, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
-	LogWrite("startServer", "Server started. BDS PID is " & $BDS_process)
+	logWrite(0, "Server started. BDS PID is " & $BDS_process)
 EndFunc   ;==>startServer
 
 Func updateConsole() ;not logging for this one
@@ -330,15 +331,15 @@ Func updateConsole() ;not logging for this one
 EndFunc   ;==>updateConsole
 
 Func RestartServer()
-	LogWrite("RestartServer", "Restarting server...")
+	logWrite(0, "Restarting server...")
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
 	stopServer()
 	startServer()
-	LogWrite("RestartServer", "Server restarted.")
+	logWrite(0, "Server restarted.")
 EndFunc   ;==>RestartServer
 
 Func stopServer()
-	LogWrite("stopServer", "Stopping server...")
+	logWrite(0, "Stopping server...")
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Stop Triggered" & @CRLF, 1)
 	StdinWrite($BDS_process, "stop" & @CRLF)
 	Sleep(1000)     ; Wait for a while to give the process time to read the input
@@ -347,35 +348,35 @@ Func stopServer()
 	Sleep(3000)
 	AdlibUnRegister("updateConsole")
 	If ProcessExists($BDS_process) Then
-		LogWrite("stopServer", "Failed to stop server. PID is still in use, although the process status is unknown")
-		MsgBox("", $guiTitle, "Failed to stop server")
+		logWrite(0, "Failed to stop server. PID is still in use, although the process status is unknown")
+		MsgBox(0, $guiTitle, "Failed to stop server")
 	else
 		GUICtrlSetData($gui_console, @CRLF & "[BDS-UI]: Server Offline")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
-		LogWrite("stopServer", "Server stopped.")
+		logWrite(0, "Server stopped.")
 	endif
 	Global $BDS_process = Null
 EndFunc   ;==>stopServer
 
 Func backupServer()
-	LogWrite("backupServer", "Backing up server...")
+	logWrite(0, "Backing up server...")
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_ORANGE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing Up (Pre Processing...)")
 	$backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
 	If $BDS_process = Null Then    ; bds isnt running
-		LogWrite("backupServer", "BDS is not running. Skipping pre-processing...")
+		logWrite(0, "BDS is not running. Skipping pre-processing...")
 	Else    ;bds is running
 		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
 		Sleep(5000)         ;5s
 		StdinWrite($BDS_process, "save query" & @CRLF)
-		LogWrite("backupServer", "BDS is running. Pre-processing complete.")
+		logWrite(0, "BDS is running. Pre-processing complete.")
 	Endif
 	DelEmptyDirs()
 	Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"    ; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
 	_Zip_Create($ZIPname)
-	LogWrite("backupServer", "Backup zip created at " & $ZIPname)
+	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files...)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\BDS", 0)    ; see CopyToTemp()
@@ -383,7 +384,7 @@ Func backupServer()
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
-	LogWrite("backupServer", "Backup complete. Resuming normal operation.")
+logWrite(0, "Backup complete. BDS world files released.")
 Endfunc   ;==>backupServer
 
 Func sendServerCommand()
@@ -395,10 +396,10 @@ Func sendServerCommand()
 EndFunc   ;==>sendServerCommand
 
 ;Main GUI Loop
-LogWrite("Main Loop", "Loading all config files...")
+logWrite(0, "Loading all config files...")
 LoadBDSConf()
 loadConf() ; load conf at first start
-LogWrite("Main Loop", "Config files loaded. Starting main loop...")
+logWrite(0, "Config files loaded. Starting main loop...")
 
 
 While 1
