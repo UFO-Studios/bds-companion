@@ -36,12 +36,12 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 360, 75, 33
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
-GUICtrlSetData(-1, "[BDS-UI]: Server Offline" & @CRLF)
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 202, 17)
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
-Global $gui_autoRestartTimeInput = GUICtrlCreateInput("7:12:00", 253, 56, 153, 21)
+Global $gui_autoRestartTimeInput = GUICtrlCreateInput("6,12,18,24", 253, 56, 153, 21)
 Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time(s):", 173, 56, 78, 17)
 Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 56, 129, 17)
 Global $gui_backupDuringRestart = GUICtrlCreateCheckbox("Backup During Restart", 21, 80, 129, 17)
@@ -49,6 +49,13 @@ Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 408, 56, 7
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
 Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
+Global $gui_AboutGroup = GUICtrlCreateGroup("About", 16, 128, 577, 113)
+Global $gui_aboutVersion = GUICtrlCreateLabel("Version:", 24, 152, 218, 17)
+Global $gui_InstallDir = GUICtrlCreateLabel("Script Folder: ", 24, 176, 221, 17)
+Global $gui_aboutBDSdir = GUICtrlCreateLabel("BDS Folder: ", 26, 198, 216, 17)
+Global $gui_getHelpBtn = GUICtrlCreateButton("Join our Discord!", 472, 152, 107, 25)
+Global $gui_openBackupsBtn = GUICtrlCreateButton("Open Backup Folder", 472, 184, 107, 25)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
 Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 64, 529, 281)
@@ -62,6 +69,7 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+GUICtrlSetData(-1, "gui_serverCtrlTab")
 
 ;Variables ###################################################################################
 
@@ -207,32 +215,29 @@ Func loadConf()
 		GUICtrlSetState($gui_autoRestartCheck1, $GUI_UNCHECKED)
 	Endif
 
-	Global $cfg_autoBackup = IniRead($settingsFile, "general", "AutoBackup", "False")
-	If $cfg_autoBackup = "True" Then
-		;GUICtrlSetState($gui_autoBackupSelect, $GUI_CHECKED)
+	Global $cfg_BackupDuringRestart = IniRead($settingsFile, "general", "BackupDuringRestart", "False")
+	If $cfg_BackupDuringRestart = "True" Then
+		GUICtrlSetState($gui_backupDuringRestart, $GUI_CHECKED)
 	Else
-		;GUICtrlSetState($gui_autoBackupSelect, $GUI_UNCHECKED)
+		GUICtrlSetState($gui_backupDuringRestart, $GUI_UNCHECKED)
 	Endif
-
-	Global $cfg_autoBackupTime = IniRead($settingsFile, "general", "AutoBackupInterval", "6,12,18,24")
-	;GUICtrlSetData($gui_backupDateTime, $cfg_autoBackupTime)
 
 	Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
 	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
 
-
 	Global $cfg_autoBackupRestartTime = IniRead($settingsFile, "general", "AutoRestartBackupInterval", "6,12,18,24")
-	;GUICtrlSetData($gui_autoRestartBackupTimeCheck, $cfg_autoBackupRestartTime)
-	logWrite(0, "Settings.ini read sucsessfiully! Set GUI data.")
+
+	;About Buttons & Data
+
+	GUICtrlSetData($gui_aboutVersion, "Version: " & $guiTitle)
+	GUICtrlSetData($gui_InstallDir, "Script Folder: " & @ScriptDir)
+	GUICtrlSetData($gui_aboutBDSdir, "BDS Folder: " & $bdsFolder)
+
+	logWrite(0, "Settings.ini read sucsessfiully! GUI data set.")
 EndFunc   ;==>loadConf
 
 Func saveConf()
 	logWrite(0, "Writing Settings.ini...")
-;~ If GUICtrlRead($gui_autoBackupSelect) = 1 Then
-;~ 	IniWrite($settingsFile, "general", "AutoBackup", "True")
-;~ Else
-;~ 	IniWrite($settingsFile, "general", "AutoBackup", "False")
-;~ Endif
 
 	If GUICtrlRead($gui_autoRestartCheck1) = 1 Then
 		IniWrite($settingsFile, "general", "AutoRestart", "True")
@@ -250,13 +255,12 @@ EndFunc   ;==>saveConf
 
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
-	$ABarr = StringSplit($cfg_autoBackupTime, ",") ; auto backup array
 	$ARarr = StringSplit($cfg_autoRestartTime, ",") ; auto restart array
 	$ARBarr = StringSplit($cfg_autoBackupRestartTime, ",")
 	$done = False
 	; Auto Backup
 
-	if $cfg_autoBackup And $cfg_autoRestart then
+	if $cfg_autoBackup then
 		For $i In $ARBarr
 			If @HOUR = $i Then
 				stopServer()             ; goes through all entries
@@ -442,7 +446,7 @@ EndFunc   ;==>sendServerCommand
 ;Main GUI Loop
 logWrite(0, "Loading all config files...")
 LoadBDSConf()
-loadConf() ; load conf at first start
+loadConf()
 logWrite(0, "Config files loaded. Starting main loop...")
 
 
@@ -451,9 +455,12 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			if $BDS_process == null Then             ;if everything goes pear-shaped it will shoot it when closed
+				logWrite(0, "BDS process is closed. Exited main loop")
 				Exit
 			Else
+				logWrite(0, "BDS process is still running. Closing BDS process...")
 				If ProcessExists($BDS_process) Then
+					logWrite(0, "BDS Process closed. Exited main loop.")
 					ProcessClose($BDS_process)
 				endif
 			endif
@@ -482,5 +489,11 @@ While 1
 
 		Case $gui_serverPropertiesSaveBtn
 			SaveBDSConf()
+		
+		Case $gui_getHelpBtn
+			ShellExecute("https://thealiendoctor.com/r/Discord")
+		
+		Case $gui_openBackupsBtn
+			ShellExecute($backupDir)
 	EndSwitch
 WEnd
