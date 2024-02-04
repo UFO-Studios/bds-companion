@@ -255,6 +255,7 @@ EndFunc   ;==>saveConf
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
 	$done = False
+ if @MIN = 0 then
 	GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
 	If $cfg_autoRestart = "True" Then
@@ -290,6 +291,7 @@ Func ScheduledActions()
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	endif
 	logWrite(0, "Scheduled actions completed.")
+endif
 EndFunc   ;==>ScheduledActions
 
 logWrite(0, "Starting scheduled actions...")
