@@ -326,8 +326,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 			Local $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
 
 			If $updateMsgBox = 6 Then
-				Global $versionPage = IniRead(@ScriptDir & "\temp\versions.ini", $latestVersionNum, "version-page", "https://www.thealiendoctor.com/downloads/bds-ui")
-				ShellExecute($versionPage)
+				ShellExecute("https://www.thealiendoctor.com/downloads/bds-ui")
 				Exit
 			EndIf
 		Else
