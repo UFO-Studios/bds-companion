@@ -255,7 +255,7 @@ EndFunc   ;==>saveConf
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
 	$done = False
- if @MIN = 0 then
+ if @MIN = 0 then; so it runs once per set hour, not once per minute in the set hour xD
 	GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
 	If $cfg_autoRestart = "True" Then
@@ -291,6 +291,8 @@ Func ScheduledActions()
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	endif
 	logWrite(0, "Scheduled actions completed.")
+else
+	logWrite(0, "@MIN isn't 0. Skipping scheduled actions.")
 endif
 EndFunc   ;==>ScheduledActions
 
