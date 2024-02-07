@@ -392,6 +392,7 @@ EndFunc   ;==>RestartServer
 
 Func stopServer()
 	logWrite(0, "Stopping server...")
+	BDSlogWrite(0, "[BDS-UI]: Stopping server...")
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Stop Triggered" & @CRLF, 1)
 	StdinWrite($BDS_process, "stop" & @CRLF)
 	Sleep(1000)     ; Wait for a while to give the process time to read the input
@@ -402,6 +403,7 @@ Func stopServer()
 	If ProcessExists($BDS_process) Then
 		logWrite(0, "Failed to stop server. PID is still in use, although the process status is unknown")
 		MsgBox(0, $guiTitle, "Failed to stop server")
+		BDSlogWrite(0, "[BDS-UI]: Failed to stop server. Process is still running, but maybe closing up. Maybe try again?")
 	else
 		GUICtrlSetData($gui_console, @CRLF & "[BDS-UI]: Server Offline")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
