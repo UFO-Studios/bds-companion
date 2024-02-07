@@ -452,6 +452,7 @@ Func sendServerCommand()
 EndFunc   ;==>sendServerCommand
 
 ;Main GUI Loop
+createLog()
 logWrite(0, "Loading all config files...")
 LoadBDSConf()
 loadConf()
