@@ -191,7 +191,8 @@ Func LoadBDSConf()
 	$FileOpened = FileRead($BDSconfFile)
 	If @error Then
 		logWrite(0, "Error opening file. Error code: " & @error)
-		MsgBox(0, $guiTitle, @error)
+		MsgBox(0, $guiTitle, "Error: cannot open server.properties! " & @CRLF & " is it in " & $bdsFolder & "?" & @CRLF & "Error code: " & @error)
+		GUICtrlSetData($gui_ServerPropertiesEdit, "Error opening file! Is it in  " & $bdsFolder & "? (Code: " & @error & ")")
 	else
 		logWrite(0, "File opened successfully.")
 		GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
@@ -433,6 +434,13 @@ Func backupServer()
 	Endif
 	DelEmptyDirs()
 	Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"    ; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+	;does backup dir exist?
+	If FileExists($backupDir) = 0 Then
+		DirCreate($backupDir)
+		logWrite(0, "Backup directory created at " & $backupDir)
+	Else
+		logWrite(0, "Backup directory exists at " & $backupDir)
+	endif
 	_Zip_Create($ZIPname)
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
@@ -505,6 +513,13 @@ While 1
 			ShellExecute("https://thealiendoctor.com/r/Discord")
 		
 		Case $gui_openBackupsBtn
+			;does backup dir exist?
+			If FileExists($backupDir) = 0 Then
+				DirCreate($backupDir)
+					logWrite(0, "Backup directory created at " & $backupDir)
+			Else
+				logWrite(0, "Backup directory exists at " & $backupDir)
+			endif
 			ShellExecute($backupDir)
 	EndSwitch
 WEnd

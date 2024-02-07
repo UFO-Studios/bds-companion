@@ -5,3 +5,4 @@ logs/
 *.ini
 BackUp/
 package.json
+dist
