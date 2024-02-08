@@ -233,7 +233,7 @@ Func loadConf()
 	GUICtrlSetData($gui_InstallDir, "Script Folder: " & @ScriptDir)
 	GUICtrlSetData($gui_aboutBDSdir, "BDS Folder: " & $bdsFolder)
 
-	logWrite(0, "Settings.ini read sucsessfiully! GUI data set.")
+	logWrite(0, "Settings.ini read successfully! GUI data set.")
 EndFunc   ;==>loadConf
 
 Func saveConf()
@@ -245,9 +245,8 @@ Func saveConf()
 		IniWrite($settingsFile, "general", "AutoRestart", "False")
 	Endif
 
-	;IniWrite($settingsFile, "general", "AutoBackupInterval", GUICtrlRead($gui_backupDateTime))
 	IniWrite($settingsFile, "general", "AutoRestartInterval", GUICtrlRead($gui_autoRestartTimeInput))
-	logWrite(0, "Settings.ini written sucsessfiully!")
+	logWrite(0, "Settings.ini written successfully!")
 EndFunc   ;==>saveConf
 
 
@@ -424,7 +423,7 @@ Func backupServer()
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_ORANGE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing Up (Pre Processing...)")
 	$backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
-	If $BDS_process = Null Then    ; bds isnt running
+	If $BDS_process = Null Then    ; bds isn't running
 		logWrite(0, "BDS is not running. Skipping pre-processing...")
 	Else    ;bds is running
 		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
@@ -457,11 +456,16 @@ Func sendServerCommand()
 	$cmd = GUICtrlRead($gui_commandInput)     ;cmd input box
 	StdinWrite($BDS_process, $cmd & @CRLF)
 	GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '" & $cmd & "'" & @CRLF, 1)
-	GUICtrlSetData($gui_commandInput, "")     ;emptys box
+	GUICtrlSetData($gui_commandInput, "")
 	Return
 EndFunc   ;==>sendServerCommand
 
-;Main GUI Loop
+;(Startup)##########################################################################
+if (Not FileExists($bdsFolder & "\bedrock_server.exe")) Then
+	MsgBox(0, $guiTitle, "Error: bedrock_server.exe not found in " & $bdsFolder & "!" & @CRLF & "Please make sure it's in the right place.")
+	logWrite(0, "Error: bedrock_server.exe not found in " & $bdsFolder & "!" & @CRLF & "Please make sure it's in the right place.")
+	Exit
+endif
 createLog()
 logWrite(0, "Loading all config files...")
 LoadBDSConf()
