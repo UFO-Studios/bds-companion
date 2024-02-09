@@ -37,7 +37,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 202, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
@@ -73,7 +73,8 @@ GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 ;Variables ###################################################################################
 
 Global $bdsFolder = @ScriptDir & "\BDS"
-Global $bdsExe = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
+Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
+Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 Global $backupDir = @ScriptDir & "\backups"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
@@ -140,7 +141,7 @@ Func BDScreateLog()
 		logWrite(0, "###################################################################")
 		logWrite(0, "Created logging directory!")
 	EndIf
-EndFunc   ;==>createLog
+EndFunc   ;==>BDScreateLog
 
 Func BDSlogWrite($spaces, $content)
 	If $spaces = 1 Then ;For adding spaces around the content written to the log
@@ -166,7 +167,7 @@ Func BDSlogWrite($spaces, $content)
 		FileWrite($BDSlogDir & "\log.latest", @CRLF)
 		FileClose($BDSlogDir & "\log.latest")
 	EndIf
-EndFunc   ;==>logWrite
+EndFunc   ;==>BDSlogWrite
 
 ;Functions (Config) #############################################################################
 
@@ -255,45 +256,45 @@ EndFunc   ;==>saveConf
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
 	$done = False
- if @MIN = 0 then; so it runs once per set hour, not once per minute in the set hour xD
-	GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
-	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
-	If $cfg_autoRestart = "True" Then
-		$times = StringSplit($cfg_autoRestartTime, ",")
-		$currentTime = @HOUR
-		For $i = 1 To $times[0]
-			If $currentTime = $times[$i] Then
-				if $cfg_BackupDuringRestart = "True" Then
-					logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
-					stopServer()
-					backupServer()
-					RestartServer()
-					$done = True
-				Else
-				logWrite(0, "Auto restart time reached. Restarting server...")
-				RestartServer()
-				$done = True
-				endif
-			EndIf
-		Next
-	endif
+	if @MIN = 0 then ; so it runs once per set hour, not once per minute in the set hour xD
+		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
+		If $cfg_autoRestart = "True" Then
+			$times = StringSplit($cfg_autoRestartTime, ",")
+			$currentTime = @HOUR
+			For $i = 1 To $times[0]
+				If $currentTime = $times[$i] Then
+					if $cfg_BackupDuringRestart = "True" Then
+						logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
+						stopServer()
+						backupServer()
+						RestartServer()
+						$done = True
+					Else
+						logWrite(0, "Auto restart time reached. Restarting server...")
+						RestartServer()
+						$done = True
+					endif
+				EndIf
+			Next
+		endif
 
-	if $done = True Then
+		if $done = True Then
+			logWrite(0, "Scheduled actions completed.")
+		Else
+			logWrite(0, "No scheduled actions to run. Next run is in 60s")
+		endif
+		if $BDS_process = Null Then
+			GUICtrlSetData($gui_serverStatusIndicator, "Offline")
+			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+		Else
+			GUICtrlSetData($gui_serverStatusIndicator, "Online")
+			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+		endif
 		logWrite(0, "Scheduled actions completed.")
-	Else
-		logWrite(0, "No scheduled actions to run. Next run is in 60s")
+	else
+		logWrite(0, "@MIN isn't 0. Skipping scheduled actions.")
 	endif
-	if $BDS_process = Null Then
-		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
-		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
-	Else
-		GUICtrlSetData($gui_serverStatusIndicator, "Online")
-		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-	endif
-	logWrite(0, "Scheduled actions completed.")
-else
-	logWrite(0, "@MIN isn't 0. Skipping scheduled actions.")
-endif
 EndFunc   ;==>ScheduledActions
 
 logWrite(0, "Starting scheduled actions...")
@@ -305,6 +306,41 @@ logWrite(0, "Scheduled actions started Next run in 60s.")
 
 
 ;Functions (Misc) ##################################################################################
+
+Func exitScript()
+	if $BDS_process == null Then             ;if everything goes pear-shaped it will shoot it when closed
+		logWrite(0, "BDS process is closed. Exited main loop")
+		Exit
+	Else
+		logWrite(0, "BDS process is still running. Closing BDS process...")
+		If ProcessExists($BDS_process) Then
+			logWrite(0, "BDS Process closed. Exited main loop.")
+			ProcessClose($BDS_process)
+		endif
+	endif
+EndFunc   ;==>exitScript
+
+Func checkForBDS()
+	If FileExists($bdsExe) Then
+		logWrite(0, "BDS exe found, proceeding with startup")
+	Else
+		logWrite(0, "BDS file not found, proceed?")
+		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS file. Please make sure the below directory is correct." & @CRLF & $bdsExe)
+
+		If $msgBox = 2 Then ;Cancel
+			logWrite(0, "Cancel")
+			exitScript()
+			Exit
+		ElseIf $msgBox = 10 Then ;Try again
+			logWrite(0, "Try again")
+			checkForBDS()
+		ElseIf $msgBox = 11 Then ;Continue
+			logWrite(0, "Continue, ignoring missing BDS.")
+			;Do nothing
+		EndIf
+
+	EndIf
+EndFunc   ;==>checkForBDS
 
 Func DelEmptyDirs()
 	logWrite(0, "Deleting empty directories...")
@@ -361,7 +397,7 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer()
 	logWrite(0, "Starting BDS...")
-	Global $BDS_process = Run($bdsExe, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
+	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
@@ -380,7 +416,7 @@ Func updateConsole() ;not logging for this one
 		Else
 			GUICtrlSetData($gui_console, $line, 1)
 			if $line <> "" Then
-			BDSlogWrite(0, $line)
+				BDSlogWrite(0, $line)
 			EndIf
 		EndIf
 	EndIf
@@ -449,7 +485,7 @@ Func backupServer()
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
-logWrite(0, "Backup complete. BDS world files released.")
+	logWrite(0, "Backup complete. BDS world files released.")
 Endfunc   ;==>backupServer
 
 Func sendServerCommand()
@@ -461,32 +497,19 @@ Func sendServerCommand()
 EndFunc   ;==>sendServerCommand
 
 ;(Startup)##########################################################################
-if (Not FileExists($bdsFolder & "\bedrock_server.exe")) Then
-	MsgBox(0, $guiTitle, "Error: bedrock_server.exe not found in " & $bdsFolder & "!" & @CRLF & "Please make sure it's in the right place.")
-	logWrite(0, "Error: bedrock_server.exe not found in " & $bdsFolder & "!" & @CRLF & "Please make sure it's in the right place.")
-	Exit
-endif
+
 createLog()
-logWrite(0, "Loading all config files...")
+checkForBDS()
 LoadBDSConf()
 loadConf()
-logWrite(0, "Config files loaded. Starting main loop...")
+logWrite(0, "Startup functions complete, starting main loop")
 
 
 While 1
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
-			if $BDS_process == null Then             ;if everything goes pear-shaped it will shoot it when closed
-				logWrite(0, "BDS process is closed. Exited main loop")
-				Exit
-			Else
-				logWrite(0, "BDS process is still running. Closing BDS process...")
-				If ProcessExists($BDS_process) Then
-					logWrite(0, "BDS Process closed. Exited main loop.")
-					ProcessClose($BDS_process)
-				endif
-			endif
+			exitScript()
 			exit
 
 		Case $gui_startServerBtn
@@ -512,15 +535,15 @@ While 1
 
 		Case $gui_serverPropertiesSaveBtn
 			SaveBDSConf()
-		
+
 		Case $gui_getHelpBtn
 			ShellExecute("https://thealiendoctor.com/r/Discord")
-		
+
 		Case $gui_openBackupsBtn
 			;does backup dir exist?
 			If FileExists($backupDir) = 0 Then
 				DirCreate($backupDir)
-					logWrite(0, "Backup directory created at " & $backupDir)
+				logWrite(0, "Backup directory created at " & $backupDir)
 			Else
 				logWrite(0, "Backup directory exists at " & $backupDir)
 			endif
