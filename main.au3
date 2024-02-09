@@ -314,6 +314,7 @@ logWrite(0, "Scheduled actions started Next run in 60s.")
 ;Functions (Misc) ##################################################################################
 
 Func exitScript()
+	MsgBox(0, "this is a test", "test")
 	if $BDS_process == null Then             ;if everything goes pear-shaped it will shoot it when closed
 		logWrite(0, "BDS process is closed. Exited main loop")
 		Exit
@@ -324,6 +325,13 @@ Func exitScript()
 			ProcessClose($BDS_process)
 		endif
 	endif
+
+	logWrite(0, "###################################################################")
+	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+	FileMove($logDir & "\log.latest", $logDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt") ;Still not working. Not sure why.
+
+	DirRemove(@ScriptDir & "\temp\", 1)
+	Sleep(1000)
 EndFunc   ;==>exitScript
 
 Func checkForBDS()
