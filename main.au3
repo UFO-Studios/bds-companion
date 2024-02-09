@@ -37,7 +37,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 352, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 352, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 352, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 577, 73)
@@ -72,10 +72,10 @@ Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 344, 75, 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -509,6 +509,17 @@ Func sendServerCommand()
 EndFunc   ;==>sendServerCommand
 
 ;(Startup)##########################################################################
+;If $cfg_checkForUpdates = "True" Then
+;	checkForUpdates(0)
+;ElseIf $cfg_checkForUpdates = "False" Then
+;	logWrite(0, "Auto update check is disabled")
+;	MsgBox(0, $guiTitle, "Auto update check is disabled - this is not recommended!")
+;EndIf
+
+If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License redownload
+	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt")		;Temp license until public
+	logWrite(0, "Re-downloaded license")
+EndIf
 
 createLog()
 checkForBDS()
@@ -565,6 +576,6 @@ While 1
 
 		Case $gui_discordBtn
 			ShellExecute("https://TheAlienDoctor.com/r/Discord")
-		
+
 	EndSwitch
 WEnd
