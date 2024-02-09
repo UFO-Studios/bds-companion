@@ -37,26 +37,26 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 352, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 352, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 352, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 577, 73)
 Global $gui_autoRestartTimeInput = GUICtrlCreateInput("", 333, 48, 169, 21)
 Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 261, 48, 72, 17)
-Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 48, 129, 17)
-Global $gui_backupDuringRestart = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
+Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 48, 129, 17)
+Global $gui_backupDuringRestartCheck = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
 Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 504, 48, 79, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 33)
 Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 104, 577, 153)
 Global $gui_bdsDirInput = GUICtrlCreateInput("", 120, 128, 465, 21)
 Global $gui_bdsDirLabel = GUICtrlCreateLabel("BDS File Location:", 24, 128, 92, 17)
-Global $gui_logDirLabel = GUICtrlCreateLabel("Logs Folder:", 24, 160, 62, 17)
-Global $gui_logDirInput = GUICtrlCreateInput("", 88, 160, 497, 21)
-Global $gui_bdsLogDirTitle = GUICtrlCreateLabel("BDS Logs Folder:", 24, 192, 87, 17)
-Global $gui_bdsLogDirInput = GUICtrlCreateInput("", 112, 192, 473, 21)
-Global $gui_backupFolderTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
-Global $gui_backupFolderInput = GUICtrlCreateInput("", 104, 224, 481, 21)
+Global $gui_logsDirLabel = GUICtrlCreateLabel("Logs Folder:", 24, 160, 62, 17)
+Global $gui_logsDirInput = GUICtrlCreateInput("", 88, 160, 497, 21)
+Global $gui_bdsLogsDirTitle = GUICtrlCreateLabel("BDS Logs Folder:", 24, 192, 87, 17)
+Global $gui_bdsLogsDirInput = GUICtrlCreateInput("", 112, 192, 473, 21)
+Global $gui_backupsFolderTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
+Global $gui_backupsFolderInput = GUICtrlCreateInput("", 104, 224, 481, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 264, 257, 97)
 Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 288, 119, 17)
@@ -72,10 +72,10 @@ Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 344, 75, 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 103, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -182,6 +182,57 @@ EndFunc   ;==>BDSlogWrite
 
 ;Functions (Config) #############################################################################
 
+Func loadConf()
+	logWrite(0, "Loading config")
+
+	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
+	If $cfg_autoRestart = "True" Then
+		GUICtrlSetState($gui_autoRestartCheck, $GUI_CHECKED)
+	ElseIf $cfg_autoRestart = "False" Then
+		GUICtrlSetState($gui_autoRestartCheck, $GUI_UNCHECKED)
+	Endif
+
+	Global $cfg_backupDuringRestart = IniRead($settingsFile, "autoRestart", "backupDuringRestart", "False")
+	If $cfg_backupDuringRestart = "True" Then
+		GUICtrlSetState($gui_backupDuringRestartCheck, $GUI_CHECKED)
+	ElseIf $cfg_backupDuringRestart = "False" Then
+		GUICtrlSetState($gui_backupDuringRestartCheck, $GUI_UNCHECKED)
+	Endif
+
+	Global $cfg_autoRestartInterval = IniRead($settingsFile, "autoRestart", "restartInterval", "6,12,18,24")
+	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartInterval)
+
+	If IniRead($settingsFile, "dirs", "bdsDir", "") = "" Then ;For first time ran
+		IniWrite($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
+	EndIf
+	Global $cfg_bdsDir = IniRead($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
+	GUICtrlSetData($gui_bdsDirInput, $cfg_bdsDir)
+
+	If IniRead($settingsFile, "dirs", "logsDir", "") = "" Then ;For first time ran
+		IniWrite($settingsFile, "dirs", "logsDir", @ScriptDir & "\logs")
+	EndIf
+	Global $cfg_logsDir = IniRead($settingsFile, "dirs", "logsDir", @ScriptDir & "\logs")
+	GUICtrlSetData($gui_logsDirInput, $cfg_logsDir)
+
+	saveConf()
+	logWrite(0, "Finished loading config")
+EndFunc
+
+Func saveConf()
+	$cfg_autoRestart = GUICtrlRead($gui_autoRestartCheck)
+	IniWrite($settingsFile, "autoRestart", "restartEnabled", $cfg_autoRestart)
+
+	$cfg_backupDuringRestart = GUICtrlRead($gui_backupDuringRestartCheck)
+	IniWrite($settingsFile, "autoRestart", "backupDuringRestart", $cfg_backupDuringRestart)
+
+	$cfg_autoRestartInterval = GUICtrlRead($gui_autoRestartTimeInput)
+	IniWrite($settingsFile, "autoRestart", "restartInterval", $cfg_autoRestartInterval)
+
+
+EndFunc
+
+;Functions (BDS Config) #########################################################################
+
 Func ReplaceFileContents($sFilePath, $sNewContent)
 	Local $hFile = FileOpen($sFilePath, 2)     ; Open the file for write and erase the current content
 	logWrite(2, "Opening file" & $sFilePath)
@@ -218,46 +269,6 @@ Func SaveBDSConf()
 	ReplaceFileContents($BDSconfFile, $NewFileValue)
 endfunc   ;==>SaveBDSConf
 
-Func loadConf()
-	Global $cfg_autoRestart = IniRead($settingsFile, "general", "AutoRestart", "False")
-	logWrite(0, "Settings.ini read successfully! Setting GUI data.")
-	If $cfg_autoRestart = "True" Then
-		GUICtrlSetState($gui_autoRestartCheck1, $GUI_CHECKED)
-	Else
-		GUICtrlSetState($gui_autoRestartCheck1, $GUI_UNCHECKED)
-	Endif
-
-	Global $cfg_BackupDuringRestart = IniRead($settingsFile, "general", "BackupDuringRestart", "False")
-	If $cfg_BackupDuringRestart = "True" Then
-		GUICtrlSetState($gui_backupDuringRestart, $GUI_CHECKED)
-	Else
-		GUICtrlSetState($gui_backupDuringRestart, $GUI_UNCHECKED)
-	Endif
-
-	Global $cfg_autoRestartTime = IniRead($settingsFile, "general", "AutoRestartInterval", "6,12,18,24")
-	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartTime)
-
-	Global $cfg_autoBackupRestartTime = IniRead($settingsFile, "general", "AutoRestartBackupInterval", "6,12,18,24")
-
-	;About Buttons & Data
-
-	logWrite(0, "Settings.ini read successfully! GUI data set.")
-EndFunc   ;==>loadConf
-
-Func saveConf()
-	logWrite(0, "Writing Settings.ini...")
-
-	If GUICtrlRead($gui_autoRestartCheck1) = 1 Then
-		IniWrite($settingsFile, "general", "AutoRestart", "True")
-	Else
-		IniWrite($settingsFile, "general", "AutoRestart", "False")
-	Endif
-
-	IniWrite($settingsFile, "general", "AutoRestartInterval", GUICtrlRead($gui_autoRestartTimeInput))
-	logWrite(0, "Settings.ini written successfully!")
-EndFunc   ;==>saveConf
-
-
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
@@ -267,7 +278,7 @@ Func ScheduledActions()
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
 		If $cfg_autoRestart = "True" Then
-			$times = StringSplit($cfg_autoRestartTime, ",")
+			$times = StringSplit($cfg_autoRestartInterval, ",")
 			$currentTime = @HOUR
 			For $i = 1 To $times[0]
 				If $currentTime = $times[$i] Then

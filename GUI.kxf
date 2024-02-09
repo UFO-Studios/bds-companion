@@ -253,7 +253,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="gui_autoRestartCheck1">
+								<object type="TACheckbox" name="gui_autoRestartCheck">
 									<properties>
 										<property name="Left" vt="Int8">5</property>
 										<property name="Top" vt="Int8">19</property>
@@ -267,7 +267,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TACheckbox" name="gui_backupDuringRestart">
+								<object type="TACheckbox" name="gui_backupDuringRestartCheck">
 									<properties>
 										<property name="Left" vt="Int8">5</property>
 										<property name="Top" vt="Int8">43</property>
@@ -354,7 +354,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TALabel" name="gui_logDirLabel">
+								<object type="TALabel" name="gui_logsDirLabel">
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">56</property>
@@ -369,7 +369,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TAInput" name="gui_logDirInput">
+								<object type="TAInput" name="gui_logsDirInput">
 									<properties>
 										<property name="Left" vt="Int8">72</property>
 										<property name="Top" vt="Int8">56</property>
@@ -382,7 +382,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TALabel" name="gui_bdsLogDirTitle">
+								<object type="TALabel" name="gui_bdsLogsDirTitle">
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">88</property>
@@ -397,7 +397,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TAInput" name="gui_bdsLogDirInput">
+								<object type="TAInput" name="gui_bdsLogsDirInput">
 									<properties>
 										<property name="Left" vt="Int8">96</property>
 										<property name="Top" vt="Int8">88</property>
@@ -410,7 +410,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TALabel" name="gui_backupFolderTitle">
+								<object type="TALabel" name="gui_backupsFolderTitle">
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">120</property>
@@ -425,7 +425,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TAInput" name="gui_backupFolderInput">
+								<object type="TAInput" name="gui_backupsFolderInput">
 									<properties>
 										<property name="Left" vt="Int8">88</property>
 										<property name="Top" vt="Int8">120</property>
