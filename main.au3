@@ -25,46 +25,56 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ###
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 615, 427, 758, 350)
-Global $gui_tabs = GUICtrlCreateTab(8, 8, 593, 393)
+#Region ### START Koda GUI section ### Form=d:\code\bds-ui\gui.kxf
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 610, 421, 750, 347)
+Global $gui_tabs = GUICtrlCreateTab(8, 0, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
-Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 40, 71, 17)
-Global $gui_commandInput = GUICtrlCreateInput("", 16, 328, 481, 21)
-Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 328, 91, 25)
-Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 360, 75, 33)
-Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 360, 75, 33)
-Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 360, 75, 33)
-Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 360, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 40, 202, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 64, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
+Global $gui_commandInput = GUICtrlCreateInput("", 16, 320, 481, 21)
+Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 320, 91, 25)
+Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 352, 75, 33)
+Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 352, 75, 33)
+Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 352, 75, 33)
+Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 352, 83, 33)
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 37, 577, 73)
-Global $gui_autoRestartTimeInput = GUICtrlCreateInput("6,12,18,24", 253, 56, 153, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Time(s):", 173, 56, 78, 17)
-Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 56, 129, 17)
-Global $gui_backupDuringRestart = GUICtrlCreateCheckbox("Backup During Restart", 21, 80, 129, 17)
-Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 408, 56, 79, 17)
+GUICtrlSetState(-1,$GUI_SHOW)
+Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 577, 73)
+Global $gui_autoRestartTimeInput = GUICtrlCreateInput("", 333, 48, 169, 21)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 261, 48, 72, 17)
+Global $gui_autoRestartCheck1 = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 48, 129, 17)
+Global $gui_backupDuringRestart = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
+Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 504, 48, 79, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 41)
-Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check For Updates", 16, 352, 107, 41)
-Global $gui_AboutGroup = GUICtrlCreateGroup("About", 16, 128, 577, 113)
-Global $gui_aboutVersion = GUICtrlCreateLabel("Version:", 24, 152, 218, 17)
-Global $gui_InstallDir = GUICtrlCreateLabel("Script Folder: ", 24, 176, 221, 17)
-Global $gui_aboutBDSdir = GUICtrlCreateLabel("BDS Folder: ", 26, 198, 216, 17)
-Global $gui_getHelpBtn = GUICtrlCreateButton("Join our Discord!", 472, 152, 107, 25)
-Global $gui_openBackupsBtn = GUICtrlCreateButton("Open Backup Folder", 472, 184, 107, 25)
+Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 33)
+Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 104, 577, 153)
+Global $gui_bdsDirInput = GUICtrlCreateInput("", 120, 128, 465, 21)
+Global $gui_bdsDirLabel = GUICtrlCreateLabel("BDS File Location:", 24, 128, 92, 17)
+Global $gui_logDirLabel = GUICtrlCreateLabel("Logs Folder:", 24, 160, 62, 17)
+Global $gui_logDirInput = GUICtrlCreateInput("", 88, 160, 497, 21)
+Global $gui_bdsLogDirTitle = GUICtrlCreateLabel("BDS Logs Folder:", 24, 192, 87, 17)
+Global $gui_bdsLogDirInput = GUICtrlCreateInput("", 112, 192, 473, 21)
+Global $gui_backupFolderTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
+Global $gui_backupFolderInput = GUICtrlCreateInput("", 104, 224, 481, 21)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 264, 257, 97)
+Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 288, 119, 17)
+Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 152, 320, 107, 25)
+Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 152, 288, 107, 25)
+Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 320, 115, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
-Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 40, 553, 353)
-Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 64, 529, 281)
+Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 32, 553, 353)
+Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 56, 529, 281)
 GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
-Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 352, 75, 25)
+Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 344, 75, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 408, 103, 17)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 408, 69, 17)
+Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 103, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
+Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -229,10 +239,6 @@ Func loadConf()
 	Global $cfg_autoBackupRestartTime = IniRead($settingsFile, "general", "AutoRestartBackupInterval", "6,12,18,24")
 
 	;About Buttons & Data
-
-	GUICtrlSetData($gui_aboutVersion, "Version: " & $guiTitle)
-	GUICtrlSetData($gui_InstallDir, "Script Folder: " & @ScriptDir)
-	GUICtrlSetData($gui_aboutBDSdir, "BDS Folder: " & $bdsFolder)
 
 	logWrite(0, "Settings.ini read successfully! GUI data set.")
 EndFunc   ;==>loadConf
@@ -535,18 +541,5 @@ While 1
 
 		Case $gui_serverPropertiesSaveBtn
 			SaveBDSConf()
-
-		Case $gui_getHelpBtn
-			ShellExecute("https://thealiendoctor.com/r/Discord")
-
-		Case $gui_openBackupsBtn
-			;does backup dir exist?
-			If FileExists($backupDir) = 0 Then
-				DirCreate($backupDir)
-				logWrite(0, "Backup directory created at " & $backupDir)
-			Else
-				logWrite(0, "Backup directory exists at " & $backupDir)
-			endif
-			ShellExecute($backupDir)
 	EndSwitch
 WEnd
