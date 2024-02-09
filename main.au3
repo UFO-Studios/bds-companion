@@ -55,8 +55,8 @@ Global $gui_logsDirLabel = GUICtrlCreateLabel("Logs Folder:", 24, 160, 62, 17)
 Global $gui_logsDirInput = GUICtrlCreateInput("", 88, 160, 497, 21)
 Global $gui_bdsLogsDirTitle = GUICtrlCreateLabel("BDS Logs Folder:", 24, 192, 87, 17)
 Global $gui_bdsLogsDirInput = GUICtrlCreateInput("", 112, 192, 473, 21)
-Global $gui_backupsFolderTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
-Global $gui_backupsFolderInput = GUICtrlCreateInput("", 104, 224, 481, 21)
+Global $gui_backupsDirTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
+Global $gui_backupsDirInput = GUICtrlCreateInput("", 104, 224, 481, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 264, 257, 97)
 Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 288, 119, 17)
@@ -211,8 +211,20 @@ Func loadConf()
 	If IniRead($settingsFile, "dirs", "logsDir", "") = "" Then ;For first time ran
 		IniWrite($settingsFile, "dirs", "logsDir", @ScriptDir & "\logs")
 	EndIf
-	Global $cfg_logsDir = IniRead($settingsFile, "dirs", "logsDir", @ScriptDir & "\logs")
+	Global $cfg_logsDir = IniRead($settingsFile, "dirs", "logsDir", @ScriptDir & "\Logs")
 	GUICtrlSetData($gui_logsDirInput, $cfg_logsDir)
+
+	If IniRead($settingsFile, "dirs", "bdsLogsDir", @ScriptDir & "") = "" Then ;For first time ran
+		IniWrite($settingsFile, "dirs", "bdsLogsDir", @ScriptDir & "\Server Logs")
+	EndIf
+	Global $cfg_bdsLogsDir = IniRead($settingsFile, "dirs", "bdsLogsDir", @ScriptDir & "\Server Logs")
+	GUICtrlSetData($gui_bdsLogsDirInput, $cfg_bdsLogsDir)
+
+	If IniRead($settingsFile, "dirs", "backupsDir", @ScriptDir & "") = "" Then ;For first time ran
+		IniWrite($settingsFile, "dirs", "backupsDir", @ScriptDir & "\Backups")
+	EndIf
+	Global $cfg_backupsDir = IniRead($settingsFile, "dirs", "backupsDir", @ScriptDir & "\Backups")
+	GUICtrlSetData($gui_backupsDirInput, $cfg_backupsDir)
 
 	saveConf()
 	logWrite(0, "Finished loading config")
@@ -228,7 +240,11 @@ Func saveConf()
 	$cfg_autoRestartInterval = GUICtrlRead($gui_autoRestartTimeInput)
 	IniWrite($settingsFile, "autoRestart", "restartInterval", $cfg_autoRestartInterval)
 
+	$cfg_bdsDir = GUICtrlRead($gui_bdsDirInput)
+	IniWrite($settingsFile, "dirs", "bdsDir", $cfg_bdsDir)
 
+	$cfg_backupsDir = GUICtrlRead($gui_bdsLogsDirInput)
+	IniWrite($settingsFile, "dirs", "logsDir", $cfg_backupsDir)
 EndFunc
 
 ;Functions (BDS Config) #########################################################################

@@ -410,7 +410,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TALabel" name="gui_backupsFolderTitle">
+								<object type="TALabel" name="gui_backupsDirTitle">
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">120</property>
@@ -425,7 +425,7 @@
 									</properties>
 									<components/>
 								</object>
-								<object type="TAInput" name="gui_backupsFolderInput">
+								<object type="TAInput" name="gui_backupsDirInput">
 									<properties>
 										<property name="Left" vt="Int8">88</property>
 										<property name="Top" vt="Int8">120</property>
