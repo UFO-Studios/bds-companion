@@ -314,24 +314,21 @@ logWrite(0, "Scheduled actions started Next run in 60s.")
 ;Functions (Misc) ##################################################################################
 
 Func exitScript()
-	MsgBox(0, "this is a test", "test")
-	if $BDS_process == null Then             ;if everything goes pear-shaped it will shoot it when closed
-		logWrite(0, "BDS process is closed. Exited main loop")
-		Exit
-	Else
-		logWrite(0, "BDS process is still running. Closing BDS process...")
-		If ProcessExists($BDS_process) Then
-			logWrite(0, "BDS Process closed. Exited main loop.")
-			ProcessClose($BDS_process)
-		endif
-	endif
-
+	;If $BDS_process = null Then             ;if everything goes pear-shaped it will shoot it when closed
+	;	logWrite(0, "BDS process is closed. Exited main loop")
+	;ElseIf BDS proccess not null 																		Nicey please do this bit because I'm not entirely sure how it works xD
+	;	logWrite(0, "BDS process is still running. Closing BDS process...")
+	;	If ProcessExists($BDS_process) Then
+	;		logWrite(0, "BDS Process closed. Exited main loop.")
+	;		ProcessClose($BDS_process)
+	;	endif
+	;endif
+	FileOpen($logDir & "\log.latest", 1)
 	logWrite(0, "###################################################################")
 	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-	FileMove($logDir & "\log.latest", $logDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt") ;Still not working. Not sure why.
+	FileMove($logDir & "\log.latest", $logDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
 
 	DirRemove(@ScriptDir & "\temp\", 1)
-	Sleep(1000)
 EndFunc   ;==>exitScript
 
 Func checkForBDS()
