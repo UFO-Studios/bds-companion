@@ -40,7 +40,6 @@ Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17
 Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-GUICtrlSetState(-1,$GUI_SHOW)
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 577, 73)
 Global $gui_autoRestartTimeInput = GUICtrlCreateInput("", 333, 48, 169, 21)
 Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 261, 48, 72, 17)
@@ -73,8 +72,10 @@ Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 344, 75, 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 103, 17)
+GUICtrlSetCursor (-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)
+GUICtrlSetCursor (-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -546,5 +547,24 @@ While 1
 
 		Case $gui_serverPropertiesSaveBtn
 			SaveBDSConf()
+
+		Case $gui_copyright
+			If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then
+				InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp URL until release
+				logWrite(0, "Re-downloaded license")
+				ShellExecute(@ScriptDir & "\LICENSE.txt")
+			ElseIf FileExists(@ScriptDir & "\LICENSE.txt") Then
+				ShellExecute(@ScriptDir & "\LICENSE.txt")
+			EndIf
+
+		Case $gui_githubLabel
+			ShellExecute("https://github.com/ufo-studios/bds-ui")
+
+		Case $gui_patreonBtn
+			ShellExecute("https://TheAlienDoctor.com/r/Patreon")
+
+		Case $gui_discordBtn
+			ShellExecute("https://TheAlienDoctor.com/r/Discord")
+		
 	EndSwitch
 WEnd

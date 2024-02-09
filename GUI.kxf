@@ -36,7 +36,7 @@
 				<property name="Top" vt="Int8">0</property>
 				<property name="Width" vt="Int16">593</property>
 				<property name="Height" vt="Int16">393</property>
-				<property name="ActivePage" vt="Ident">gui_settingsTab</property>
+				<property name="ActivePage" vt="Ident">gui_serverCtrlTab</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
 				<property name="Font.Height" vt="Int8">-11</property>
@@ -587,6 +587,7 @@
 				<property name="Top" vt="Int16">400</property>
 				<property name="Width" vt="Int8">103</property>
 				<property name="Height" vt="Int8">17</property>
+				<property name="Cursor" vt="Ident">crHandPoint</property>
 				<property name="Caption" vt="UTF8String">© UFO Studios 2024</property>
 				<property name="TabOrder" vt="Int8">1</property>
 				<property name="HaveVariable" vt="False">False</property>
@@ -617,6 +618,7 @@
 				<property name="Top" vt="Int16">400</property>
 				<property name="Width" vt="Int16">270</property>
 				<property name="Height" vt="Int8">17</property>
+				<property name="Cursor" vt="Ident">crHandPoint</property>
 				<property name="Caption" vt="String">View source code, report bugs and contribute on GitHub</property>
 				<property name="TabOrder" vt="Int8">3</property>
 				<property name="HaveVariable" vt="False">False</property>
