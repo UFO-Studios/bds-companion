@@ -8,3 +8,18 @@ Extract a copy of MCBE's BDS to a folder named `BDS` within the folder the exe i
 (aka bds-ui/BDS)
 <br></br>
 Then double click the exe to open! 
+
+Your folder should look like this:
+``` plaintext
+bds-ui/
+    BDS-UI.exe
+    BDS/
+        bedrock_server.exe
+        server.properties
+        (and other BDS files)
+  
+```
+
+## Features
+### Manual server management
+

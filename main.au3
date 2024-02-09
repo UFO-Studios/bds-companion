@@ -484,7 +484,7 @@ Func stopServer()
 		MsgBox(0, $guiTitle, "Failed to stop server")
 		BDSlogWrite(0, "[BDS-UI]: Failed to stop server. Process is still running, but maybe closing up. Maybe try again?")
 	else
-		GUICtrlSetData($gui_console, @CRLF & "[BDS-UI]: Server Offline")
+		GUICtrlSetData($gui_console, @CRLF & "[BDS-UI]: Server Offline" & @CRLF)
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
