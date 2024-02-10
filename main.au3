@@ -253,8 +253,14 @@ Func saveConf()
 	$cfg_bdsDir = GUICtrlRead($gui_bdsDirInput)
 	IniWrite($settingsFile, "dirs", "bdsDir", $cfg_bdsDir)
 
-	$cfg_backupsDir = GUICtrlRead($gui_bdsLogsDirInput)
-	IniWrite($settingsFile, "dirs", "logsDir", $cfg_backupsDir)
+	$cfg_logsDir = GUICtrlRead($gui_logsDirInput)
+	IniWrite($settingsFile, "dirs", "logsDir", $cfg_logsDir)
+
+	$cfg_bdsLogsDir = GUICtrlRead($gui_bdsLogsDirInput)
+	IniWrite($settingsFile, "dirs", "bdsLogsDir", $cfg_bdsLogsDir)
+
+	$cfg_backupsDir = GUICtrlRead($gui_backupsDirInput)
+	IniWrite($settingsFile, "dirs", "backupsDir", $cfg_backupsDir)
 
 	logWrite(0, "Settings Save Complete")
 EndFunc   ;==>saveConf
