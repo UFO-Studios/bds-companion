@@ -37,7 +37,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 352, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 352, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 352, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 577, 73)
@@ -72,10 +72,10 @@ Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 344, 75, 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -228,13 +228,23 @@ Func loadConf()
 
 	saveConf()
 	logWrite(0, "Finished loading config")
-EndFunc
+EndFunc   ;==>loadConf
 
 Func saveConf()
-	$cfg_autoRestart = GUICtrlRead($gui_autoRestartCheck)
+	logWrite(0, "Saving Settings")
+
+	If GUICtrlRead($gui_autoRestartCheck) = $GUI_CHECKED Then
+		$cfg_autoRestart = "True"
+	ElseIf GUICtrlRead($gui_autoRestartCheck) = $GUI_UNCHECKED Then
+		$cfg_autoRestart = "False"
+	EndIf
 	IniWrite($settingsFile, "autoRestart", "restartEnabled", $cfg_autoRestart)
 
-	$cfg_backupDuringRestart = GUICtrlRead($gui_backupDuringRestartCheck)
+	If GUICtrlRead($gui_backupDuringRestartCheck) = $GUI_CHECKED Then
+		$cfg_backupDuringRestart = "True"
+	ElseIf GUICtrlRead($gui_backupDuringRestartCheck) = $GUI_UNCHECKED Then
+		$cfg_backupDuringRestart = "False"
+	EndIf
 	IniWrite($settingsFile, "autoRestart", "backupDuringRestart", $cfg_backupDuringRestart)
 
 	$cfg_autoRestartInterval = GUICtrlRead($gui_autoRestartTimeInput)
@@ -245,7 +255,9 @@ Func saveConf()
 
 	$cfg_backupsDir = GUICtrlRead($gui_bdsLogsDirInput)
 	IniWrite($settingsFile, "dirs", "logsDir", $cfg_backupsDir)
-EndFunc
+
+	logWrite(0, "Settings Save Complete")
+EndFunc   ;==>saveConf
 
 ;Functions (BDS Config) #########################################################################
 
@@ -298,7 +310,7 @@ Func ScheduledActions()
 			$currentTime = @HOUR
 			For $i = 1 To $times[0]
 				If $currentTime = $times[$i] Then
-					if $cfg_BackupDuringRestart = "True" Then
+					if $cfg_backupDuringRestart = "True" Then
 						logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
 						stopServer()
 						backupServer()
@@ -544,7 +556,7 @@ EndFunc   ;==>sendServerCommand
 ;EndIf
 
 If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License redownload
-	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt")		;Temp license until public
+	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
 	logWrite(0, "Re-downloaded license")
 EndIf
 
