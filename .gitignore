@@ -6,3 +6,5 @@ logs/
 BackUp/
 package.json
 dist
+Server Logs/*
+*.log

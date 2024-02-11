@@ -143,6 +143,8 @@ Func loadConf()
 	;~ logWrite(0, "Finished loading config"); cant use this bc logWrite calls loadConf
 EndFunc   ;==>loadConf
 
+loadConf()
+
 Func saveConf()
 	;logWrite(0, "Saving Settings"); cant use this bc logWrite calls saveConf
 
