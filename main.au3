@@ -72,7 +72,7 @@ Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 320,
 Global $gui_readmeBtn = GUICtrlCreateButton("Instructions And Credits", 24, 352, 235, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("ï¿½ UFO Studios 2024", 8, 400, 112, 17)
+Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 112, 17)
 GUICtrlSetCursor (-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)

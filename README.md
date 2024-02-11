@@ -15,7 +15,6 @@ bds-ui/
         bedrock_server.exe
         server.properties
         (and other BDS files)
-  
 ```
 
 ## Features
@@ -44,4 +43,4 @@ bds-ui/
 
 ## Credits
 - TheAlienDoctor & Niceygy: Main Devs
-- FoxyNoTail: For the original idea
+- FoxyNoTail: Inspired by his [MCBE play](https://foxynotail.com/tools/mcbe-play)
