@@ -32,11 +32,16 @@ bds-ui/
 
 - 🔴 Red: The Backup & Restart Settings. Note: Backup won't work without restart also being enabled
 - 🟠 Orange: The time (in 24H) that BDS-UI will Restart/Backup. This is ignored if `Auto Restarts` is disabled
-- 🟢 Green: The file paths. We reccomend having them in the same folder (`D:/TAD/bds-ui` in the image, for example) for ease of use, but this is not needed
+- 🟢 Green: The file paths. We recommend having them in the same folder (`D:/TAD/bds-ui` in the image, for example) for ease of use, but this is not needed
 - 🔵 Blue: About. Shows info about your version of BDS-UI
 - 🟣 Purple: Save settings button. Make sure you save before leaving the tab!
 
 ## Troubleshooting
 - Q: My PC says this is a virus! A: Yup, that's because not many people have downloaded this exe, so windows (amongst others) don't yet trust it. The code is open source on Github, and you're welcome to check it!
 - Q: It can't find (BDS, server.properties, ect) A: Check that the folder in settings matches the one with BDS in it, and restart BDS-UI.
+- Q: Where can I get help? A: You can join our [Discord](https://thealiendoctor.com/r/Discord)! Make sure you have uploaded the logs to [pastebin](https://pastebin.com) or similar, so we can help you better.
 
+
+## Credits
+- TheAlienDoctor & Niceygy: Main Devs
+- FoxyNoTail: For the original idea
