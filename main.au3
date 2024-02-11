@@ -26,7 +26,7 @@ Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 610, 421, 925, 468)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 610, 421, 835, 397)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
@@ -64,11 +64,12 @@ Global $gui_bdsLogsDirInput = GUICtrlCreateInput("", 112, 192, 473, 21)
 Global $gui_backupsDirTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
 Global $gui_backupsDirInput = GUICtrlCreateInput("", 104, 224, 481, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 264, 257, 97)
+Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 264, 257, 121)
 Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 292, 119, 17)
 Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 152, 320, 107, 25)
 Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 152, 288, 107, 25)
 Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 320, 115, 25)
+Global $gui_readmeBtn = GUICtrlCreateButton("Instructions And Credits", 24, 352, 235, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("ï¿½ UFO Studios 2024", 8, 400, 112, 17)
@@ -619,6 +620,9 @@ While 1
 
 		Case $gui_discordBtn
 			ShellExecute("https://TheAlienDoctor.com/r/Discord")
+		
+		Case $gui_readmeBtn
+			ShellExecute("https://github.com/ufo-studios/bds-ui/blob/main/README.md")
 
 	EndSwitch
 WEnd
