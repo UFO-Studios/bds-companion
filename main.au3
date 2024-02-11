@@ -354,15 +354,19 @@ logWrite(0, "Scheduled actions started Next run in 60s.")
 ;Functions (Misc) ##################################################################################
 
 Func exitScript()
-	;If $BDS_process = null Then             ;if everything goes pear-shaped it will shoot it when closed
-	;	logWrite(0, "BDS process is closed. Exited main loop")
-	;ElseIf BDS proccess not null 																		Nicey please do this bit because I'm not entirely sure how it works xD
-	;	logWrite(0, "BDS process is still running. Closing BDS process...")
-	;	If ProcessExists($BDS_process) Then
-	;		logWrite(0, "BDS Process closed. Exited main loop.")
-	;		ProcessClose($BDS_process)
-	;	endif
-	;endif
+	logWrite(0, "Exiting script...")
+	AdlibUnRegister("ScheduledActions")
+	If $BDS_process = Null then ;stopServer has closed it properly
+		logWrite(0, "BDS Process isn't running. Closing script")
+	ElseIf ProcessExists($BDS_process) Then
+		logWrite(0, "BDS Process is still running. Requesting for windows to kill process")
+		ProcessClose($BDS_process)
+		$serverRunning = False
+		AdlibUnRegister("updateConsole")
+		logWrite(0, "BDS Process killed. Closing script")		
+	Else
+		logWrite(0, "BDS Process is not running. Closing script")
+	endif
 	FileOpen($logDir & "\log.latest", 1)
 	logWrite(0, "###################################################################")
 	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
