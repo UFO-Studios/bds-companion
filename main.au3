@@ -96,7 +96,7 @@ Global $BDS_process = null
 ;Functions (Config) #############################################################################
 
 Func loadConf()
-	logWrite(0, "Loading config")
+	;logWrite(0, "Loading config"); cant use this bc logWrite calls loadConf
 
 	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
 	If $cfg_autoRestart = "True" Then
@@ -140,11 +140,11 @@ Func loadConf()
 	GUICtrlSetData($gui_backupsDirInput, $cfg_backupsDir)
 
 	saveConf()
-	logWrite(0, "Finished loading config")
+	;~ logWrite(0, "Finished loading config"); cant use this bc logWrite calls loadConf
 EndFunc   ;==>loadConf
 
 Func saveConf()
-	logWrite(0, "Saving Settings")
+	;logWrite(0, "Saving Settings"); cant use this bc logWrite calls saveConf
 
 	If GUICtrlRead($gui_autoRestartCheck) = $GUI_CHECKED Then
 		$cfg_autoRestart = "True"
@@ -169,7 +169,7 @@ Func saveConf()
 	$cfg_backupsDir = GUICtrlRead($gui_bdsLogsDirInput)
 	IniWrite($settingsFile, "dirs", "logsDir", $cfg_backupsDir)
 
-	logWrite(0, "Settings Save Complete")
+	;~ logWrite(0, "Settings Save Complete") ;cant use this bc logWrite calls saveConf
 EndFunc   ;==>saveConf
 
 ;Functions (Logging) ############################################################################
