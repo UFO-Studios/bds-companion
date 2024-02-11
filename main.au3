@@ -87,99 +87,11 @@ GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
-Global $backupDir = @ScriptDir & "\backups"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
-Global $logDir = @ScriptDir & "\logs"
-Global $BDSlogDir = @ScriptDir & "\logs\bds"
-
-;Functions (Logging) ############################################################################
-
-Func createLog()
-	If FileExists($logDir & "\latest.log") Then
-		FileMove($logDir & "\log.latest", $logDir & "\log.old")
-	EndIf
-
-	If FileExists($logDir) Then ;If directory exists then begin writing logs
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
-	ElseIf FileExists($logDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
-		DirCreate($logDir)
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
-		logWrite(0, "Created logging directory!")
-	EndIf
-EndFunc   ;==>createLog
-
-Func logWrite($spaces, $content)
-	If $spaces = 1 Then ;For adding spaces around the content written to the log
-		FileOpen($logDir & "\log.latest", 1)
-		FileWrite($logDir & "\log.latest", @CRLF)
-		FileClose($logDir & "\log.latest")
-	ElseIf $spaces = 2 Then
-		FileOpen($logDir & "\log.latest", 1)
-		FileWrite($logDir & "\log.latest", @CRLF)
-		FileClose($logDir & "\log.latest")
-	EndIf
-
-	FileOpen($logDir & "\log.latest", 1)
-	FileWrite($logDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
-	FileClose($logDir & "\log.latest")
-
-	If $spaces = 1 Then
-		FileOpen($logDir & "\log.latest", 1)
-		FileWrite($logDir & "\log.latest", @CRLF)
-		FileClose($logDir & "\log.latest")
-	ElseIf $spaces = 3 Then
-		FileOpen($logDir & "\log.latest", 1)
-		FileWrite($logDir & "\log.latest", @CRLF)
-		FileClose($logDir & "\log.latest")
-	EndIf
-EndFunc   ;==>logWrite
 
 
-Func BDScreateLog()
-	If FileExists($BDSlogDir & "\latest.log") Then
-		FileMove($BDSlogDir & "\log.latest", $BDSlogDir & "\log.old")
-	EndIf
-
-	If FileExists($BDSlogDir) Then ;If directory exists then begin writing logs
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
-	ElseIf FileExists($BDSlogDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
-		DirCreate($BDSlogDir)
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
-		logWrite(0, "Created logging directory!")
-	EndIf
-EndFunc   ;==>BDScreateLog
-
-Func BDSlogWrite($spaces, $content)
-	If $spaces = 1 Then ;For adding spaces around the content written to the log
-		FileOpen($BDSlogDir & "\log.latest", 1)
-		FileWrite($BDSlogDir & "\log.latest", @CRLF)
-		FileClose($BDSlogDir & "\log.latest")
-	ElseIf $spaces = 2 Then
-		FileOpen($BDSlogDir & "\log.latest", 1)
-		FileWrite($BDSlogDir & "\log.latest", @CRLF)
-		FileClose($BDSlogDir & "\log.latest")
-	EndIf
-
-	FileOpen($BDSlogDir & "\log.latest", 1)
-	FileWrite($BDSlogDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
-	FileClose($BDSlogDir & "\log.latest")
-
-	If $spaces = 1 Then
-		FileOpen($BDSlogDir & "\log.latest", 1)
-		FileWrite($BDSlogDir & "\log.latest", @CRLF)
-		FileClose($BDSlogDir & "\log.latest")
-	ElseIf $spaces = 3 Then
-		FileOpen($BDSlogDir & "\log.latest", 1)
-		FileWrite($BDSlogDir & "\log.latest", @CRLF)
-		FileClose($BDSlogDir & "\log.latest")
-	EndIf
-EndFunc   ;==>BDSlogWrite
 
 ;Functions (Config) #############################################################################
 
@@ -259,6 +171,93 @@ Func saveConf()
 
 	logWrite(0, "Settings Save Complete")
 EndFunc   ;==>saveConf
+
+;Functions (Logging) ############################################################################
+
+Func createLog()
+	If FileExists($cfg_logsDir & "\latest.log") Then
+		FileMove($cfg_LogsDir & "\log.latest", $cfg_LogsDir & "\log.old")
+	EndIf
+
+	If FileExists($cfg_LogsDir) Then ;If directory exists then begin writing logs
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+	ElseIf FileExists($cfg_LogsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
+		DirCreate($cfg_LogsDir)
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+		logWrite(0, "Created logging directory!")
+	EndIf
+EndFunc   ;==>createLog
+
+Func logWrite($spaces, $content)
+	If $spaces = 1 Then ;For adding spaces around the content written to the log
+		FileOpen($cfg_LogsDir & "\log.latest", 1)
+		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_LogsDir & "\log.latest")
+	ElseIf $spaces = 2 Then
+		FileOpen($cfg_LogsDir & "\log.latest", 1)
+		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_LogsDir & "\log.latest")
+	EndIf
+
+	FileOpen($cfg_LogsDir & "\log.latest", 1)
+	FileWrite($cfg_LogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileClose($cfg_LogsDir & "\log.latest")
+
+	If $spaces = 1 Then
+		FileOpen($cfg_LogsDir & "\log.latest", 1)
+		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_LogsDir & "\log.latest")
+	ElseIf $spaces = 3 Then
+		FileOpen($cfg_LogsDir & "\log.latest", 1)
+		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_LogsDir & "\log.latest")
+	EndIf
+EndFunc   ;==>logWrite
+
+
+Func BDScreateLog()
+	If FileExists($cfg_logsDir & "\latest.log") Then
+		FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log.old")
+	EndIf
+
+	If FileExists($cfg_bdsLogsDir) Then ;If directory exists then begin writing logs
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+	ElseIf FileExists($cfg_bdsLogsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
+		DirCreate($cfg_bdsLogsDir)
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+		logWrite(0, "Created logging directory!")
+	EndIf
+EndFunc   ;==>BDScreateLog
+
+Func BDSlogWrite($spaces, $content)
+	If $spaces = 1 Then ;For adding spaces around the content written to the log
+		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_bdsLogsDir & "\log.latest")
+	ElseIf $spaces = 2 Then
+		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_bdsLogsDir & "\log.latest")
+	EndIf
+
+	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileClose($cfg_bdsLogsDir & "\log.latest")
+
+	If $spaces = 1 Then
+		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_bdsLogsDir & "\log.latest")
+	ElseIf $spaces = 3 Then
+		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
+		FileClose($cfg_bdsLogsDir & "\log.latest")
+	EndIf
+EndFunc   ;==>BDSlogWrite
 
 ;Functions (BDS Config) #########################################################################
 
@@ -368,10 +367,10 @@ Func exitScript()
 	Else
 		logWrite(0, "BDS Process is not running. Closing script")
 	endif
-	FileOpen($logDir & "\log.latest", 1)
+	FileOpen($cfg_LogsDir & "\log.latest", 1)
 	logWrite(0, "###################################################################")
 	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-	FileMove($logDir & "\log.latest", $logDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+	FileMove($cfg_LogsDir & "\log.latest", $cfg_LogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
 
 	DirRemove(@ScriptDir & "\temp\", 1)
 EndFunc   ;==>exitScript
@@ -400,7 +399,7 @@ EndFunc   ;==>checkForBDS
 
 Func DelEmptyDirs()
 	logWrite(0, "Deleting empty directories...")
-	$cmd = "ROBOCOPY BDS BDS /S /MOVE"    ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
+	$cmd = "ROBOCOPY "& $cfg_bdsDir & " "& $cfg_bdsDir &" /S /MOVE"    ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Checking server files...)")
 	logWrite(0, "Running ROBOCOPY command to delete empty directories")
 	RunWait($cmd, @ScriptDir, @SW_HIDE)
@@ -524,19 +523,19 @@ Func backupServer()
 		logWrite(0, "BDS is running. Pre-processing complete.")
 	Endif
 	DelEmptyDirs()
-	Local $ZIPname = $backupDir & "\Backup-" & $backupDateTime & ".zip"    ; E.G: D:/BDS_UI/Backups/Backup-10.01.24.zip
+	Local $ZIPname = $cfg_backupsDir & "\Backup-" & $backupDateTime & ".zip"
 	;does backup dir exist?
-	If FileExists($backupDir) = 0 Then
-		DirCreate($backupDir)
-		logWrite(0, "Backup directory created at " & $backupDir)
+	If FileExists($cfg_backupsDir) = 0 Then
+		DirCreate($cfg_backupsDir)
+		logWrite(0, "Backup directory created at " & $cfg_backupsDir)
 	Else
-		logWrite(0, "Backup directory exists at " & $backupDir)
+		logWrite(0, "Backup directory exists at " & $cfg_backupsDir)
 	endif
 	_Zip_Create($ZIPname)
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files...)")
-	_Zip_AddFolder($ZIPname, @ScriptDir & "\BDS", 0)    ; see CopyToTemp()
+	_Zip_AddFolder($ZIPname, $cfg_bdsDir, 0)
 	StdinWrite($BDS_process, "save resume" & @CRLF)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
@@ -560,7 +559,7 @@ EndFunc   ;==>sendServerCommand
 ;	MsgBox(0, $guiTitle, "Auto update check is disabled - this is not recommended!")
 ;EndIf
 
-If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License redownload
+If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
 	logWrite(0, "Re-downloaded license")
 EndIf
