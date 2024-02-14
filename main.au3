@@ -482,6 +482,10 @@ Func updateConsole() ;not logging for this one
 				BDSlogWrite(0, $line)
 			EndIf
 		EndIf
+	Else
+		logWrite(0, "BDS process seems to have crashed. Restarting it now...")
+		AdlibUnRegister("updateConsole")
+		startServer()
 	EndIf
 EndFunc   ;==>updateConsole
 
