@@ -285,12 +285,12 @@ Func ReplaceFileContents($sFilePath, $sNewContent)
 EndFunc   ;==>ReplaceFileContents
 
 Func LoadBDSConf()
-	Local $BDSconfFile = $bdsFolder & "/server.properties"
+	Local $BDSconfFile = $cfg_bdsDir & "/server.properties"
 	logWrite(0, "Loading BDS conf file from " & $BDSconfFile & "...")
 	$FileOpened = FileRead($BDSconfFile)
 	If @error Then
 		logWrite(0, "Error opening file. Error code: " & @error)
-		MsgBox(0, $guiTitle, "Error: cannot open server.properties! " & @CRLF & " is it in " & $bdsFolder & "?" & @CRLF & "Error code: " & @error)
+		MsgBox(0, $guiTitle, "Error: cannot open server.properties! " & @CRLF & " is it in " & $cfg_bdsDir & "?" & @CRLF & "Error code: " & @error)
 		GUICtrlSetData($gui_ServerPropertiesEdit, "Error opening file! Is it in  " & $bdsFolder & "? (Code: " & @error & ")")
 	else
 		logWrite(0, "File opened successfully.")
@@ -299,7 +299,7 @@ Func LoadBDSConf()
 EndFunc   ;==>LoadBDSConf
 
 Func SaveBDSConf()
-	Local $BDSconfFile = $bdsFolder & "/server.properties"
+	Local $BDSconfFile = $cfg_bdsDir & "/server.properties"
 	local $NewFileValue = GUICtrlRead($gui_ServerPropertiesEdit)
 	logWrite(0, "Saved BDS conf file to " & $BDSconfFile)
 	ReplaceFileContents($BDSconfFile, $NewFileValue)
