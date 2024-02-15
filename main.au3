@@ -29,7 +29,7 @@ Global Const $guiTitle = "BDS UI - V1.0.0"
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 610, 421, 835, 397)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 593, 393)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
-Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
+Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 160, 17)
 Global $gui_commandInput = GUICtrlCreateInput("", 16, 320, 481, 21)
 Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 320, 91, 25)
 Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 352, 75, 33)
@@ -86,11 +86,11 @@ GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 
 Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
-Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ' & '"' & $bdsFolder & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
+Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ';We use cmd.exe otherwise bds freaks out. idk why
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
-
+Global $RestartCheckAttempts = 0
 
 
 ;Functions (Config) #############################################################################
@@ -116,9 +116,10 @@ Func loadConf()
 	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartInterval)
 
 	If IniRead($settingsFile, "dirs", "bdsDir", "") = "" Then ;For first time ran
-		IniWrite($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
+		IniWrite($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS") 
 	EndIf
 	Global $cfg_bdsDir = IniRead($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
+	Global $cfg_BDSrunCMD = $bdsExeRun & $cfg_bdsDir & "\bedrock_server.exe"
 	GUICtrlSetData($gui_bdsDirInput, $cfg_bdsDir)
 
 	If IniRead($settingsFile, "dirs", "logsDir", "") = "" Then ;For first time ran
@@ -311,6 +312,12 @@ Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
 	$done = False
 	if @MIN = 0 then ; so it runs once per set hour, not once per minute in the set hour xD
+		logWrite(0, "Sending 5 minute warning for server restart!")
+		StdinWrite($BDS_process, "say Server restart in 5 minutes!" & @CRLF)
+		Sleep(4*60*1000);4m
+		StdinWrite($BDS_process, "say Server restart in 1 minute!" & @CRLF)
+		Sleep(60*1000);1m
+		StdinWrite($BDS_process, "say Server restarting now!" & @CRLF)
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
 		If $cfg_autoRestart = "True" Then
@@ -347,6 +354,7 @@ Func ScheduledActions()
 		endif
 		logWrite(0, "Scheduled actions completed.")
 	else
+	
 		logWrite(0, "@MIN isn't 0. Skipping scheduled actions.")
 	endif
 EndFunc   ;==>ScheduledActions
@@ -384,11 +392,11 @@ Func exitScript()
 EndFunc   ;==>exitScript
 
 Func checkForBDS()
-	If FileExists($bdsExe) Then
+	If FileExists($cfg_bdsDir&"/bedrock_server.exe") Then
 		logWrite(0, "BDS exe found, proceeding with startup")
 	Else
 		logWrite(0, "BDS file not found, proceed?")
-		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS file. Please make sure the below directory is correct." & @CRLF & $bdsExe)
+		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS file. Please make sure the below directory is correct." & @CRLF & $cfg_bdsDir&"/bedrock_server.exe")
 
 		If $msgBox = 2 Then ;Cancel
 			logWrite(0, "Cancel")
@@ -460,7 +468,7 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer()
 	logWrite(0, "Starting BDS...")
-	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
+	Global $BDS_process = Run($cfg_BDSrunCMD, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
@@ -483,9 +491,14 @@ Func updateConsole() ;not logging for this one
 			EndIf
 		EndIf
 	Else
-		logWrite(0, "BDS process seems to have crashed. Restarting it now...")
-		AdlibUnRegister("updateConsole")
-		startServer()
+		logWrite(0, "BDS process seems to have crashed. Attempt " & $RestartCheckAttempts & " of 3")
+		$RestartCheckAttempts = $RestartCheckAttempts + 1
+		if $RestartCheckAttempts > 5 Then
+			logWrite(0, "BDS process has crashed 3 times. Restarting server.")
+			AdlibUnRegister("updateConsole")
+			startServer()
+			$RestartCheckAttempts = 0
+		endif
 	EndIf
 EndFunc   ;==>updateConsole
 
