@@ -86,7 +86,6 @@ GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 
 Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
-Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ';We use cmd.exe otherwise bds freaks out. idk why
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
@@ -119,7 +118,7 @@ Func loadConf()
 		IniWrite($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS") 
 	EndIf
 	Global $cfg_bdsDir = IniRead($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
-	Global $cfg_BDSrunCMD = $bdsExeRun & $cfg_bdsDir & "\bedrock_server.exe"
+	Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ' & '"' & $cfg_bdsDir & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
 	GUICtrlSetData($gui_bdsDirInput, $cfg_bdsDir)
 
 	If IniRead($settingsFile, "dirs", "logsDir", "") = "" Then ;For first time ran
@@ -468,7 +467,7 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer()
 	logWrite(0, "Starting BDS...")
-	Global $BDS_process = Run($cfg_BDSrunCMD, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
+	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
