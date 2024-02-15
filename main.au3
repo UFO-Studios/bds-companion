@@ -322,7 +322,7 @@ Func ScheduledActions()
 						logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
 						stopServer()
 						backupServer()
-						RestartServer()
+						startServer()
 						$done = True
 					Else
 						logWrite(0, "Auto restart time reached. Restarting server...")
