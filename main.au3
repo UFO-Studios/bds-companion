@@ -224,6 +224,7 @@ Func logWrite($spaces, $content)
 	EndIf
 EndFunc   ;==>logWrite
 
+;Functions (Server Logging) #######################################################################
 
 Func BDScreateLog()
 	If FileExists($cfg_logsDir & "\latest.log") Then
@@ -241,30 +242,13 @@ Func BDScreateLog()
 	EndIf
 EndFunc   ;==>BDScreateLog
 
-Func BDSlogWrite($spaces, $content)
-	If $spaces = 1 Then ;For adding spaces around the content written to the log
-		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_bdsLogsDir & "\log.latest")
-	ElseIf $spaces = 2 Then
-		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_bdsLogsDir & "\log.latest")
-	EndIf
+Func outputToConsole($content)
+
+	GUICtrlSetData($gui_console, "[BDS-UI]: " & $content & @CRLF, 1)
 
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF)
 	FileClose($cfg_bdsLogsDir & "\log.latest")
-
-	If $spaces = 1 Then
-		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_bdsLogsDir & "\log.latest")
-	ElseIf $spaces = 3 Then
-		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-		FileWrite($cfg_bdsLogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_bdsLogsDir & "\log.latest")
-	EndIf
 EndFunc   ;==>BDSlogWrite
 
 ;Functions (BDS Config) #########################################################################
@@ -470,7 +454,7 @@ Func startServer()
 	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
-	GUICtrlSetData($gui_console, "[BDS-UI]: Server Startup Triggered. BDS PID is " & $BDS_process & @CRLF, 1)
+	outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	BDScreateLog()
@@ -486,7 +470,9 @@ Func updateConsole() ;not logging for this one
 		Else
 			GUICtrlSetData($gui_console, $line, 1)
 			if $line <> "" Then
-				BDSlogWrite(0, $line)
+	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+	FileWrite($cfg_bdsLogsDir & "\log.latest", $line)
+	FileClose($cfg_bdsLogsDir & "\log.latest")
 			EndIf
 		EndIf
 	Else
@@ -503,7 +489,7 @@ EndFunc   ;==>updateConsole
 
 Func RestartServer()
 	logWrite(0, "Restarting server...")
-	GUICtrlSetData($gui_console, "[BDS-UI]: Server Restart Triggered" & @CRLF, 1)
+	outputToConsole("Server Restart Triggered")
 	stopServer()
 	startServer()
 	logWrite(0, "Server restarted.")
@@ -511,8 +497,7 @@ EndFunc   ;==>RestartServer
 
 Func stopServer()
 	logWrite(0, "Stopping server...")
-	BDSlogWrite(0, "[BDS-UI]: Stopping server...")
-	GUICtrlSetData($gui_console, "[BDS-UI]: Server Stop Triggered" & @CRLF, 1)
+	outputToConsole("Server Stop Triggered")
 	StdinWrite($BDS_process, "stop" & @CRLF)
 	Sleep(1000)     ; Wait for a while to give the process time to read the input
 	StdinWrite($BDS_process)     ; Close the stream
@@ -522,19 +507,26 @@ Func stopServer()
 	If ProcessExists($BDS_process) Then
 		logWrite(0, "Failed to stop server. PID is still in use, although the process status is unknown")
 		MsgBox(0, $guiTitle, "Failed to stop server")
-		BDSlogWrite(0, "[BDS-UI]: Failed to stop server. Process is still running, but maybe closing up. Maybe try again?")
+		outputToConsole("Failed to stop server. Process is still running, but maybe closing up. Maybe try again?")
 	else
-		GUICtrlSetData($gui_console, @CRLF & "[BDS-UI]: Server Offline" & @CRLF)
+		outputToConsole("Server Offline")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
+
+		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+		logWrite(0, "###################################################################")
+		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+	
+		DirRemove(@ScriptDir & "\temp\", 1)
 	endif
 	Global $BDS_process = Null
 EndFunc   ;==>stopServer
 
 Func backupServer()
 	logWrite(0, "Backing up server...")
-	GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Started" & @CRLF, 1)
+	outputToConsole("Server Backup Started")
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_ORANGE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing Up (Pre Processing...)")
 	$backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
@@ -563,14 +555,14 @@ Func backupServer()
 	StdinWrite($BDS_process, "save resume" & @CRLF)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
-	GUICtrlSetData($gui_console, "[BDS-UI]: Server Backup Completed" & @CRLF, 1)
+	outputToConsole("Server Backup Completed")
 	logWrite(0, "Backup complete. BDS world files released.")
 Endfunc   ;==>backupServer
 
 Func sendServerCommand()
 	$cmd = GUICtrlRead($gui_commandInput)     ;cmd input box
 	StdinWrite($BDS_process, $cmd & @CRLF)
-	GUICtrlSetData($gui_console, "[BDS-UI]: Command Sent: '" & $cmd & "'" & @CRLF, 1)
+	outputToConsole("Command Sent: '" & $cmd & "'")
 	GUICtrlSetData($gui_commandInput, "")
 	Return
 EndFunc   ;==>sendServerCommand
