@@ -345,6 +345,19 @@ logWrite(0, "Scheduled actions started Next run in 60s.")
 
 ;Functions (Misc) ##################################################################################
 
+Func startup()
+
+GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
+GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
+GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+
+createLog()
+checkForBDS()
+LoadBDSConf()
+loadConf()
+logWrite(0, "Startup functions complete, starting main loop")
+EndFunc
+
 Func exitScript()
 	logWrite(0, "Exiting script...")
 	AdlibUnRegister("ScheduledActions")
@@ -452,6 +465,12 @@ Func startServer()
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	BDScreateLog()
 	logWrite(0, "Server started. BDS PID is " & $BDS_process)
+
+	GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
+	GUICtrlSetState($gui_killServerBtn, $GUI_ENABLE)
+	GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
+
+	GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
 EndFunc   ;==>startServer
 
 Func updateConsole() ;not logging for this one
@@ -507,6 +526,12 @@ Func stopServer()
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
 
+		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
+		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
+		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+	
+		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
+
 		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 		logWrite(0, "###################################################################")
 		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
@@ -521,12 +546,29 @@ Func killServer()
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
 		ProcessClose($BDS_process)
-		logWrite(0, "Server Killed")
+
 		$serverRunning = False
+		$BDS_process = Null
+
+		outputToConsole("Server Offline")
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
+
+		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
+		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
+		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+	
+		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
+
+		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+		logWrite(0, "###################################################################")
+		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+
+		logWrite(0, "Server Killed")
 	ElseIf $msgBox = 7 Then ;No
 		logWrite(0, "Aborted server killing. It will live for another day!")
 	EndIf
-	$BDS_process = Null
 EndFunc   ;==>killServer
 
 Func backupServer()
@@ -585,12 +627,7 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-createLog()
-checkForBDS()
-LoadBDSConf()
-loadConf()
-logWrite(0, "Startup functions complete, starting main loop")
-
+startUp()
 
 While 1
 	$nMsg = GUIGetMsg()
