@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <object type="TAForm" name="gui_mainWindow">
 	<properties>
-		<property name="Left" vt="Int16">835</property>
-		<property name="Top" vt="Int16">397</property>
-		<property name="Width" vt="Int16">625</property>
-		<property name="Height" vt="Int16">459</property>
+		<property name="Left" vt="Int16">814</property>
+		<property name="Top" vt="Int16">369</property>
+		<property name="Width" vt="Int16">738</property>
+		<property name="Height" vt="Int16">544</property>
 		<property name="Caption" vt="String">&quot; &amp; $guiTitle &amp; &quot;</property>
 		<property name="Color" vt="Ident">clBtnFace</property>
 		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -34,8 +34,8 @@
 			<properties>
 				<property name="Left" vt="Int8">8</property>
 				<property name="Top" vt="Int8">0</property>
-				<property name="Width" vt="Int16">593</property>
-				<property name="Height" vt="Int16">393</property>
+				<property name="Width" vt="Int16">705</property>
+				<property name="Height" vt="Int16">481</property>
 				<property name="ActivePage" vt="Ident">gui_serverCtrlTab</property>
 				<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
 				<property name="Font.Color" vt="Ident">clWindowText</property>
@@ -79,8 +79,8 @@
 						<object type="TAInput" name="gui_commandInput">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int16">295</property>
-								<property name="Width" vt="Int16">481</property>
+								<property name="Top" vt="Int16">383</property>
+								<property name="Width" vt="Int16">585</property>
 								<property name="Height" vt="Int8">21</property>
 								<property name="TabOrder" vt="Int8">1</property>
 								<property name="OnChange" vt="String">gui_commandInputChange</property>
@@ -92,8 +92,8 @@
 						</object>
 						<object type="TAButton" name="gui_sendCmdBtn">
 							<properties>
-								<property name="Left" vt="Int16">492</property>
-								<property name="Top" vt="Int16">295</property>
+								<property name="Left" vt="Int16">596</property>
+								<property name="Top" vt="Int16">382</property>
 								<property name="Width" vt="Int8">91</property>
 								<property name="Height" vt="Int8">25</property>
 								<property name="Caption" vt="String">Send Command</property>
@@ -108,7 +108,7 @@
 						<object type="TAButton" name="gui_startServerBtn">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int16">327</property>
+								<property name="Top" vt="Int16">415</property>
 								<property name="Width" vt="Int8">75</property>
 								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Start Server</property>
@@ -123,7 +123,7 @@
 						<object type="TAButton" name="gui_stopServerBtn">
 							<properties>
 								<property name="Left" vt="Int8">84</property>
-								<property name="Top" vt="Int16">327</property>
+								<property name="Top" vt="Int16">415</property>
 								<property name="Width" vt="Int8">75</property>
 								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Stop Server</property>
@@ -137,8 +137,8 @@
 						</object>
 						<object type="TAButton" name="gui_restartBtn">
 							<properties>
-								<property name="Left" vt="Int16">164</property>
-								<property name="Top" vt="Int16">327</property>
+								<property name="Left" vt="Int16">244</property>
+								<property name="Top" vt="Int16">415</property>
 								<property name="Width" vt="Int8">75</property>
 								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Restart Server</property>
@@ -152,8 +152,8 @@
 						</object>
 						<object type="TAButton" name="gui_backupBtn">
 							<properties>
-								<property name="Left" vt="Int16">244</property>
-								<property name="Top" vt="Int16">327</property>
+								<property name="Left" vt="Int16">324</property>
+								<property name="Top" vt="Int16">415</property>
 								<property name="Width" vt="Int8">83</property>
 								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Backup Server</property>
@@ -184,17 +184,27 @@
 							<properties>
 								<property name="Left" vt="Int8">4</property>
 								<property name="Top" vt="Int8">31</property>
-								<property name="Width" vt="Int16">577</property>
-								<property name="Height" vt="Int16">257</property>
-								<property name="Lines.Strings" vt="List">
-									<list>
-										<li vt="String">[BDS-UI]: Server Offline</li>
-									</list>
-								</property>
+								<property name="Width" vt="Int16">689</property>
+								<property name="Height" vt="Int16">345</property>
 								<property name="TabOrder" vt="Int8">8</property>
 								<property name="CtrlStyle" vt="Int32">1345525956</property>
 								<property name="CtrlExStyle" vt="Int16">512</property>
 								<property name="Resizing" vt="Set"/>
+							</properties>
+							<components/>
+						</object>
+						<object type="TAButton" name="gui_killServerBtn">
+							<properties>
+								<property name="Left" vt="Int16">165</property>
+								<property name="Top" vt="Int16">415</property>
+								<property name="Width" vt="Int8">75</property>
+								<property name="Height" vt="Int8">33</property>
+								<property name="Caption" vt="String">Kill Server</property>
+								<property name="TabOrder" vt="Int8">9</property>
+								<property name="Color" vt="Ident">clBtnFace</property>
+								<property name="CtrlStyle" vt="Int32">1342373888</property>
+								<property name="CtrlExStyle" vt="Int8">0</property>
+								<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
 							</properties>
 							<components/>
 						</object>
@@ -214,10 +224,10 @@
 					<components>
 						<object type="TAGroup" name="gui_ServerPropertiesGroup">
 							<properties>
-								<property name="Left" vt="Int8">20</property>
+								<property name="Left" vt="Int8">4</property>
 								<property name="Top" vt="Int8">7</property>
-								<property name="Width" vt="Int16">553</property>
-								<property name="Height" vt="Int16">353</property>
+								<property name="Width" vt="Int16">689</property>
+								<property name="Height" vt="Int16">441</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">Server.Properties</property>
@@ -229,8 +239,8 @@
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int16">529</property>
-										<property name="Height" vt="Int16">281</property>
+										<property name="Width" vt="Int16">673</property>
+										<property name="Height" vt="Int16">377</property>
 										<property name="Lines.Strings" vt="List">
 											<list>
 												<li vt="String">gui_ServerPropertiesEdit</li>
@@ -245,8 +255,8 @@
 								</object>
 								<object type="TAButton" name="gui_serverPropertiesSaveBtn">
 									<properties>
-										<property name="Left" vt="Int16">464</property>
-										<property name="Top" vt="Int16">312</property>
+										<property name="Left" vt="Int16">608</property>
+										<property name="Top" vt="Int16">408</property>
 										<property name="Width" vt="Int8">75</property>
 										<property name="Height" vt="Int8">25</property>
 										<property name="Caption" vt="String">Save</property>
@@ -278,7 +288,7 @@
 							<properties>
 								<property name="Left" vt="Int8">4</property>
 								<property name="Top" vt="Int8">4</property>
-								<property name="Width" vt="Int16">577</property>
+								<property name="Width" vt="Int16">689</property>
 								<property name="Height" vt="Int8">73</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -289,7 +299,7 @@
 							<components>
 								<object type="TAInput" name="gui_autoRestartTimeInput">
 									<properties>
-										<property name="Left" vt="Int16">317</property>
+										<property name="Left" vt="Int16">429</property>
 										<property name="Top" vt="Int8">19</property>
 										<property name="Width" vt="Int16">169</property>
 										<property name="Height" vt="Int8">21</property>
@@ -302,7 +312,7 @@
 								</object>
 								<object type="TALabel" name="gui_autoRestartTimeLabel">
 									<properties>
-										<property name="Left" vt="Int16">245</property>
+										<property name="Left" vt="Int16">357</property>
 										<property name="Top" vt="Int8">19</property>
 										<property name="Width" vt="Int8">72</property>
 										<property name="Height" vt="Int8">17</property>
@@ -345,7 +355,7 @@
 								</object>
 								<object type="TALabel" name="gui_autoRestartEgText">
 									<properties>
-										<property name="Left" vt="Int16">488</property>
+										<property name="Left" vt="Int16">600</property>
 										<property name="Top" vt="Int8">19</property>
 										<property name="Width" vt="Int8">79</property>
 										<property name="Height" vt="Int8">17</property>
@@ -362,8 +372,8 @@
 						</object>
 						<object type="TAButton" name="gui_saveSettingsBtn">
 							<properties>
-								<property name="Left" vt="Int16">476</property>
-								<property name="Top" vt="Int16">327</property>
+								<property name="Left" vt="Int16">588</property>
+								<property name="Top" vt="Int16">415</property>
 								<property name="Width" vt="Int8">107</property>
 								<property name="Height" vt="Int8">33</property>
 								<property name="Caption" vt="String">Save Settings</property>
@@ -378,8 +388,8 @@
 						<object type="TAGroup" name="gui_dirSettingGroup">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int8">79</property>
-								<property name="Width" vt="Int16">577</property>
+								<property name="Top" vt="Int8">87</property>
+								<property name="Width" vt="Int16">689</property>
 								<property name="Height" vt="Int16">153</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
@@ -392,7 +402,7 @@
 									<properties>
 										<property name="Left" vt="Int8">104</property>
 										<property name="Top" vt="Int8">24</property>
-										<property name="Width" vt="Int16">465</property>
+										<property name="Width" vt="Int16">577</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="TabOrder" vt="Int8">0</property>
 										<property name="CtrlStyle" vt="Int32">1342374016</property>
@@ -435,7 +445,7 @@
 									<properties>
 										<property name="Left" vt="Int8">72</property>
 										<property name="Top" vt="Int8">56</property>
-										<property name="Width" vt="Int16">497</property>
+										<property name="Width" vt="Int16">609</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="TabOrder" vt="Int8">3</property>
 										<property name="CtrlStyle" vt="Int32">1342374016</property>
@@ -463,7 +473,7 @@
 									<properties>
 										<property name="Left" vt="Int8">96</property>
 										<property name="Top" vt="Int8">88</property>
-										<property name="Width" vt="Int16">473</property>
+										<property name="Width" vt="Int16">585</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="TabOrder" vt="Int8">5</property>
 										<property name="CtrlStyle" vt="Int32">1342374016</property>
@@ -491,7 +501,7 @@
 									<properties>
 										<property name="Left" vt="Int8">88</property>
 										<property name="Top" vt="Int8">120</property>
-										<property name="Width" vt="Int16">481</property>
+										<property name="Width" vt="Int16">593</property>
 										<property name="Height" vt="Int8">21</property>
 										<property name="TabOrder" vt="Int8">7</property>
 										<property name="CtrlStyle" vt="Int32">1342374016</property>
@@ -505,9 +515,9 @@
 						<object type="TAGroup" name="gui_aboutGroup">
 							<properties>
 								<property name="Left" vt="Int8">4</property>
-								<property name="Top" vt="Int16">239</property>
+								<property name="Top" vt="Int16">327</property>
 								<property name="Width" vt="Int16">257</property>
-								<property name="Height" vt="Int8">97</property>
+								<property name="Height" vt="Int8">121</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">About</property>
@@ -575,6 +585,21 @@
 									</properties>
 									<components/>
 								</object>
+								<object type="TAButton" name="gui_readmeBtn">
+									<properties>
+										<property name="Left" vt="Int8">8</property>
+										<property name="Top" vt="Int8">88</property>
+										<property name="Width" vt="Int16">243</property>
+										<property name="Height" vt="Int8">25</property>
+										<property name="Caption" vt="String">Instructions and Credits</property>
+										<property name="TabOrder" vt="Int8">4</property>
+										<property name="Color" vt="Ident">clBtnFace</property>
+										<property name="CtrlStyle" vt="Int32">1342373888</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
+									</properties>
+									<components/>
+								</object>
 							</components>
 						</object>
 					</components>
@@ -584,8 +609,8 @@
 		<object type="TALabel" name="gui_copyright">
 			<properties>
 				<property name="Left" vt="Int8">8</property>
-				<property name="Top" vt="Int16">400</property>
-				<property name="Width" vt="Int8">103</property>
+				<property name="Top" vt="Int16">488</property>
+				<property name="Width" vt="Int8">112</property>
 				<property name="Height" vt="Int8">17</property>
 				<property name="Cursor" vt="Ident">crHandPoint</property>
 				<property name="Caption" vt="UTF8String">� UFO Studios 2024</property>
@@ -599,8 +624,8 @@
 		</object>
 		<object type="TALabel" name="gui_versionNum">
 			<properties>
-				<property name="Left" vt="Int16">528</property>
-				<property name="Top" vt="Int16">400</property>
+				<property name="Left" vt="Int16">648</property>
+				<property name="Top" vt="Int16">488</property>
 				<property name="Width" vt="Int8">69</property>
 				<property name="Height" vt="Int8">17</property>
 				<property name="Caption" vt="String">Version: 1.0.0</property>
@@ -614,8 +639,8 @@
 		</object>
 		<object type="TALabel" name="gui_githubLabel">
 			<properties>
-				<property name="Left" vt="Int16">184</property>
-				<property name="Top" vt="Int16">400</property>
+				<property name="Left" vt="Int16">248</property>
+				<property name="Top" vt="Int16">488</property>
 				<property name="Width" vt="Int16">270</property>
 				<property name="Height" vt="Int8">17</property>
 				<property name="Cursor" vt="Ident">crHandPoint</property>

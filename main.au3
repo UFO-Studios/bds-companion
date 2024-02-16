@@ -26,60 +26,61 @@ Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
 #Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 610, 421, 835, 397)
-Global $gui_tabs = GUICtrlCreateTab(8, 0, 593, 393)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506, 814, 369)
+Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 481)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
-Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 160, 17)
-Global $gui_commandInput = GUICtrlCreateInput("", 16, 320, 481, 21)
-Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 504, 320, 91, 25)
-Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 352, 75, 33)
-Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 352, 75, 33)
-Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 176, 352, 75, 33)
-Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 256, 352, 83, 33)
+Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
+Global $gui_commandInput = GUICtrlCreateInput("", 16, 408, 585, 21)
+Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 608, 407, 91, 25)
+Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 440, 75, 33)
+Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
+Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
+Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 577, 257, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
-GUICtrlSetData(-1, "[BDS-UI]: Server Offline")
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
-Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 32, 32, 553, 353)
-Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 40, 56, 529, 281)
+Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 441)
+Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 24, 56, 673, 377)
 GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
-Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 496, 344, 75, 25)
+Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 624, 440, 75, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
-Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 577, 73)
-Global $gui_autoRestartTimeInput = GUICtrlCreateInput("", 333, 48, 169, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 261, 48, 72, 17)
+Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 689, 73)
+Global $gui_autoRestartTimeInput = GUICtrlCreateInput("", 445, 48, 169, 21)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 373, 48, 72, 17)
 Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 48, 129, 17)
 Global $gui_backupDuringRestartCheck = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
-Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 504, 48, 79, 17)
+Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 616, 48, 79, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 488, 352, 107, 33)
-Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 104, 577, 153)
-Global $gui_bdsDirInput = GUICtrlCreateInput("", 120, 128, 465, 21)
-Global $gui_bdsDirLabel = GUICtrlCreateLabel("BDS File Location:", 24, 128, 92, 17)
-Global $gui_logsDirLabel = GUICtrlCreateLabel("Logs Folder:", 24, 160, 62, 17)
-Global $gui_logsDirInput = GUICtrlCreateInput("", 88, 160, 497, 21)
-Global $gui_bdsLogsDirTitle = GUICtrlCreateLabel("BDS Logs Folder:", 24, 192, 87, 17)
-Global $gui_bdsLogsDirInput = GUICtrlCreateInput("", 112, 192, 473, 21)
-Global $gui_backupsDirTitle = GUICtrlCreateLabel("Backup Folder:", 24, 224, 76, 17)
-Global $gui_backupsDirInput = GUICtrlCreateInput("", 104, 224, 481, 21)
+Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 600, 440, 107, 33)
+Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 112, 689, 153)
+Global $gui_bdsDirInput = GUICtrlCreateInput("", 120, 136, 577, 21)
+Global $gui_bdsDirLabel = GUICtrlCreateLabel("BDS File Location:", 24, 136, 92, 17)
+Global $gui_logsDirLabel = GUICtrlCreateLabel("Logs Folder:", 24, 168, 62, 17)
+Global $gui_logsDirInput = GUICtrlCreateInput("", 88, 168, 609, 21)
+Global $gui_bdsLogsDirTitle = GUICtrlCreateLabel("BDS Logs Folder:", 24, 200, 87, 17)
+Global $gui_bdsLogsDirInput = GUICtrlCreateInput("", 112, 200, 585, 21)
+Global $gui_backupsDirTitle = GUICtrlCreateLabel("Backup Folder:", 24, 232, 76, 17)
+Global $gui_backupsDirInput = GUICtrlCreateInput("", 104, 232, 593, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 264, 257, 121)
-Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 292, 119, 17)
-Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 152, 320, 107, 25)
-Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 152, 288, 107, 25)
-Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 320, 115, 25)
-Global $gui_readmeBtn = GUICtrlCreateButton("Instructions And Credits", 24, 352, 235, 25)
+Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 352, 257, 121)
+Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 380, 119, 17)
+Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 152, 408, 107, 25)
+Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 152, 376, 107, 25)
+Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 408, 115, 25)
+Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 440, 243, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 400, 112, 17)
-GUICtrlSetCursor (-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 528, 400, 69, 17)
-Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 184, 400, 270, 17)
-GUICtrlSetCursor (-1, 0)
+Global $gui_copyright = GUICtrlCreateLabel("ï¿½ UFO Studios 2024", 8, 488, 112, 17)
+GUICtrlSetCursor(-1, 0)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 488, 69, 17)
+Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 488, 270, 17)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
+GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline" & @CRLF, 1)
 GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 
 ;Variables ###################################################################################
@@ -91,12 +92,9 @@ Global $serverRunning = False
 Global $BDS_process = null
 Global $RestartCheckAttempts = 0
 
-
 ;Functions (Config) #############################################################################
 
 Func loadConf()
-	;logWrite(0, "Loading config"); cant use this bc logWrite calls loadConf
-
 	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
 	If $cfg_autoRestart = "True" Then
 		GUICtrlSetState($gui_autoRestartCheck, $GUI_CHECKED)
@@ -115,7 +113,7 @@ Func loadConf()
 	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartInterval)
 
 	If IniRead($settingsFile, "dirs", "bdsDir", "") = "" Then ;For first time ran
-		IniWrite($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS") 
+		IniWrite($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
 	EndIf
 	Global $cfg_bdsDir = IniRead($settingsFile, "dirs", "bdsDir", @ScriptDir & "\BDS")
 	Global $bdsExeRun = 'C:\Windows\System32\cmd.exe /c ' & '"' & $cfg_bdsDir & '\bedrock_server.exe' & '"' ;We use cmd.exe otherwise bds freaks out. idk why
@@ -140,14 +138,11 @@ Func loadConf()
 	GUICtrlSetData($gui_backupsDirInput, $cfg_backupsDir)
 
 	saveConf()
-	;~ logWrite(0, "Finished loading config"); cant use this bc logWrite calls loadConf
 EndFunc   ;==>loadConf
 
 loadConf()
 
 Func saveConf()
-	;logWrite(0, "Saving Settings"); cant use this bc logWrite calls saveConf
-
 	If GUICtrlRead($gui_autoRestartCheck) = $GUI_CHECKED Then
 		$cfg_autoRestart = "True"
 	ElseIf GUICtrlRead($gui_autoRestartCheck) = $GUI_UNCHECKED Then
@@ -176,22 +171,20 @@ Func saveConf()
 
 	$cfg_backupsDir = GUICtrlRead($gui_backupsDirInput)
 	IniWrite($settingsFile, "dirs", "backupsDir", $cfg_backupsDir)
-
-	;~ logWrite(0, "Settings Save Complete") ;cant use this bc logWrite calls saveConf
 EndFunc   ;==>saveConf
 
 ;Functions (Logging) ############################################################################
 
 Func createLog()
 	If FileExists($cfg_logsDir & "\latest.log") Then
-		FileMove($cfg_LogsDir & "\log.latest", $cfg_LogsDir & "\log.old")
+		FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log.old")
 	EndIf
 
-	If FileExists($cfg_LogsDir) Then ;If directory exists then begin writing logs
+	If FileExists($cfg_logsDir) Then ;If directory exists then begin writing logs
 		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 		logWrite(0, "###################################################################")
-	ElseIf FileExists($cfg_LogsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
-		DirCreate($cfg_LogsDir)
+	ElseIf FileExists($cfg_logsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
+		DirCreate($cfg_logsDir)
 		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 		logWrite(0, "###################################################################")
 		logWrite(0, "Created logging directory!")
@@ -200,27 +193,27 @@ EndFunc   ;==>createLog
 
 Func logWrite($spaces, $content)
 	If $spaces = 1 Then ;For adding spaces around the content written to the log
-		FileOpen($cfg_LogsDir & "\log.latest", 1)
-		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_LogsDir & "\log.latest")
+		FileOpen($cfg_logsDir & "\log.latest", 1)
+		FileWrite($cfg_logsDir & "\log.latest", @CRLF)
+		FileClose($cfg_logsDir & "\log.latest")
 	ElseIf $spaces = 2 Then
-		FileOpen($cfg_LogsDir & "\log.latest", 1)
-		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_LogsDir & "\log.latest")
+		FileOpen($cfg_logsDir & "\log.latest", 1)
+		FileWrite($cfg_logsDir & "\log.latest", @CRLF)
+		FileClose($cfg_logsDir & "\log.latest")
 	EndIf
 
-	FileOpen($cfg_LogsDir & "\log.latest", 1)
-	FileWrite($cfg_LogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
-	FileClose($cfg_LogsDir & "\log.latest")
+	FileOpen($cfg_logsDir & "\log.latest", 1)
+	FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileClose($cfg_logsDir & "\log.latest")
 
 	If $spaces = 1 Then
-		FileOpen($cfg_LogsDir & "\log.latest", 1)
-		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_LogsDir & "\log.latest")
+		FileOpen($cfg_logsDir & "\log.latest", 1)
+		FileWrite($cfg_logsDir & "\log.latest", @CRLF)
+		FileClose($cfg_logsDir & "\log.latest")
 	ElseIf $spaces = 3 Then
-		FileOpen($cfg_LogsDir & "\log.latest", 1)
-		FileWrite($cfg_LogsDir & "\log.latest", @CRLF)
-		FileClose($cfg_LogsDir & "\log.latest")
+		FileOpen($cfg_logsDir & "\log.latest", 1)
+		FileWrite($cfg_logsDir & "\log.latest", @CRLF)
+		FileClose($cfg_logsDir & "\log.latest")
 	EndIf
 EndFunc   ;==>logWrite
 
@@ -249,7 +242,7 @@ Func outputToConsole($content)
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF)
 	FileClose($cfg_bdsLogsDir & "\log.latest")
-EndFunc   ;==>BDSlogWrite
+EndFunc   ;==>outputToConsole
 
 ;Functions (BDS Config) #########################################################################
 
@@ -297,9 +290,9 @@ Func ScheduledActions()
 	if @MIN = 0 then ; so it runs once per set hour, not once per minute in the set hour xD
 		logWrite(0, "Sending 5 minute warning for server restart!")
 		StdinWrite($BDS_process, "say Server restart in 5 minutes!" & @CRLF)
-		Sleep(4*60*1000);4m
+		Sleep(4 * 60 * 1000) ;4m
 		StdinWrite($BDS_process, "say Server restart in 1 minute!" & @CRLF)
-		Sleep(60*1000);1m
+		Sleep(60 * 1000) ;1m
 		StdinWrite($BDS_process, "say Server restarting now!" & @CRLF)
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
@@ -337,7 +330,7 @@ Func ScheduledActions()
 		endif
 		logWrite(0, "Scheduled actions completed.")
 	else
-	
+
 		logWrite(0, "@MIN isn't 0. Skipping scheduled actions.")
 	endif
 EndFunc   ;==>ScheduledActions
@@ -362,24 +355,24 @@ Func exitScript()
 		ProcessClose($BDS_process)
 		$serverRunning = False
 		AdlibUnRegister("updateConsole")
-		logWrite(0, "BDS Process killed. Closing script")		
+		logWrite(0, "BDS Process killed. Closing script")
 	Else
 		logWrite(0, "BDS Process is not running. Closing script")
 	endif
-	FileOpen($cfg_LogsDir & "\log.latest", 1)
+	FileOpen($cfg_logsDir & "\log.latest", 1)
 	logWrite(0, "###################################################################")
 	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-	FileMove($cfg_LogsDir & "\log.latest", $cfg_LogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+	FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
 
 	DirRemove(@ScriptDir & "\temp\", 1)
 EndFunc   ;==>exitScript
 
 Func checkForBDS()
-	If FileExists($cfg_bdsDir&"/bedrock_server.exe") Then
+	If FileExists($cfg_bdsDir & "/bedrock_server.exe") Then
 		logWrite(0, "BDS exe found, proceeding with startup")
 	Else
 		logWrite(0, "BDS file not found, proceed?")
-		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS file. Please make sure the below directory is correct." & @CRLF & $cfg_bdsDir&"/bedrock_server.exe")
+		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS file. Please make sure the below directory is correct." & @CRLF & $cfg_bdsDir & "/bedrock_server.exe")
 
 		If $msgBox = 2 Then ;Cancel
 			logWrite(0, "Cancel")
@@ -398,7 +391,7 @@ EndFunc   ;==>checkForBDS
 
 Func DelEmptyDirs()
 	logWrite(0, "Deleting empty directories...")
-	$cmd = "ROBOCOPY "& $cfg_bdsDir & " "& $cfg_bdsDir &" /S /MOVE"    ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
+	$cmd = "ROBOCOPY " & $cfg_bdsDir & " " & $cfg_bdsDir & " /S /MOVE" ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Checking server files...)")
 	logWrite(0, "Running ROBOCOPY command to delete empty directories")
 	RunWait($cmd, @ScriptDir, @SW_HIDE)
@@ -470,9 +463,9 @@ Func updateConsole() ;not logging for this one
 		Else
 			GUICtrlSetData($gui_console, $line, 1)
 			if $line <> "" Then
-	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-	FileWrite($cfg_bdsLogsDir & "\log.latest", $line)
-	FileClose($cfg_bdsLogsDir & "\log.latest")
+				FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+				FileWrite($cfg_bdsLogsDir & "\log.latest", $line)
+				FileClose($cfg_bdsLogsDir & "\log.latest")
 			EndIf
 		EndIf
 	Else
@@ -518,11 +511,23 @@ Func stopServer()
 		logWrite(0, "###################################################################")
 		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
-	
-		DirRemove(@ScriptDir & "\temp\", 1)
 	endif
 	Global $BDS_process = Null
 EndFunc   ;==>stopServer
+
+Func killServer()
+	logWrite(0, "Kill Server Triggered")
+	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS proccess, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
+	If $msgBox = 6 Then ;Yes
+		outputToConsole("Server Kill Triggered")
+		ProcessClose($BDS_process)
+		logWrite(0, "Server Killed")
+		$serverRunning = False
+	ElseIf $msgBox = 7 Then ;No
+		logWrite(0, "Aborted server killing. It will live for another day!")
+	EndIf
+	$BDS_process = Null
+EndFunc   ;==>killServer
 
 Func backupServer()
 	logWrite(0, "Backing up server...")
@@ -600,6 +605,9 @@ While 1
 		Case $gui_stopServerBtn
 			stopServer()
 
+		Case $gui_killServerBtn
+			killServer()
+
 		Case $gui_restartBtn
 			RestartServer()
 
@@ -635,7 +643,7 @@ While 1
 
 		Case $gui_discordBtn
 			ShellExecute("https://TheAlienDoctor.com/r/Discord")
-		
+
 		Case $gui_readmeBtn
 			ShellExecute("https://github.com/ufo-studios/bds-ui/blob/main/README.md")
 
