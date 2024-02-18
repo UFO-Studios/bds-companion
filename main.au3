@@ -203,7 +203,7 @@ EndFunc   ;==>logWrite
 
 Func createLog()
 	If FileExists($cfg_logsDir & "\latest.log") Then
-		logWrite("createLog() called. Skipping as log.latest already exists.")
+		logWrite(0, "createLog() called. Skipping as log.latest already exists.")
 	EndIf
 
 	If FileExists($cfg_logsDir) Then ;If directory exists then begin writing logs
@@ -293,58 +293,20 @@ endfunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
-	$done = False
-	if @MIN = 0 then ; so it runs once per set hour, not once per minute in the set hour xD
-		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
+	$SAarr = $cfg_autoRestartInterval.StringSplit(",")
+	if (StringCompare($cfg_autoRestartInterval, @HOUR) = 0) Then
+		logWrite(0, "Auto restart time reached. Restarting server...")
+		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
-		If $cfg_autoRestart = "True" Then
-			$times = StringSplit($cfg_autoRestartInterval, ",")
-			$currentTime = @HOUR
-			For $i = 1 To $times[0]
-				If $currentTime = $times[$i] Then
-					logWrite(0, "Sending 5 minute warning for server restart!")
-					StdinWrite($BDS_process, "say Server restart in 5 minutes!" & @CRLF)
-					Sleep(4 * 60 * 1000) ;4m
-					StdinWrite($BDS_process, "say Server restart in 1 minute!" & @CRLF)
-					Sleep(60 * 1000) ;1m
-					StdinWrite($BDS_process, "say Server restarting now!" & @CRLF)
-					if $cfg_backupDuringRestart = "True" Then
-						logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
-						stopServer()
-						backupServer()
-						startServer()
-						$done = True
-					Else
-						logWrite(0, "Auto restart time reached. Restarting server...")
-						RestartServer()
-						$done = True
-					endif
-				EndIf
-			Next
+		RestartServer()
+		If ($cfg_backupDuringRestart = "True") Then
+			backupServer()
 		endif
-
-		if $done = True Then
-			logWrite(0, "Scheduled actions completed.")
-		Else
-			logWrite(0, "No scheduled actions to run. Next run is in 60s")
-		endif
-		if $BDS_process = Null Then
-			GUICtrlSetData($gui_serverStatusIndicator, "Offline")
-			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
-		Else
-			GUICtrlSetData($gui_serverStatusIndicator, "Online")
-			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-		endif
-		logWrite(0, "Scheduled actions completed.")
-	else
-
-		logWrite(0, "@MIN isn't 0. Skipping scheduled actions.")
+	Else
+		logWrite(0, "Auto restart time not reached. Skipping...")
 	endif
 EndFunc   ;==>ScheduledActions
 
-logWrite(0, "Starting scheduled actions...")
-AdlibRegister("ScheduledActions", 60 * 1000) ; run it every 60s
-logWrite(0, "Scheduled actions started Next run in 60s.")
 
 ;Functions (World & packs) ########################################################################
 
@@ -410,7 +372,6 @@ Func DelEmptyDirs()
 	logWrite(0, "Deleting empty directories...")
 	$cmd = "ROBOCOPY " & $cfg_bdsDir & " " & $cfg_bdsDir & " /S /MOVE" ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Checking server files...)")
-	logWrite(0, "Running ROBOCOPY command to delete empty directories")
 	RunWait($cmd, @ScriptDir, @SW_HIDE)
 	logWrite(0, "Empty directories deleted.")
 	return 0
@@ -461,6 +422,11 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer()
 	logWrite(0, "Starting BDS...")
+	if (ProcessExists($BDS_process)) Then
+		logWrite(0, "BDS process already running. Skipping startServer()")
+		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
+		Return
+	endif
 	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
@@ -492,14 +458,15 @@ Func updateConsole() ;not logging for this one
 			EndIf
 		EndIf
 	Else
-		logWrite(0, "BDS process seems to have crashed. Attempt " & $RestartCheckAttempts & " of 3")
-		$RestartCheckAttempts = $RestartCheckAttempts + 1
-		if $RestartCheckAttempts > 5 Then
-			logWrite(0, "BDS process has crashed 3 times. Restarting server.")
-			AdlibUnRegister("updateConsole")
-			startServer()
-			$RestartCheckAttempts = 0
-		endif
+		logWrite(0, "BDS process seems to have crashed. Auto recover is temporarily disabled.")
+		;~ logWrite(0, "BDS process seems to have crashed. Attempt " & $RestartCheckAttempts & " of 3")
+		;~ $RestartCheckAttempts = $RestartCheckAttempts + 1
+		;~ if $RestartCheckAttempts > 5 Then
+		;~ 	logWrite(0, "BDS process has crashed 3 times. Restarting server.")
+		;~ 	AdlibUnRegister("updateConsole")
+		;~ 	startServer()
+		;~ 	$RestartCheckAttempts = 0
+		;~ endif
 	EndIf
 EndFunc   ;==>updateConsole
 
