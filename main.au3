@@ -490,6 +490,7 @@ EndFunc   ;==>RestartServer
 
 Func stopServer()
 	logWrite(0, "Stopping server")
+	outputToConsole("Server Stop Triggered")
 	$attempts = 0
 	StdinWrite($BDS_process, "stop" & @CRLF)
 	Sleep(5 * 1000) ;5s
@@ -506,6 +507,7 @@ Func stopServer()
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
+		outputToConsole("Server Stopped")
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
