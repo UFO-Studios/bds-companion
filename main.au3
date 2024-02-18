@@ -220,20 +220,26 @@ EndFunc   ;==>createLog
 ;Functions (Server Logging) #######################################################################
 
 Func BDScreateLog()
-	If FileExists($cfg_logsDir & "\latest.log") Then
-		FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log.old")
+	If FileExists($cfg_bdsLogsDir & "\latest.log") Then
+		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log.old")
 	EndIf
 
 	If FileExists($cfg_bdsLogsDir) Then ;If directory exists then begin writing logs
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
+		fileWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		fileWrite(0, "###################################################################")
 	ElseIf FileExists($cfg_bdsLogsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
 		DirCreate($cfg_bdsLogsDir)
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
+		fileWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		fileWrite(0, "###################################################################")
 		logWrite(0, "Created logging directory!")
 	EndIf
 EndFunc   ;==>BDScreateLog
+
+Func BDSwriteLog($content)
+	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	FileClose($cfg_bdsLogsDir & "\log.latest")
+endfunc   ;==>BDSwriteLog
 
 Func closeLog()
 	FileOpen($cfg_logsDir & "\log.latest", 1)
@@ -355,6 +361,7 @@ Func exitScript()
 	closeLog()
 
 	DirRemove(@ScriptDir & "\temp\", 1)
+	Exit
 EndFunc   ;==>exitScript
 
 Func checkForBDS()
@@ -463,21 +470,9 @@ Func updateConsole() ;not logging for this one
 		Else
 			GUICtrlSetData($gui_console, $line, 1)
 			if $line <> "" Then
-				FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-				FileWrite($cfg_bdsLogsDir & "\log.latest", $line)
-				FileClose($cfg_bdsLogsDir & "\log.latest")
+				BDSwriteLog($line)
 			EndIf
 		EndIf
-	Else
-		;logWrite(0, "BDS process seems to have crashed. Auto recover is temporarily disabled.")
-		;~ logWrite(0, "BDS process seems to have crashed. Attempt " & $RestartCheckAttempts & " of 3")
-		;~ $RestartCheckAttempts = $RestartCheckAttempts + 1
-		;~ if $RestartCheckAttempts > 5 Then
-		;~ 	logWrite(0, "BDS process has crashed 3 times. Restarting server.")
-		;~ 	AdlibUnRegister("updateConsole")
-		;~ 	startServer()
-		;~ 	$RestartCheckAttempts = 0
-		;~ endif
 	EndIf
 EndFunc   ;==>updateConsole
 
@@ -547,9 +542,8 @@ Func killServer()
 	
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
-		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-		logWrite(0, "###################################################################")
-		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		BDSwriteLog("###################################################################")
+		BDSwriteLog("Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
 
 		AdlibUnRegister("updateConsole")
