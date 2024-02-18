@@ -36,7 +36,7 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 440, 75, 33
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 170, 17);3rd one
 Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
@@ -293,8 +293,11 @@ endfunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
-	$SAarr = $cfg_autoRestartInterval.StringSplit(",")
-	if (StringCompare($cfg_autoRestartInterval, @HOUR) = 0) Then
+	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
+	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
+
+	If $iIndex > 0 Then
+    	;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
 		logWrite(0, "Auto restart time reached. Restarting server...")
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
@@ -315,16 +318,24 @@ EndFunc   ;==>ScheduledActions
 ;Functions (Misc) ##################################################################################
 
 Func startup()
+logWrite(0, "Starting BDS UI...")
 
 GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
 GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+
+if ($cfg_autoRestart = "True") Then
+	AdlibRegister("ScheduledActions", 60*60*1000) ;every minute
+	logWrite(0, "Auto restart enabled. Scheduled actions registered.")
+endif
 
 createLog()
 checkForBDS()
 LoadBDSConf()
 loadConf()
 logWrite(0, "Startup functions complete, starting main loop")
+;temp
+ScheduledActions()
 EndFunc
 
 Func exitScript()
@@ -427,7 +438,7 @@ Func startServer()
 		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
 		Return
 	endif
-	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
+	Global $BDS_process = Run($bdsExeRun, @ScriptDir,  @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
@@ -458,7 +469,7 @@ Func updateConsole() ;not logging for this one
 			EndIf
 		EndIf
 	Else
-		logWrite(0, "BDS process seems to have crashed. Auto recover is temporarily disabled.")
+		;logWrite(0, "BDS process seems to have crashed. Auto recover is temporarily disabled.")
 		;~ logWrite(0, "BDS process seems to have crashed. Attempt " & $RestartCheckAttempts & " of 3")
 		;~ $RestartCheckAttempts = $RestartCheckAttempts + 1
 		;~ if $RestartCheckAttempts > 5 Then
@@ -471,11 +482,15 @@ Func updateConsole() ;not logging for this one
 EndFunc   ;==>updateConsole
 
 Func RestartServer()
-	logWrite(0, "Restarting server...")
-	outputToConsole("Server Restart Triggered")
-	stopServer()
-	startServer()
-	logWrite(0, "Server restarted.")
+	if (ProcessExists($BDS_process)) Then
+		logWrite(0, "Restarting server...")
+		outputToConsole("Server Restart Triggered")
+		stopServer()
+		startServer()
+		logWrite(0, "Server restarted.")
+	else
+		logWrite(0, "BDS process not found. Skipping restart.")
+	endif
 EndFunc   ;==>RestartServer
 
 Func stopServer()
@@ -536,6 +551,8 @@ Func killServer()
 		logWrite(0, "###################################################################")
 		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+
+		AdlibUnRegister("updateConsole")
 
 		logWrite(0, "Server Killed")
 	ElseIf $msgBox = 7 Then ;No
