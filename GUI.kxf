@@ -169,7 +169,7 @@
 							<properties>
 								<property name="Left" vt="Int8">76</property>
 								<property name="Top" vt="Int8">7</property>
-								<property name="Width" vt="Int8">34</property>
+								<property name="Width" vt="Int16">186</property>
 								<property name="Height" vt="Int8">17</property>
 								<property name="Caption" vt="String">Offline</property>
 								<property name="TabOrder" vt="Int8">7</property>
