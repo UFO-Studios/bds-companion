@@ -36,7 +36,7 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 440, 75, 33
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 170, 17);3rd one
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 170, 17) ;3rd one
 Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
@@ -303,12 +303,12 @@ Func ScheduledActions()
 	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
 
 	If $iIndex > 0 Then
-    	;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
+		;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
 		logWrite(0, "Auto restart time reached. Restarting server...")
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
 		RestartServer()
-		If ($cfg_backupDuringRestart = "True") Then
+		If($cfg_backupDuringRestart = "True") Then
 			backupServer()
 		endif
 	Else
@@ -324,25 +324,25 @@ EndFunc   ;==>ScheduledActions
 ;Functions (Misc) ##################################################################################
 
 Func startup()
-logWrite(0, "Starting BDS UI...")
+	logWrite(0, "Starting BDS UI...")
 
-GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
-GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
-GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
+	GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
+	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
-if ($cfg_autoRestart = "True") Then
-	AdlibRegister("ScheduledActions", 60*60*1000) ;every minute
-	logWrite(0, "Auto restart enabled. Scheduled actions registered.")
-endif
+	if($cfg_autoRestart = "True") Then
+		AdlibRegister("ScheduledActions", 60 * 60 * 1000) ;every minute
+		logWrite(0, "Auto restart enabled. Scheduled actions registered.")
+	endif
 
-createLog()
-checkForBDS()
-LoadBDSConf()
-loadConf()
-logWrite(0, "Startup functions complete, starting main loop")
-;temp
-ScheduledActions()
-EndFunc
+	createLog()
+	checkForBDS()
+	LoadBDSConf()
+	loadConf()
+	logWrite(0, "Startup functions complete, starting main loop")
+	;temp
+	ScheduledActions()
+EndFunc   ;==>startup
 
 Func exitScript()
 	logWrite(0, "Exiting script...")
@@ -440,12 +440,12 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer()
 	logWrite(0, "Starting BDS...")
-	if (ProcessExists($BDS_process)) Then
+	if(ProcessExists($BDS_process)) Then
 		logWrite(0, "BDS process already running. Skipping startServer()")
 		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
 		Return
 	endif
-	Global $BDS_process = Run($bdsExeRun, @ScriptDir,  @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)    ;DO NOT forget $STDIN_CHILD
+	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
@@ -477,7 +477,7 @@ Func updateConsole() ;not logging for this one
 EndFunc   ;==>updateConsole
 
 Func RestartServer()
-	if (ProcessExists($BDS_process)) Then
+	if(ProcessExists($BDS_process)) Then
 		logWrite(0, "Restarting server...")
 		outputToConsole("Server Restart Triggered")
 		stopServer()
@@ -490,27 +490,27 @@ EndFunc   ;==>RestartServer
 
 Func stopServer()
 	logWrite(0, "Stopping server")
- 	$attempts = 0
- 	StdinWrite($BDS_process, "stop" & @CRLF)
- 	Sleep(5*1000) ;5s
-	While ( $attempts < 5 And ProcessExists($BDS_process) )
+	$attempts = 0
+	StdinWrite($BDS_process, "stop" & @CRLF)
+	Sleep(5 * 1000) ;5s
+	While($attempts < 5 And ProcessExists($BDS_process))
 		$attempts = $attempts + 1
 		StdinWrite($BDS_process, "stop" & @CRLF)
 		logWrite(0, "Server stop attempt " & $attempts & " of 4")
-		Sleep((5-$attempts)*1000);so it gets shorter each time
+		Sleep((5 - $attempts) * 1000) ;so it gets shorter each time
 	WEnd
-	If (ProcessExists($BDS_process)) then
+	If(ProcessExists($BDS_process)) then
 		logWrite(0, "Server stop failed.")
 		MsgBox(0, $guiTitle, "Server stop failed. Please kill the process manually.")
 	Else
- 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
-	
+
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
 		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
@@ -539,7 +539,7 @@ Func killServer()
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
-	
+
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
 		BDSwriteLog("###################################################################")
@@ -610,7 +610,7 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-startUp()
+startup()
 
 While 1
 	$nMsg = GUIGetMsg()
