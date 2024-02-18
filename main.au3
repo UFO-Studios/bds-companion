@@ -288,12 +288,6 @@ Func ScheduledActions()
 	logWrite(0, "Running scheduled actions...")
 	$done = False
 	if @MIN = 0 then ; so it runs once per set hour, not once per minute in the set hour xD
-		logWrite(0, "Sending 5 minute warning for server restart!")
-		StdinWrite($BDS_process, "say Server restart in 5 minutes!" & @CRLF)
-		Sleep(4 * 60 * 1000) ;4m
-		StdinWrite($BDS_process, "say Server restart in 1 minute!" & @CRLF)
-		Sleep(60 * 1000) ;1m
-		StdinWrite($BDS_process, "say Server restarting now!" & @CRLF)
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled actions")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
 		If $cfg_autoRestart = "True" Then
@@ -301,6 +295,12 @@ Func ScheduledActions()
 			$currentTime = @HOUR
 			For $i = 1 To $times[0]
 				If $currentTime = $times[$i] Then
+					logWrite(0, "Sending 5 minute warning for server restart!")
+					StdinWrite($BDS_process, "say Server restart in 5 minutes!" & @CRLF)
+					Sleep(4 * 60 * 1000) ;4m
+					StdinWrite($BDS_process, "say Server restart in 1 minute!" & @CRLF)
+					Sleep(60 * 1000) ;1m
+					StdinWrite($BDS_process, "say Server restarting now!" & @CRLF)
 					if $cfg_backupDuringRestart = "True" Then
 						logWrite(0, "Auto restart time reached. BackupDuringRestart is true so backing up server...")
 						stopServer()
