@@ -250,7 +250,7 @@ EndFunc   ;==>closeLog
 
 Func outputToConsole($content)
 
-	GUICtrlSetData($gui_console, "[BDS-UI]: " & $content & @CRLF, 1)
+	GUICtrlSetData($gui_console, @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF, 1)
 
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF)
