@@ -175,22 +175,6 @@ EndFunc   ;==>saveConf
 
 ;Functions (Logging) ############################################################################
 
-Func createLog()
-	If FileExists($cfg_logsDir & "\latest.log") Then
-		FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log.old")
-	EndIf
-
-	If FileExists($cfg_logsDir) Then ;If directory exists then begin writing logs
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
-	ElseIf FileExists($cfg_logsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
-		DirCreate($cfg_logsDir)
-		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		logWrite(0, "###################################################################")
-		logWrite(0, "Created logging directory!")
-	EndIf
-EndFunc   ;==>createLog
-
 Func logWrite($spaces, $content)
 	If $spaces = 1 Then ;For adding spaces around the content written to the log
 		FileOpen($cfg_logsDir & "\log.latest", 1)
@@ -217,6 +201,22 @@ Func logWrite($spaces, $content)
 	EndIf
 EndFunc   ;==>logWrite
 
+Func createLog()
+	If FileExists($cfg_logsDir & "\latest.log") Then
+		logWrite("createLog() called. Skipping as log.latest already exists.")
+	EndIf
+
+	If FileExists($cfg_logsDir) Then ;If directory exists then begin writing logs
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+	ElseIf FileExists($cfg_logsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
+		DirCreate($cfg_logsDir)
+		logWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		logWrite(0, "###################################################################")
+		logWrite(0, "Created logging directory!")
+	EndIf
+EndFunc   ;==>createLog
+
 ;Functions (Server Logging) #######################################################################
 
 Func BDScreateLog()
@@ -234,6 +234,13 @@ Func BDScreateLog()
 		logWrite(0, "Created logging directory!")
 	EndIf
 EndFunc   ;==>BDScreateLog
+
+Func closeLog()
+	FileOpen($cfg_logsDir & "\log.latest", 1)
+	logWrite(0, "###################################################################")
+	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+	FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+EndFunc   ;==>closeLog
 
 Func outputToConsole($content)
 
@@ -372,10 +379,7 @@ Func exitScript()
 	Else
 		logWrite(0, "BDS Process is not running. Closing script")
 	endif
-	FileOpen($cfg_logsDir & "\log.latest", 1)
-	logWrite(0, "###################################################################")
-	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-	FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+	closeLog()
 
 	DirRemove(@ScriptDir & "\temp\", 1)
 EndFunc   ;==>exitScript
@@ -509,14 +513,19 @@ EndFunc   ;==>RestartServer
 
 Func stopServer()
 	logWrite(0, "Stopping server")
- $attempts = 0
- StdinWrite($BDS_process, "stop" & @CRLF)
- Sleep(5*1000) ;5s
- if ProcessExists($BDS_process) Then
-   logWrite(0, "server not closed. trying again")
-   StdinWrite($BDS_process, "stop" & @CRLF)
-   Sleep(4*1000);4s
- endif
+ 	$attempts = 0
+ 	StdinWrite($BDS_process, "stop" & @CRLF)
+ 	Sleep(5*1000) ;5s
+	While ( $attempts < 5 And ProcessExists($BDS_process) )
+		$attempts = $attempts + 1
+		StdinWrite($BDS_process, "stop" & @CRLF)
+		logWrite(0, "Server stop attempt " & $attempts & " of 4")
+		Sleep((5-$attempts)*1000);so it gets shorter each time
+	WEnd
+	If (ProcessExists($BDS_process)) then
+		logWrite(0, "Server stop failed.")
+		MsgBox(0, $guiTitle, "Server stop failed. Please kill the process manually.")
+	Else
  	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
@@ -532,12 +541,13 @@ Func stopServer()
 		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
 	endif
+
 	Global $BDS_process = Null
 EndFunc   ;==>stopServer
 
 Func killServer()
 	logWrite(0, "Kill Server Triggered")
-	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS proccess, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
+	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS process, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
 		ProcessClose($BDS_process)
