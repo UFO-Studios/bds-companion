@@ -508,21 +508,16 @@ Func RestartServer()
 EndFunc   ;==>RestartServer
 
 Func stopServer()
-	logWrite(0, "Stopping server...")
-	outputToConsole("Server Stop Triggered")
-	StdinWrite($BDS_process, "stop" & @CRLF)
-	Sleep(1000)     ; Wait for a while to give the process time to read the input
-	StdinWrite($BDS_process)     ; Close the stream
-	$serverRunning = False
-	Sleep(3000)
-	AdlibUnRegister("updateConsole")
-	If ProcessExists($BDS_process) Then
-		logWrite(0, "Failed to stop server. PID is still in use, although the process status is unknown")
-		MsgBox(0, $guiTitle, "Failed to stop server")
-		outputToConsole("Failed to stop server. Process is still running, but maybe closing up. Maybe try again?")
-	else
-		outputToConsole("Server Offline")
-		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+	logWrite(0, "Stopping server")
+ $attempts = 0
+ StdinWrite($BDS_process, "stop" & @CRLF)
+ Sleep(5*1000) ;5s
+ if ProcessExists($BDS_process) Then
+   logWrite(0, "server not closed. trying again")
+   StdinWrite($BDS_process, "stop" & @CRLF)
+   Sleep(4*1000);4s
+ endif
+ 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
 
