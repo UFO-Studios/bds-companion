@@ -298,11 +298,22 @@ endfunc   ;==>SaveBDSConf
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
+	logWrite(0, "debug")
+	if (@MIN <> 0) then Return;only run on the hour
 	logWrite(0, "Running scheduled actions...")
 	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
 	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
 
 	If $iIndex > 0 Then
+		logWrite(0, "Auto restart time is in 5 minutes. Sending in game warning if server is running")
+		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5 minutes" & @CRLF)
+		Sleep(3*60000);3m
+		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 2 minutes" & @CRLF)
+		Sleep(60000);1m
+		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 1 minute" & @CRLF)
+		Sleep(60000);1m
+		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5s!" & @CRLF)
+		Sleep(5000);5s
 		;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
 		logWrite(0, "Auto restart time reached. Restarting server...")
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
@@ -311,8 +322,6 @@ Func ScheduledActions()
 		If($cfg_backupDuringRestart = "True") Then
 			backupServer()
 		endif
-	Else
-		logWrite(0, "Auto restart time not reached. Skipping...")
 	endif
 EndFunc   ;==>ScheduledActions
 
@@ -331,7 +340,7 @@ Func startup()
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
 	if($cfg_autoRestart = "True") Then
-		AdlibRegister("ScheduledActions", 60 * 60 * 1000) ;every minute
+		AdlibRegister("ScheduledActions", 60 * 1000) ;every minute
 		logWrite(0, "Auto restart enabled. Scheduled actions registered.")
 	endif
 
@@ -585,8 +594,13 @@ Func backupServer()
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files...)")
 	_Zip_AddFolder($ZIPname, $cfg_bdsDir, 0)
 	StdinWrite($BDS_process, "save resume" & @CRLF)
-	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-	GUICtrlSetData($gui_serverStatusIndicator, "Online")
+	if (ProcessExists($BDS_process)) Then
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+		GUICtrlSetData($gui_serverStatusIndicator, "Online")
+	Else
+		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
+	endif
 	outputToConsole("Server Backup Completed")
 	logWrite(0, "Backup complete. BDS world files released.")
 Endfunc   ;==>backupServer
