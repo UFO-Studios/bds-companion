@@ -36,7 +36,7 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 440, 75, 33
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 170, 17) ;3rd one
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 170, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
@@ -72,7 +72,7 @@ Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 408,
 Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 440, 243, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("ï¿½ UFO Studios 2024", 8, 488, 112, 17)
+Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 488, 103, 17)
 GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 488, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 488, 270, 17)
@@ -299,21 +299,21 @@ endfunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "debug")
-	if (@MIN <> 0) then Return;only run on the hour
+	if(@MIN <> 0) then Return ;only run on the hour
 	logWrite(0, "Running scheduled actions...")
 	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
 	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
 
 	If $iIndex > 0 Then
 		logWrite(0, "Auto restart time is in 5 minutes. Sending in game warning if server is running")
-		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5 minutes" & @CRLF)
-		Sleep(3*60000);3m
-		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 2 minutes" & @CRLF)
-		Sleep(60000);1m
-		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 1 minute" & @CRLF)
-		Sleep(60000);1m
-		if (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5s!" & @CRLF)
-		Sleep(5000);5s
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5 minutes" & @CRLF)
+		Sleep(3 * 60000) ;3m
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 2 minutes" & @CRLF)
+		Sleep(60000) ;1m
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 1 minute" & @CRLF)
+		Sleep(60000) ;1m
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5s!" & @CRLF)
+		Sleep(5000) ;5s
 		;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
 		logWrite(0, "Auto restart time reached. Restarting server...")
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
@@ -594,7 +594,7 @@ Func backupServer()
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files...)")
 	_Zip_AddFolder($ZIPname, $cfg_bdsDir, 0)
 	StdinWrite($BDS_process, "save resume" & @CRLF)
-	if (ProcessExists($BDS_process)) Then
+	if(ProcessExists($BDS_process)) Then
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 		GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	Else
