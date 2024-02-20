@@ -566,7 +566,7 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	outputToConsole("Server Backup Started")
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_ORANGE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing Up (Pre Processing...)")
-	$backupDateTime = "[" & @SEC & "-" & @MIN & "-" & @HOUR & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
+	$backupDateTime = "[" & @HOUR & "-" & @MIN & "-" & @SEC & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
 	If $BDS_process = Null Then    ; bds isn't running
 		logWrite(0, "BDS is not running. Skipping pre-processing...")
 	Else    ;bds is running
