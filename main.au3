@@ -25,8 +25,8 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
-#Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506, 814, 369)
+#Region ### START Koda GUI section ###
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506, 691, 250)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 481)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
@@ -36,7 +36,7 @@ Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 440, 75, 33
 Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
-Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 170, 17)
+Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 34, 17)
 Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
@@ -44,6 +44,7 @@ Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 
 Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 24, 56, 673, 377)
 GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
 Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 624, 440, 75, 25)
+Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 689, 73)
@@ -351,6 +352,8 @@ Func startup()
 	logWrite(0, "Startup functions complete, starting main loop")
 	;temp
 	ScheduledActions()
+
+	GUICtrlSetData($gui_serverPropertiesLabel, "File Location: " & $cfg_bdsDir & "\server.properties")
 EndFunc   ;==>startup
 
 Func exitScript()
@@ -360,7 +363,7 @@ Func exitScript()
 		logWrite(0, "BDS Process isn't running. Closing script")
 	ElseIf ProcessExists($BDS_process) Then
 		logWrite(0, "BDS Process is still running. Requesting for windows to kill process")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE)		;Kills all bedrock_server.exe instances, works better than ProccessClose
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProccessClose
 		$serverRunning = False
 		AdlibUnRegister("updateConsole")
 		logWrite(0, "BDS Process killed. Closing script")
@@ -538,7 +541,7 @@ Func killServer()
 	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS process, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE)		;Kills all bedrock_server.exe instances, works better than ProccessClose
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProccessClose
 
 		$serverRunning = False
 		$BDS_process = Null
@@ -682,6 +685,5 @@ While 1
 
 		Case $gui_readmeBtn
 			ShellExecute("https://github.com/ufo-studios/bds-ui/blob/main/README.md")
-
 	EndSwitch
 WEnd
