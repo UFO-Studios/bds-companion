@@ -565,7 +565,7 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
-Func backupServer()
+Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
 	logWrite(0, "Backing up server...")
 	outputToConsole("Server Backup Started")
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_ORANGE)
@@ -592,7 +592,13 @@ Func backupServer()
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files...)")
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir, 0)
+	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\behavior_packs", 0)
+	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\resource_packs", 0)
+	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\worlds", 0)
+	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\allowlist.json", 0)
+	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\permissions.json", 0)
+	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\server.properties", 0)
+
 	StdinWrite($BDS_process, "save resume" & @CRLF)
 	if(ProcessExists($BDS_process)) Then
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
