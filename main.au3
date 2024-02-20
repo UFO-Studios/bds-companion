@@ -334,7 +334,6 @@ Func startup()
 	logWrite(0, "Starting BDS UI...")
 
 	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
-	GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
 	if($cfg_autoRestart = "True") Then
@@ -464,7 +463,6 @@ Func startServer()
 	logWrite(0, "Server started. BDS PID is " & $BDS_process)
 
 	GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
-	GUICtrlSetState($gui_killServerBtn, $GUI_ENABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
 
 	GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
@@ -519,7 +517,6 @@ Func stopServer()
 		outputToConsole("Server Stopped")
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
-		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
@@ -548,7 +545,6 @@ Func killServer()
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
-		GUICtrlSetState($gui_killServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
