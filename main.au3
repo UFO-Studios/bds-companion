@@ -326,11 +326,6 @@ Func ScheduledActions()
 	endif
 EndFunc   ;==>ScheduledActions
 
-
-;Functions (World & packs) ########################################################################
-
-
-
 ;Functions (Misc) ##################################################################################
 
 Func startup()
@@ -658,12 +653,14 @@ While 1
 
 		Case $gui_saveSettingsBtn
 			saveConf()
+			MsgBox(0, $guiTitle, "Settings Saved!")
 
 		Case $gui_UpdateCheckBtn
 			checkForUpdates(1)
 
 		Case $gui_serverPropertiesSaveBtn
 			SaveBDSConf()
+			MsgBox(0, $guiTitle, "Settings Properties Saved!")
 
 		Case $gui_copyright
 			If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then
