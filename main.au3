@@ -360,7 +360,7 @@ Func exitScript()
 		logWrite(0, "BDS Process isn't running. Closing script")
 	ElseIf ProcessExists($BDS_process) Then
 		logWrite(0, "BDS Process is still running. Requesting for windows to kill process")
-		ProcessClose($BDS_process)
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE)		;Kills all bedrock_server.exe instances, works better than ProccessClose
 		$serverRunning = False
 		AdlibUnRegister("updateConsole")
 		logWrite(0, "BDS Process killed. Closing script")
@@ -538,7 +538,7 @@ Func killServer()
 	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS process, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
-		ProcessClose($BDS_process)
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE)		;Kills all bedrock_server.exe instances, works better than ProccessClose
 
 		$serverRunning = False
 		$BDS_process = Null
