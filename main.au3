@@ -13,6 +13,7 @@
 #include <TabConstants.au3>
 #include <ColorConstants.au3>
 #include <GUIConstantsEx.au3>
+#include <GuiEdit.au3>
 #include <AutoItConstants.au3>
 #include <WindowsConstants.au3>
 #include <EditConstants.au3>
@@ -83,6 +84,7 @@ GUISetState(@SW_SHOW)
 
 GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline" & @CRLF, 1)
 GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+_GUICtrlEdit_SetLimitText($gui_console, 200000)
 
 ;Variables ###################################################################################
 
