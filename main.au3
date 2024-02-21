@@ -1,3 +1,7 @@
+; This is Bedrock Dedicated Server UI (BDS-UI) licensed under the MIT license, created with ❤️ & 👽 by the UFO Studios Dev Team (https://github.com/UFO-Studios).
+; Check out the github repository of this project for more info @ https://github.com/UFO-Studios/bds-ui.
+; Copyright UFO Studios. All rights reserved. For more into email us. UFOStudios@TheAlienDoctor.com
+
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS UI)
 #pragma compile(ProductName, BDS UI)
@@ -93,7 +97,6 @@ Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
-Global $RestartCheckAttempts = 0
 
 ;Functions (Config) #############################################################################
 
