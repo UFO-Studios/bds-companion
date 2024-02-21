@@ -309,13 +309,11 @@ Func ScheduledActions()
 
 	If $iIndex > 0 Then
 		logWrite(0, "Auto restart time is in 5 minutes. Sending in game warning if server is running")
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5 minutes" & @CRLF)
-		Sleep(3 * 60000) ;3m
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 2 minutes" & @CRLF)
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 5 minutes" & @CRLF)
+		Sleep(5 * 60000) ;3m
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 1 minute" & @CRLF)
 		Sleep(60000) ;1m
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 1 minute" & @CRLF)
-		Sleep(60000) ;1m
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say [BDS-UI]: Server will restart in 5s!" & @CRLF)
+		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server is restarting!" & @CRLF)
 		Sleep(5000) ;5s
 		;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
 		logWrite(0, "Auto restart time reached. Restarting server...")
