@@ -25,7 +25,7 @@
 #include <GuiIPAddress.au3>
 
 #include "UDF/Zip.au3"
-;GUI #####
+
 
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
@@ -97,6 +97,7 @@ Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = null
+
 
 ;Functions (Config) #############################################################################
 
