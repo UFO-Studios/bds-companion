@@ -101,6 +101,9 @@ Global $BDS_process = null
 ;Functions (Config) #############################################################################
 
 Func loadConf()
+
+	Global $cfg_verboseLogging = IniRead($settingsFile, "settings", "verboseLogging", "False");not in saveConf() becuase its for dev only
+
 	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
 	If $cfg_autoRestart = "True" Then
 		GUICtrlSetState($gui_autoRestartCheck, $GUI_CHECKED)
@@ -181,7 +184,7 @@ EndFunc   ;==>saveConf
 
 ;Functions (Logging) ############################################################################
 
-Func logWrite($spaces, $content)
+Func logWrite($spaces, $content, $onlyVerbose = False)
 	If $spaces = 1 Then ;For adding spaces around the content written to the log
 		FileOpen($cfg_logsDir & "\log.latest", 1)
 		FileWrite($cfg_logsDir & "\log.latest", @CRLF)
@@ -193,7 +196,13 @@ Func logWrite($spaces, $content)
 	EndIf
 
 	FileOpen($cfg_logsDir & "\log.latest", 1)
-	FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	if ($onlyVerbose = True) then
+		if ($cfg_verboseLogging = "True") then;if both are true then write to log, else drop it
+			FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+		EndIf
+	Else;write to log as normal
+		FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+	ElseIf 
 	FileClose($cfg_logsDir & "\log.latest")
 
 	If $spaces = 1 Then
@@ -209,7 +218,7 @@ EndFunc   ;==>logWrite
 
 Func createLog()
 	If FileExists($cfg_logsDir & "\latest.log") Then
-		logWrite(0, "createLog() called. Skipping as log.latest already exists.")
+		logWrite(0, "createLog() called. Skipping as log.latest already exists.", True)
 	EndIf
 
 	If FileExists($cfg_logsDir) Then ;If directory exists then begin writing logs
@@ -318,7 +327,6 @@ Func ScheduledActions()
 		Sleep(60000) ;1m
 		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server is restarting!" & @CRLF)
 		Sleep(5000) ;5s
-		;MsgBox(0, "Result", "@HOUR is in $cfg_autoRestartInterval")
 		logWrite(0, "Auto restart time reached. Restarting server...")
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
@@ -333,6 +341,7 @@ EndFunc   ;==>ScheduledActions
 
 Func startup()
 	logWrite(0, "Starting BDS UI...")
+	logWrite(0, "Verbose logging is " & $cfg_verboseLogging, True)
 
 	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
@@ -351,6 +360,7 @@ Func startup()
 	ScheduledActions()
 
 	GUICtrlSetData($gui_serverPropertiesLabel, "File Location: " & $cfg_bdsDir & "\server.properties")
+	logWrite(0, "Complete! Started main loop", True)
 EndFunc   ;==>startup
 
 Func exitScript()
@@ -572,11 +582,11 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 		logWrite(0, "BDS is not running. Skipping pre-processing...")
 	Else    ;bds is running
 		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
-		Sleep(5000)         ;5s
+		logWrite(0, "BDS's Lock has been released. Waiting 5s...", True)
+		Sleep(5000);5s
 		StdinWrite($BDS_process, "save query" & @CRLF)
 		logWrite(0, "BDS is running. Pre-processing complete.")
 	Endif
-	DelEmptyDirs()
 	Local $ZIPname = $cfg_backupsDir & "\Backup-" & $backupDateTime & ".zip"
 	;does backup dir exist?
 	If FileExists($cfg_backupsDir) = 0 Then
@@ -589,17 +599,30 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 0/5)")
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\behavior_packs", 0)
+	logWrite(0, "Backing up (Compressing files 0/5)", True)
+	;~ _Zip_AddFolder($ZIPname, $cfg_bdsDir & "\behavior_packs", 0)
+	RunWait("Compress-Archive -LiteralPath " & $cfg_bdsDir & "\behavior_packs" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 1/5)")
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\resource_packs", 0)
+	logWrite(0, "Backing up (Compressing files 1/5)", True)
+	;~ _Zip_AddFolder($ZIPname, $cfg_bdsDir & "\resource_packs", 0)
+	RunWait("Compress-Archive -LiteralPath " & $cfg_bdsDir & "\resource_packs" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 2/5)")
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\worlds", 0)
+	logWrite(0, "Backing up (Compressing files 2/5)", True)
+	;~ _Zip_AddFolder($ZIPname, $cfg_bdsDir & "\worlds", 0)
+	RunWait("Compress-Archive -LiteralPath " & $cfg_bdsDir & "\worlds" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 3/5)")
-	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\allowlist.json", 0)
+	logWrite(0, "Backing up (Compressing files 3/5)", True)
+	;~ _Zip_AddFile($ZIPname, $cfg_bdsDir & "\allowlist.json", 0)
+	RunWait("Compress-Archive -LiteralPath " & $cfg_bdsDir & "\allowlist.json" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 4/5)")
-	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\permissions.json", 0)
+	logWrite(0, "Backing up (Compressing files 4/5)", True)
+	;~ _Zip_AddFile($ZIPname, $cfg_bdsDir & "\permissions.json", 0)
+	RunWait("Compress-Archive -LiteralPath " & $cfg_bdsDir & "\permissions.json" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
 	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 5/5)")
-	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\server.properties", 0)
+	logWrite(0, "Backing up (Compressing files 5/5)", True)
+	;~ _Zip_AddFile($ZIPname, $cfg_bdsDir & "\server.properties", 0)
+	RunWait("Compress-Archive -LiteralPath " & $cfg_bdsDir & "\server.properties" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
+	logWrite(0, "Backing up (Complete)", True)
 
 	StdinWrite($BDS_process, "save resume" & @CRLF)
 	if(ProcessExists($BDS_process)) Then
@@ -621,13 +644,6 @@ Func sendServerCommand()
 	Return
 EndFunc   ;==>sendServerCommand
 
-;(Startup)##########################################################################
-;If $cfg_checkForUpdates = "True" Then
-;	checkForUpdates(0)
-;ElseIf $cfg_checkForUpdates = "False" Then
-;	logWrite(0, "Auto update check is disabled")
-;	MsgBox(0, $guiTitle, "Auto update check is disabled - this is not recommended!")
-;EndIf
 
 If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
