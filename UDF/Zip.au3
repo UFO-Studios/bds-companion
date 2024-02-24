@@ -1,4 +1,5 @@
 ;#AutoIt3Wrapper_au3check_parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
+;AW2C FILEPROTECT @ 24.02.24. MARKED AS SAFE
 #include <array.au3>
 ; ------------------------------------------------------------------------------
 ;
