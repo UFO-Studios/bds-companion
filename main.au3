@@ -370,8 +370,15 @@ Func exitScript()
 	If $BDS_process = Null then ;stopServer has closed it properly
 		logWrite(0, "BDS Process isn't running. Closing script")
 	ElseIf ProcessExists($BDS_process) Then
-		logWrite(0, "BDS Process is still running. Requesting for windows to kill process")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
+		logWrite(0, "BDS Process is still running. Checking if user wants it closed")
+		Local $msgBox = MsgBox(4, $guiTitle, "BDS process is still running. Would you like to kill it?" & @CRLF & "This can result in loss of data, so  only do this if you need to")
+		If $msgBox = 6 Then ;Yes
+			RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
+		ElseIf $msgBox = 7 Then ;No
+			logWrite(0, "User chose not to kill BDS process. Canceling close")
+			return
+		EndIf
+
 		$serverRunning = False
 		AdlibUnRegister("updateConsole")
 		logWrite(0, "BDS Process killed. Closing script")
@@ -652,7 +659,7 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			exitScript()
-			exit
+			;~ exit ;this is done in exitScript()
 
 		Case $gui_startServerBtn
 			startServer()
