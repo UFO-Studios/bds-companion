@@ -23,6 +23,7 @@
 #include <EditConstants.au3>
 #include <File.au3>
 #include <GuiIPAddress.au3>
+#include <WinAPI.au3>
 
 #include "UDF/Zip.au3"
 
@@ -370,6 +371,7 @@ Func exitScript()
 	If $BDS_process = Null then ;stopServer has closed it properly
 		logWrite(0, "BDS Process isn't running. Closing script")
 	ElseIf ProcessExists($BDS_process) Then
+		_WinAPI_FlashWindow($gui_mainWindow, 1)
 		logWrite(0, "BDS Process is still running. Checking if user wants it closed")
 		Local $msgBox = MsgBox(4, $guiTitle, "BDS process is still running. Would you like to kill it?" & @CRLF & "This can result in loss of data, so  only do this if you need to")
 		If $msgBox = 6 Then ;Yes
