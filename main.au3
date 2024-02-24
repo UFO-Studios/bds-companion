@@ -103,7 +103,7 @@ Global $BDS_process = null
 
 Func loadConf()
 
-	Global $cfg_verboseLogging = IniRead($settingsFile, "settings", "verboseLogging", "False");not in saveConf() becuase its for dev only
+	Global $cfg_verboseLogging = IniRead($settingsFile, "settings", "verboseLogging", "False");not in saveConf() because its for dev only
 
 	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
 	If $cfg_autoRestart = "True" Then
@@ -371,7 +371,7 @@ Func exitScript()
 		logWrite(0, "BDS Process isn't running. Closing script")
 	ElseIf ProcessExists($BDS_process) Then
 		logWrite(0, "BDS Process is still running. Requesting for windows to kill process")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProccessClose
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
 		$serverRunning = False
 		AdlibUnRegister("updateConsole")
 		logWrite(0, "BDS Process killed. Closing script")
@@ -547,7 +547,7 @@ Func killServer()
 	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS process, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProccessClose
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
 
 		$serverRunning = False
 		$BDS_process = Null
@@ -599,30 +599,24 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	_Zip_Create($ZIPname)
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 0/5)")
+	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 1/6)")
 	logWrite(0, "Backing up (Compressing files 0/5)", True)
 	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\behavior_packs", 0)
-	;~ RunWait("pwsh -c Compress-Archive -LiteralPath " & $cfg_bdsDir & "\behavior_packs" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 1/5)")
+	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 2/6)")
 	logWrite(0, "Backing up (Compressing files 1/5)", True)
 	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\resource_packs", 0)
-	;~ RunWait("pwsh -c Compress-Archive -LiteralPath " & $cfg_bdsDir & "\resource_packs" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 2/5)")
+	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 3/6)")
 	logWrite(0, "Backing up (Compressing files 2/5)", True)
 	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\worlds", 0)
-	;~ RunWait("pwsh -c Compress-Archive -LiteralPath " & $cfg_bdsDir & "\worlds" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 3/5)")
+	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 4/6)")
 	logWrite(0, "Backing up (Compressing files 3/5)", True)
 	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\allowlist.json", 0)
-	;~ RunWait("pwsh -c Compress-Archive -LiteralPath " & $cfg_bdsDir & "\allowlist.json" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 4/5)")
+	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 5/6)")
 	logWrite(0, "Backing up (Compressing files 4/5)", True)
 	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\permissions.json", 0)
-	;~ RunWait("pwsh -c Compress-Archive -LiteralPath " & $cfg_bdsDir & "\permissions.json" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 5/5)")
+	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 6/6)")
 	logWrite(0, "Backing up (Compressing files 5/5)", True)
 	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\server.properties", 0)
-	;~ RunWait("pwsh -c Compress-Archive -LiteralPath " & $cfg_bdsDir & "\server.properties" & " -DestinationPath" & $ZIPname, @ScriptDir, @SW_HIDE)
 	logWrite(0, "Backing up (Complete)", True)
 
 	StdinWrite($BDS_process, "save resume" & @CRLF)

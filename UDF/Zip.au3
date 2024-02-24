@@ -42,7 +42,7 @@ EndFunc   ;==>_Zip_Create
 ;===============================================================================
 ;
 ; Function Name:    _Zip_AddFile()
-; Description:      Add a file to a ZIP Archieve.
+; Description:      Add a file to a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ;					$hFile2Add - Complete path to the file that will be added
 ;					$flag = 1
@@ -56,7 +56,7 @@ EndFunc   ;==>_Zip_Create
 ;					@error = 3 dll isn't registered
 ;                   On Failure - Returns False
 ; Author(s):        torels_
-; Notes:			The return values will be given once the compressing process is ultimated... it takes some time with big files
+; Notes:			The return values will be given once the compressing process is complete... it takes some time with big files
 ;
 ;===============================================================================
 Func _Zip_AddFile($hZipFile, $hFile2Add, $flag = 1)
@@ -78,7 +78,7 @@ EndFunc   ;==>_Zip_AddFile
 ;===============================================================================
 ;
 ; Function Name:    _Zip_AddFolder()
-; Description:      Add a folder to a ZIP Archieve.
+; Description:      Add a folder to a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ;					$hFolder - Complete path to the folder that will be added (possibly including "\" at the end)
 ;					$flag = 1
@@ -91,7 +91,7 @@ EndFunc   ;==>_Zip_AddFile
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
 ; Author(s):        torels_
-; Notes:			The return values will be given once the compressing process is ultimated... it takes some time with big files
+; Notes:			The return values will be given once the compressing process is complete... it takes some time with big files
 ;
 ;===============================================================================
 Func _Zip_AddFolder($hZipFile, $hFolder, $flag = 1)
@@ -114,7 +114,7 @@ EndFunc   ;==>_Zip_AddFolder
 ;===============================================================================
 ;
 ; Function Name:    _Zip_AddFolderContents()
-; Description:      Add a folder to a ZIP Archieve.
+; Description:      Add a folder to a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ;					$hFolder - Complete path to the folder that will be added (possibly including "\" at the end)
 ;					$flag = 1
@@ -127,7 +127,7 @@ EndFunc   ;==>_Zip_AddFolder
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
 ; Author(s):        torels_
-; Notes:			The return values will be given once the compressing process is ultimated... it takes some time with big files
+; Notes:			The return values will be given once the compressing process is complete... it takes some time with big files
 ;
 ;===============================================================================
 Func _Zip_AddFolderContents($hZipFile, $hFolder, $flag)
@@ -187,7 +187,7 @@ EndFunc
 ;===============================================================================
 ;
 ; Function Name:    _Zip_UnzipAll()
-; Description:      Extract all files contained in a ZIP Archieve.
+; Description:      Extract all files contained in a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ;					$hDestPath - Complete path to where the files will be extracted
 ;					$flag = 1
@@ -200,7 +200,7 @@ EndFunc
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
 ; Author(s):        torels_
-; Notes:			The return values will be given once the extracting process is ultimated... it takes some time with big files
+; Notes:			The return values will be given once the extracting process is complete... it takes some time with big files
 ;
 ;===============================================================================
 Func _Zip_UnzipAll($hZipFile, $hDestPath, $flag = 1)
@@ -228,7 +228,7 @@ EndFunc   ;==>_Zip_UnzipAll
 ;===============================================================================
 ;
 ; Function Name:    _Zip_Unzip()
-; Description:      Extract a single file contained in a ZIP Archieve.
+; Description:      Extract a single file contained in a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ;					$hFilename - Name of the element in the zip archive ex. "hello_world.txt"
 ;					$hDestPath - Complete path to where the files will be extracted
@@ -242,7 +242,7 @@ EndFunc   ;==>_Zip_UnzipAll
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
 ; Author(s):        torels_
-; Notes:			The return values will be given once the extracting process is ultimated... it takes some time with big files
+; Notes:			The return values will be given once the extracting process is complete... it takes some time with big files
 ;
 ;===============================================================================
 Func _Zip_Unzip($hZipFile, $hFilename, $hDestPath, $flag = 1)
@@ -267,7 +267,7 @@ EndFunc   ;==>_Zip_Unzip
 ;===============================================================================
 ;
 ; Function Name:    _Zip_Count()
-; Description:      Count files contained in a ZIP Archieve.
+; Description:      Count files contained in a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ; Requirement(s):   none.
 ; Return Value(s):  On Success - 0
@@ -315,7 +315,7 @@ EndFunc
 ;===============================================================================
 ;
 ; Function Name:    _Zip_List()
-; Description:      Returns an Array containing of all the files contained in a ZIP Archieve.
+; Description:      Returns an Array containing of all the files contained in a ZIP Archive.
 ; Parameter(s):     $hZipFile - Complete path to zip file that will be created (or handle if existant)
 ; Requirement(s):   none.
 ; Return Value(s):  On Success - 0
