@@ -523,6 +523,24 @@ Func RestartServer()
 	endif
 EndFunc   ;==>RestartServer
 
+Func FindServerPID()
+
+	logWrite(0, "Finding BDS PID...")
+	local $cmd = "pwsh -c (Get-Process test.exe).Id"
+	local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
+	local $tmp = StdoutRead($output)
+	if ($tmp = "") Then
+		logWrite(0, "BDS PID not found. BDS is not running.")
+		Return 0
+	Else
+		logWrite(0, "BDS PID found. BDS is running.")
+		$BDS_process = $tmp
+
+		logWrite(0, "BDS PID is " & $BDS_process)
+		Return $BDS_process
+	EndIf
+endfunc   ;==>FindServerPID
+
 Func stopServer()
 	logWrite(0, "Stopping server")
 	outputToConsole("Server Stop Triggered")
