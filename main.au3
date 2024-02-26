@@ -100,6 +100,13 @@ Global $serverRunning = False
 Global $BDS_process = null
 
 
+;Functions (Server Status) #############################################################################
+
+Func setServerStatus($colour, $status)
+	GUICtrlSetColor($gui_serverStatusIndicator, $colour)
+	GUICtrlSetData($gui_serverStatusIndicator, $status)
+endfunc   ;==>setServerStatus
+
 ;Functions (Config) #############################################################################
 
 Func loadConf()
@@ -584,60 +591,59 @@ EndFunc   ;==>killServer
 
 Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
 	logWrite(0, "Backing up server...")
+	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
-	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_ORANGE)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing Up (Pre Processing...)")
-	$backupDateTime = "[" & @HOUR & "-" & @MIN & "-" & @SEC & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
-	If $BDS_process = Null Then    ; bds isn't running
-		logWrite(0, "BDS is not running. Skipping pre-processing...")
-	Else    ;bds is running
+	If (ProcessExists($BDS_process)) then 
+		logWrite(0, "BDS is running. Requesting release on file locks")
 		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
-		logWrite(0, "BDS's Lock has been released. Waiting 5s...", True)
+		logWrite(0, "BDS's Lock has been released. Waiting 5s for windows to concurr", True)
 		Sleep(5000);5s
-		StdinWrite($BDS_process, "save query" & @CRLF)
-		logWrite(0, "BDS is running. Pre-processing complete.")
-	Endif
-	Local $ZIPname = $cfg_backupsDir & "\Backup-" & $backupDateTime & ".zip"
-	;does backup dir exist?
-	If FileExists($cfg_backupsDir) = 0 Then
-		DirCreate($cfg_backupsDir)
-		logWrite(0, "Backup directory created at " & $cfg_backupsDir)
-	Else
-		logWrite(0, "Backup directory exists at " & $cfg_backupsDir)
 	endif
+
+	logWrite(0, "Copying files to tempory folder")
+	setServerStatus($COLOR_ORANGE, "Backing up (Copying files...)")
+	DirCreate(@ScriptDir & "\temp\")
+	DirCreate(@ScriptDir & "\temp\backups\")
+	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\behavior_packs", 1)
+	DirCopy($cfg_bdsDir & "\resource_packs", @ScriptDir & "\temp\backups\resource_packs", 1)
+	DirCopy($cfg_bdsDir & "\worlds", @ScriptDir & "\temp\backups\worlds", 1)
+	FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\backups\allowlist.json", 1)
+	FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\temp\backups\permissions.json", 1)
+	FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\backups\server.properties", 1)
+	logWrite(0, "Files copied to temporary folder. Releasing file lock back to bedrock_server.exe (if it's running)")
+
+	if (processExists($BDS_process)) then
+		StdinWrite($BDS_process, "save resume" & @CRLF)
+		logWrite(0, "BDS's Lock has been reacquired. Backup complete.")
+	endif
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")
+
+	Local $backupDateTime = "[" & @HOUR & "-" & @MIN & "-" & @SEC & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
+	Local $ZIPname = $cfg_backupsDir & "\Backup-" & $backupDateTime & ".zip"
 	_Zip_Create($ZIPname)
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 1/6)")
-	logWrite(0, "Backing up (Compressing files 0/5)", True)
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\behavior_packs", 0)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 2/6)")
-	logWrite(0, "Backing up (Compressing files 1/5)", True)
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\resource_packs", 0)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 3/6)")
-	logWrite(0, "Backing up (Compressing files 2/5)", True)
-	_Zip_AddFolder($ZIPname, $cfg_bdsDir & "\worlds", 0)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 4/6)")
-	logWrite(0, "Backing up (Compressing files 3/5)", True)
-	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\allowlist.json", 0)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 5/6)")
-	logWrite(0, "Backing up (Compressing files 4/5)", True)
-	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\permissions.json", 0)
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Compressing files 6/6)")
-	logWrite(0, "Backing up (Compressing files 5/5)", True)
-	_Zip_AddFile($ZIPname, $cfg_bdsDir & "\server.properties", 0)
-	logWrite(0, "Backing up (Complete)", True)
 
-	StdinWrite($BDS_process, "save resume" & @CRLF)
-	if(ProcessExists($BDS_process)) Then
-		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-		GUICtrlSetData($gui_serverStatusIndicator, "Online")
-	Else
-		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
-		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 1/6)")
+	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\behavior_packs", 0)
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 2/6)")
+	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\resource_packs", 0)
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 3/6)")
+	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\worlds", 0)
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 4/6)")
+	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\allowlist.json", 0)
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 5/6)")
+	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\permissions.json", 0)
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 6/6)")
+	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\server.properties", 0)
+	logWrite(0, "Backup (Complete)", True)
+	outputToConsole("Server Backup Complete")
+
+	if (processExists($BDS_process)) then
+		setServerStatus($COLOR_GREEN, "Online")
+	else
+		setServerStatus($COLOR_RED, "Offline")
 	endif
-	outputToConsole("Server Backup Completed")
-	logWrite(0, "Backup complete. BDS world files released.")
 Endfunc   ;==>backupServer
 
 Func sendServerCommand()
