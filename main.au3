@@ -607,6 +607,17 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
+Func IsFileUnlocked($sFilePath);only for BackupServer()
+    Local $hFile = FileOpen($sFilePath, 2) ; 2 = Write mode
+
+    If $hFile = -1 Then ; If the file failed to open
+        Return False
+    Else
+        FileClose($hFile) ; Close the file if it opened successfully
+        Return True
+    EndIf
+EndFunc  ;==>IsFileUnlocked
+
 Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
 	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
