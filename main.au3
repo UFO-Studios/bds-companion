@@ -646,8 +646,9 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	;POST PROCESSING & RELEASE FILE LOCKS
 	if (processExists($BDS_process)) then
 		StdinWrite($BDS_process, "save resume" & @CRLF)
-		logWrite(0, "BDS's Lock has been reacquired. Backup complete.")
+		logWrite(0, "BDS's Lock has been reacquired. Copy Complete.")
 	endif
+	logWrite(0, "Creating Zip & compressing files...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")
 
 	;CREATE ZIP
