@@ -526,7 +526,7 @@ EndFunc   ;==>RestartServer
 Func FindServerPID()
 
 	logWrite(0, "Finding BDS PID...")
-	local $cmd = "pwsh -c (Get-Process test.exe).Id"
+	local $cmd = "pwsh -c (Get-Process bedrock_server.exe).Id"
 	local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
 	local $tmp = StdoutRead($output)
 	if ($tmp = "") Then
