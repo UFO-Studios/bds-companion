@@ -590,6 +590,7 @@ Func killServer()
 EndFunc   ;==>killServer
 
 Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
+	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
@@ -600,6 +601,7 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 		Sleep(5000);5s
 	endif
 
+	;COPY FILES TO TEMP FOLDER
 	logWrite(0, "Copying files to tempory folder")
 	setServerStatus($COLOR_ORANGE, "Backing up (Copying files...)")
 	DirCreate(@ScriptDir & "\temp\")
@@ -612,18 +614,21 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\backups\server.properties", 1)
 	logWrite(0, "Files copied to temporary folder. Releasing file lock back to bedrock_server.exe (if it's running)")
 
+	;POST PROCESSING & RELEASE FILE LOCKS
 	if (processExists($BDS_process)) then
 		StdinWrite($BDS_process, "save resume" & @CRLF)
 		logWrite(0, "BDS's Lock has been reacquired. Backup complete.")
 	endif
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")
 
+	;CREATE ZIP
 	Local $backupDateTime = "[" & @HOUR & "-" & @MIN & "-" & @SEC & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
 	Local $ZIPname = $cfg_backupsDir & "\Backup-" & $backupDateTime & ".zip"
 	_Zip_Create($ZIPname)
 	logWrite(0, "Backup zip created at " & $ZIPname)
 	Sleep(100)
 
+	;COMPRESS FILES
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 1/6)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\behavior_packs", 0)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 2/6)")
@@ -639,6 +644,12 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	logWrite(0, "Backup (Complete)", True)
 	outputToConsole("Server Backup Complete")
 
+	;CLEANUP
+	logWrite(0, "Cleaning up temporary files")
+	DirRemove(@ScriptDir & "\temp\", 1)
+	logWrite(0, "Temporary files cleaned up")
+
+	;SET STATUS
 	if (processExists($BDS_process)) then
 		setServerStatus($COLOR_GREEN, "Online")
 	else
