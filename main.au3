@@ -339,10 +339,11 @@ Func ScheduledActions()
 		logWrite(0, "Auto restart time reached. Restarting server...")
 		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
-		RestartServer()
 		If($cfg_backupDuringRestart = "True") Then
-			backupServer()
-		endif
+			RestartServer(1) ;Backup during restart
+		Else
+			RestartServer(0)
+		EndIf
 	endif
 EndFunc   ;==>ScheduledActions
 
@@ -511,20 +512,20 @@ Func updateConsole() ;not logging for this one
 	EndIf
 EndFunc   ;==>updateConsole
 
-Func RestartServer()
+Func RestartServer($backup)
 	if(ProcessExists($BDS_process)) Then
 		logWrite(0, "Restarting server...")
 		outputToConsole("Server Restart Triggered")
 		stopServer()
+		backupServer()
 		startServer()
-		logWrite(0, "Server restarted.")
+		logWrite(0, "Server restarted")
 	else
 		logWrite(0, "BDS process not found. Skipping restart.")
 	endif
 EndFunc   ;==>RestartServer
 
 Func FindServerPID()
-
 	logWrite(0, "Finding BDS PID...")
 	local $cmd = "pwsh -c (Get-Process bedrock_server.exe).Id"
 	local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
@@ -618,24 +619,27 @@ Func IsFileUnlocked($sFilePath);only for BackupServer()
     EndIf
 EndFunc  ;==>IsFileUnlocked
 
-Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
+Func backupServer()
 	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
-	If (ProcessExists($BDS_process)) then 
+	If (ProcessExists($BDS_process)) then
 		logWrite(0, "BDS is running. Requesting release on file locks")
+		outputToConsole("Beginning backup process")
 		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
 		logWrite(0, "BDS's Lock has been released. Waiting 5s for windows to concurr", True)
 		Sleep(5000);5s
 	endif
 
 	;COPY FILES TO TEMP FOLDER
+	;backup: "behavior_packs/, config/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
 	logWrite(0, "Copying files to tempory folder")
 	setServerStatus($COLOR_ORANGE, "Backing up (Copying files...)")
 	DirCreate(@ScriptDir & "\temp\")
 	DirCreate(@ScriptDir & "\temp\backups\")
 	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\behavior_packs", 1)
+	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\config", 1)
 	DirCopy($cfg_bdsDir & "\resource_packs", @ScriptDir & "\temp\backups\resource_packs", 1)
 	DirCopy($cfg_bdsDir & "\worlds", @ScriptDir & "\temp\backups\worlds", 1)
 	FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\backups\allowlist.json", 1)
@@ -659,17 +663,19 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	Sleep(100)
 
 	;COMPRESS FILES
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 1/6)")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 1/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\behavior_packs", 0)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 2/6)")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 2/7)")
+	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\config", 0)
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 3/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\resource_packs", 0)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 3/6)")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 4/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\worlds", 0)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 4/6)")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 5/7)")
 	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\allowlist.json", 0)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 5/6)")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 6/7)")
 	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\permissions.json", 0)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 6/6)")
+	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 7/7)")
 	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\server.properties", 0)
 	logWrite(0, "Backup (Complete)", True)
 	outputToConsole("Server Backup Complete")
@@ -682,6 +688,7 @@ Func backupServer();backup: "behavior_packs/, resource_packs/, worlds/, allowlis
 	;SET STATUS
 	if (processExists($BDS_process)) then
 		setServerStatus($COLOR_GREEN, "Online")
+		outputToConsole("Server backup complete")
 	else
 		setServerStatus($COLOR_RED, "Offline")
 	endif
@@ -720,7 +727,7 @@ While 1
 			killServer()
 
 		Case $gui_restartBtn
-			RestartServer()
+			RestartServer(0)
 
 		Case $gui_backupBtn
 			backupServer()
