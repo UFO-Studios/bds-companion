@@ -110,9 +110,6 @@ endfunc   ;==>setServerStatus
 ;Functions (Config) #############################################################################
 
 Func loadConf()
-
-	Global $cfg_verboseLogging = IniRead($settingsFile, "settings", "verboseLogging", "False") ;not in saveConf() because its for dev only
-
 	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
 	If $cfg_autoRestart = "True" Then
 		GUICtrlSetState($gui_autoRestartCheck, $GUI_CHECKED)
@@ -154,6 +151,8 @@ Func loadConf()
 	EndIf
 	Global $cfg_backupsDir = IniRead($settingsFile, "dirs", "backupsDir", @ScriptDir & "\Backups")
 	GUICtrlSetData($gui_backupsDirInput, $cfg_backupsDir)
+
+	Global $cfg_verboseLogging = IniRead($settingsFile, "debug", "verboseLogging", "False")
 
 	saveConf()
 EndFunc   ;==>loadConf
