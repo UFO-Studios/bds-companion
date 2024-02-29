@@ -1,6 +1,7 @@
-; This is Bedrock Dedicated Server UI (BDS-UI) licensed under the MIT license, created with ❤️ & 👽 by the UFO Studios Dev Team (https://github.com/UFO-Studios).
+; This is Bedrock Dedicated Server UI (BDS-UI) licensed under the BSD 3-Clause license
+; Created with ❤️ & 👽 by the UFO Studios Dev Team (https://github.com/UFO-Studios).
 ; Check out the github repository of this project for more info @ https://github.com/UFO-Studios/bds-ui.
-; Copyright UFO Studios. All rights reserved. For more into email us. UFOStudios@TheAlienDoctor.com
+; Copyright UFO Studios. All rights reserved. For more info, email us: UFOStudios@TheAlienDoctor.com
 
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS UI)
@@ -86,10 +87,6 @@ Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and 
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
-
-GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline" & @CRLF, 1)
-GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
-_GUICtrlEdit_SetLimitText($gui_console, 200000)
 
 ;Variables ###################################################################################
 
@@ -354,22 +351,30 @@ EndFunc   ;==>ScheduledActions
 ;Functions (Misc) ##################################################################################
 
 Func startup()
-	logWrite(0, "Starting BDS UI...")
+	createLog()
+	logWrite(0, "Starting " & $guiTitle & "...")
 	logWrite(0, "Verbose logging is " & $cfg_verboseLogging, True)
 
+	;Disable buttons that can't be used
 	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
+	;Register scheduled actions
 	AdlibRegister("ScheduledActions", 60 * 1000) ;every minute
 	logWrite(0, "Auto restart scheduled actions registered.")
 
-	createLog()
+	;Config
 	checkForBDS()
 	LoadBDSConf()
 	loadConf()
 	logWrite(0, "Startup functions complete, starting main loop")
-	;temp
-	ScheduledActions()
+	;ScheduledActions()
+
+	;Set initial server status
+	GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline" & @CRLF, 1)
+	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
+	_GUICtrlEdit_SetLimitText($gui_console, 200000)
+	logWrite(0, "Server status set to offline.")
 
 	GUICtrlSetData($gui_serverPropertiesLabel, "File Location: " & $cfg_bdsDir & "\server.properties")
 	logWrite(0, "Complete! Started main loop", True)
@@ -407,32 +412,23 @@ Func checkForBDS()
 	If FileExists($cfg_bdsDir & "/bedrock_server.exe") Then
 		logWrite(0, "BDS exe found, proceeding with startup")
 	Else
-		logWrite(0, "BDS file not found, proceed?")
-		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS file. Please make sure the below directory is correct." & @CRLF & $cfg_bdsDir & "/bedrock_server.exe")
+		logWrite(0, "BDS file not found, asking user what to do")
+		Local $msgBox = MsgBox(6, $guiTitle, "Could not find BDS executable. Please make sure the below folder is correct." & @CRLF & $cfg_bdsDir & "/bedrock_server.exe")
 
 		If $msgBox = 2 Then ;Cancel
-			logWrite(0, "Cancel")
+			logWrite(0, "Canceled. Exiting script.")
 			exitScript()
 			Exit
 		ElseIf $msgBox = 10 Then ;Try again
-			logWrite(0, "Try again")
+			logWrite(0, "Trying again")
 			checkForBDS()
 		ElseIf $msgBox = 11 Then ;Continue
-			logWrite(0, "Continue, ignoring missing BDS.")
+			logWrite(0, "Continuing, ignoring missing BDS.")
 			;Do nothing
 		EndIf
-
 	EndIf
 EndFunc   ;==>checkForBDS
 
-Func DelEmptyDirs()
-	logWrite(0, "Deleting empty directories...")
-	$cmd = "ROBOCOPY " & $cfg_bdsDir & " " & $cfg_bdsDir & " /S /MOVE" ;cmd.exe func to copy to the same dir, but deletes empty folders in the process
-	GUICtrlSetData($gui_serverStatusIndicator, "Backing up (Checking server files...)")
-	RunWait($cmd, @ScriptDir, @SW_HIDE)
-	logWrite(0, "Empty directories deleted.")
-	return 0
-EndFunc   ;==>DelEmptyDirs
 
 Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thanks TAD ;D
 	Local $ping = Ping("TheAlienDoctor.com")
@@ -507,7 +503,7 @@ Func updateConsole() ;not logging for this one
 			AdlibUnRegister("updateConsole")
 		Else
 			GUICtrlSetData($gui_console, $line, 1)
-			if $line <> "" Then
+			if $line <> "" Then;if line has content
 				BDSwriteLog($line)
 			EndIf
 		EndIf
@@ -610,16 +606,6 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
-Func IsFileUnlocked($sFilePath) ;only for BackupServer()
-	Local $hFile = FileOpen($sFilePath, 2)     ; 2 = Write mode
-
-	If $hFile = -1 Then     ; If the file failed to open
-		Return False
-	Else
-		FileClose($hFile)         ; Close the file if it opened successfully
-		Return True
-	EndIf
-EndFunc   ;==>IsFileUnlocked
 
 Func backupServer()
 	;PRE PROCESSING & FILE LOCKS
@@ -627,10 +613,9 @@ Func backupServer()
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
 	If(ProcessExists($BDS_process)) then
-		logWrite(0, "BDS is running. Requesting release on file locks")
+		logWrite(0, "BDS is running, stopping to avoid corruption")
 		outputToConsole("Beginning backup process")
-		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
-		logWrite(0, "BDS's Lock has been released. Waiting 5s for windows to concurr", True)
+		stopServer()
 		Sleep(5000) ;5s
 	endif
 
@@ -647,7 +632,7 @@ Func backupServer()
 	FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\backups\allowlist.json", 1)
 	FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\temp\backups\permissions.json", 1)
 	FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\backups\server.properties", 1)
-	logWrite(0, "Files copied to temporary folder. Releasing file lock back to bedrock_server.exe (if it's running)")
+	logWrite(0, "Files copied to temporary folder. Restarting BDS if it was running")
 
 	;POST PROCESSING & RELEASE FILE LOCKS
 	if(processExists($BDS_process)) then
