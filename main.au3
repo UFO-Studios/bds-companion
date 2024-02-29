@@ -111,7 +111,7 @@ endfunc   ;==>setServerStatus
 
 Func loadConf()
 
-	Global $cfg_verboseLogging = IniRead($settingsFile, "settings", "verboseLogging", "False");not in saveConf() because its for dev only
+	Global $cfg_verboseLogging = IniRead($settingsFile, "settings", "verboseLogging", "False") ;not in saveConf() because its for dev only
 
 	Global $cfg_autoRestart = IniRead($settingsFile, "autoRestart", "restartEnabled", "False")
 	If $cfg_autoRestart = "True" Then
@@ -205,11 +205,11 @@ Func logWrite($spaces, $content, $onlyVerbose = False)
 	EndIf
 
 	FileOpen($cfg_logsDir & "\log.latest", 1)
-	if ($onlyVerbose = True) then
-		if ($cfg_verboseLogging = "True") then;if both are true then write to log, else drop it
+	if($onlyVerbose = True) then
+		if($cfg_verboseLogging = "True") then ;if both are true then write to log, else drop it
 			FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 		EndIf
-	Else;write to log as normal
+	Else ;write to log as normal
 		FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 	endif
 	FileClose($cfg_logsDir & "\log.latest")
@@ -329,22 +329,26 @@ Func ScheduledActions()
 	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
 
 	If $iIndex > 0 Then
-		logWrite(0, "Auto restart time is in 5 minutes. Sending in game warning if server is running")
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 5 minutes" & @CRLF)
-		Sleep(5 * 60000) ;3m
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 1 minute" & @CRLF)
-		Sleep(60000) ;1m
-		if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server is restarting!" & @CRLF)
-		Sleep(5000) ;5s
-		logWrite(0, "Auto restart time reached. Restarting server...")
-		GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
-		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
-		If($cfg_backupDuringRestart = "True") Then
-			RestartServer(1) ;Backup during restart
-		Else
-			RestartServer(0)
-		EndIf
-	endif
+		If $cfg_autoRestart = "True" Then
+			logWrite(0, "Auto restart time is in 5 minutes. Sending in game warning if server is running")
+			if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 5 minutes" & @CRLF)
+			Sleep(5 * 60000) ;3m
+			if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 1 minute" & @CRLF)
+			Sleep(60000) ;1m
+			if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server is restarting!" & @CRLF)
+			Sleep(5000) ;5s
+			logWrite(0, "Auto restart time reached. Restarting server...")
+			GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
+			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
+			If($cfg_backupDuringRestart = "True") Then
+				RestartServer(1) ;Backup during restart
+			Else
+				RestartServer(0)
+			EndIf
+		Endif
+	Else
+		Return
+	EndIf
 EndFunc   ;==>ScheduledActions
 
 ;Functions (Misc) ##################################################################################
@@ -356,10 +360,8 @@ Func startup()
 	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 
-	if($cfg_autoRestart = "True") Then
-		AdlibRegister("ScheduledActions", 60 * 1000) ;every minute
-		logWrite(0, "Auto restart enabled. Scheduled actions registered.")
-	endif
+	AdlibRegister("ScheduledActions", 60 * 1000) ;every minute
+	logWrite(0, "Auto restart scheduled actions registered.")
 
 	createLog()
 	checkForBDS()
@@ -530,7 +532,7 @@ Func FindServerPID()
 	local $cmd = "pwsh -c (Get-Process bedrock_server.exe).Id"
 	local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
 	local $tmp = StdoutRead($output)
-	if ($tmp = "") Then
+	if($tmp = "") Then
 		logWrite(0, "BDS PID not found. BDS is not running.")
 		Return 0
 	Else
@@ -608,28 +610,28 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
-Func IsFileUnlocked($sFilePath);only for BackupServer()
-    Local $hFile = FileOpen($sFilePath, 2) ; 2 = Write mode
+Func IsFileUnlocked($sFilePath) ;only for BackupServer()
+	Local $hFile = FileOpen($sFilePath, 2)     ; 2 = Write mode
 
-    If $hFile = -1 Then ; If the file failed to open
-        Return False
-    Else
-        FileClose($hFile) ; Close the file if it opened successfully
-        Return True
-    EndIf
-EndFunc  ;==>IsFileUnlocked
+	If $hFile = -1 Then     ; If the file failed to open
+		Return False
+	Else
+		FileClose($hFile)         ; Close the file if it opened successfully
+		Return True
+	EndIf
+EndFunc   ;==>IsFileUnlocked
 
 Func backupServer()
 	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
-	If (ProcessExists($BDS_process)) then
+	If(ProcessExists($BDS_process)) then
 		logWrite(0, "BDS is running. Requesting release on file locks")
 		outputToConsole("Beginning backup process")
 		StdinWrite($BDS_process, "save hold" & @CRLF)        ;releases BDS's lock on the file
 		logWrite(0, "BDS's Lock has been released. Waiting 5s for windows to concurr", True)
-		Sleep(5000);5s
+		Sleep(5000) ;5s
 	endif
 
 	;COPY FILES TO TEMP FOLDER
@@ -648,7 +650,7 @@ Func backupServer()
 	logWrite(0, "Files copied to temporary folder. Releasing file lock back to bedrock_server.exe (if it's running)")
 
 	;POST PROCESSING & RELEASE FILE LOCKS
-	if (processExists($BDS_process)) then
+	if(processExists($BDS_process)) then
 		StdinWrite($BDS_process, "save resume" & @CRLF)
 		logWrite(0, "BDS's Lock has been reacquired. Copy Complete.")
 	endif
@@ -686,7 +688,7 @@ Func backupServer()
 	logWrite(0, "Temporary files cleaned up")
 
 	;SET STATUS
-	if (processExists($BDS_process)) then
+	if(processExists($BDS_process)) then
 		setServerStatus($COLOR_GREEN, "Online")
 		outputToConsole("Server backup complete")
 	else
@@ -715,7 +717,7 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			exitScript()
-			;~ exit ;this is done in exitScript()
+;~ exit ;this is done in exitScript()
 
 		Case $gui_startServerBtn
 			startServer()
