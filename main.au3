@@ -516,12 +516,20 @@ EndFunc   ;==>updateConsole
 
 Func RestartServer($backup)
 	if(ProcessExists($BDS_process)) Then
-		logWrite(0, "Restarting server...")
-		outputToConsole("Server Restart Triggered")
-		stopServer()
-		backupServer()
-		startServer()
-		logWrite(0, "Server restarted")
+		If $backup = 1 Then
+			logWrite(0, "Restarting server...")
+			outputToConsole("Server Restart Triggered")
+			stopServer()
+			backupServer()
+			startServer()
+			logWrite(0, "Server restarted")
+		ElseIf $backup = 0 Then
+			logWrite(0, "Restarting server...")
+			outputToConsole("Server Restart Triggered")
+			stopServer()
+			startServer()
+			logWrite(0, "Server restarted")
+		EndIf
 	else
 		logWrite(0, "BDS process not found. Skipping restart.")
 	endif
