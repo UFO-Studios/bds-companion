@@ -49,7 +49,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 441)
@@ -86,10 +86,10 @@ Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 440,
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 488, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 488, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 488, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -334,9 +334,9 @@ Func ScheduledActions()
 	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
 
 	If @HOUR = 0 Then
-		 $HR = 23
+		$HR = 23
 	Else
-	     $HR = @HOUR - 1
+		$HR = @HOUR - 1
 	EndIf
 	; Find the index of the current hour in the array
 	Local $iIndex = _ArraySearch($aIntervals, $HR)
