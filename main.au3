@@ -187,6 +187,7 @@ Func saveConf()
 	IniWrite($settingsFile, "dirs", "backupsDir", $cfg_backupsDir)
 EndFunc   ;==>saveConf
 
+
 ;Functions (Logging) ############################################################################
 
 Func logWrite($spaces, $content, $onlyVerbose = False)
@@ -319,7 +320,7 @@ endfunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "debug")
-	if(@MIN <> 0) then Return ;only run on the hour
+	if(@MIN <> 55) then Return ;only run 5 mins before the hour
 	logWrite(0, "Running scheduled actions...")
 	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
 	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
