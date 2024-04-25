@@ -328,8 +328,13 @@ Func ScheduledActions()
 	; Split the autoRestartInterval string into an array
 	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
 
+	If @HOUR = 0 Then
+		 $HR = 23
+	Else
+	     $HR = @HOUR - 1
+	EndIf
 	; Find the index of the current hour in the array
-	Local $iIndex = _ArraySearch($aIntervals, @HOUR - 1)
+	Local $iIndex = _ArraySearch($aIntervals, $HR)
 
 
 	If $iIndex > 0 Then
