@@ -501,8 +501,10 @@ Func updateConsole() ;not logging for this one
 			$serverRunning = False
 			AdlibUnRegister("updateConsole")
 		Else
+			Local $lineCount = _GUICtrlEdit_GetLineCount($gui_console) ;Get line count
+			_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Scroll down to bottom of console, stops existing text from being overwritten
 			GUICtrlSetData($gui_console, $line, 1)
-			if $line <> "" Then;if line has content
+			if $line <> "" Then ;if line has content
 				BDSwriteLog($line)
 			EndIf
 		EndIf
