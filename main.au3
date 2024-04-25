@@ -320,10 +320,17 @@ endfunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "debug")
-	if(@MIN <> 55) then Return ;only run 5 mins before the hour
+	; Check if the current time is 5 minutes before the hour
+	if(@MIN <> 55) then Return
+
 	logWrite(0, "Running scheduled actions...")
+
+	; Split the autoRestartInterval string into an array
 	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
-	Local $iIndex = _ArraySearch($aIntervals, @HOUR)
+
+	; Find the index of the current hour in the array
+	Local $iIndex = _ArraySearch($aIntervals, @HOUR - 1)
+
 
 	If $iIndex > 0 Then
 		If $cfg_autoRestart = "True" Then
@@ -368,7 +375,6 @@ Func startup()
 	LoadBDSConf()
 	loadConf()
 	logWrite(0, "Startup functions complete, starting main loop")
-	;ScheduledActions()
 
 	;Set initial server status
 	GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline" & @CRLF, 1)
