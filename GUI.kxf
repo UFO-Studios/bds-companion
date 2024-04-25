@@ -272,7 +272,7 @@
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int16">416</property>
-										<property name="Width" vt="Int16">590</property>
+										<property name="Width" vt="Int8">126</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">gui_serverPropertiesLabel</property>
 										<property name="TabOrder" vt="Int8">2</property>

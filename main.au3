@@ -32,8 +32,13 @@
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
 
+; Koda doesn't let you set certain things, so change to match the below manually:
+;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
+;Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
+;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
+
 #Region ### START Koda GUI section ###
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506, 691, 250)
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 481)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
@@ -44,7 +49,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 441)
@@ -81,10 +86,10 @@ Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 440,
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 488, 103, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 488, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 488, 270, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
