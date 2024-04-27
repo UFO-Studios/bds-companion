@@ -84,6 +84,11 @@ Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 152, 376, 
 Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 408, 115, 25)
 Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 440, 243, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 280, 352, 209, 121)
+Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 288, 376, 131, 25)
+Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 288, 408, 131, 25)
+Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 288, 440, 131, 25)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 488, 103, 17)
 GUICtrlSetCursor(-1, 0)
@@ -324,7 +329,7 @@ endfunc   ;==>SaveBDSConf
 ;Functions (Scheduled Actions) ##################################################################
 
 Func ScheduledActions()
-	logWrite(0, "debug")
+	logWrite(0, "Scheduled actions called")
 	; Check if the current time is 5 minutes before the hour
 	if(@MIN <> 55) then Return
 
@@ -636,10 +641,13 @@ EndFunc   ;==>killServer
 Func backupServer()
 	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
+	$ServerWasRunning = False
+	if ($cfg_verboseLogging = "True") then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
 	If(ProcessExists($BDS_process)) then
 		logWrite(0, "BDS is running, stopping to avoid corruption")
+		$ServerWasRunning = True
 		outputToConsole("Beginning backup process")
 		stopServer()
 		Sleep(5000) ;5s
@@ -660,10 +668,14 @@ Func backupServer()
 	FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\backups\server.properties", 1)
 	logWrite(0, "Files copied to temporary folder. Restarting BDS if it was running")
 
-	;POST PROCESSING & RELEASE FILE LOCKS
+	;POST PROCESSING & RELEASE FILE LOCKS. Not (in theory) in use, but keeping it for edge cases.
 	if(processExists($BDS_process)) then
 		StdinWrite($BDS_process, "save resume" & @CRLF)
 		logWrite(0, "BDS's Lock has been reacquired. Copy Complete.")
+	endif
+	;RESTART BDS IF IT WAS RUNNING
+	if($ServerWasRunning = True) then
+		startServer()
 	endif
 	logWrite(0, "Creating Zip & compressing files...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")

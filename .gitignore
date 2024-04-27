@@ -10,3 +10,5 @@ dist
 Server Logs/*
 *.log
 BDS
+settings.ini
+settings.ini
