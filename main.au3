@@ -373,6 +373,22 @@ EndFunc   ;==>ScheduledActions
 
 ;Functions (Misc) ##################################################################################
 
+Func IsBackupThread()
+	;Check if the current thread is the backup thread 
+	If ($CmdLine[0] > 0 ) Then
+		If ($CmdLine[1] = "backup") Then
+			logWrite(0, "Backup thread detected. Running backup...")
+			backupServer()
+			logWrite(0, "Backup complete. Exiting backup thread.")
+			Exit
+		Else
+			logWrite(0, "Backup thread not detected. Continuing...")
+		EndIf
+	Else
+		logWrite(0, "Backup thread not detected. Continuing...")		
+	EndIf
+EndFunc   ;==>IsBackupThread
+
 Func UploadLog()
 	logWrite(0, "Uploading log (" &  $cfg_logsDir & "\log.latest) to server...")
 	local $logFile = FileOpen($cfg_logsDir & "\log.latest", 0)
@@ -657,6 +673,9 @@ Func backupServer()
 	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
 	$ServerWasRunning = False
+	DirCreate(@ScriptDir & "\temp\") ;for other thread
+	FileWrite("/temp/is_running", "1")
+	
 	if ($cfg_verboseLogging = "True") then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
@@ -672,7 +691,6 @@ Func backupServer()
 	;backup: "behavior_packs/, config/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
 	logWrite(0, "Copying files to tempory folder")
 	setServerStatus($COLOR_ORANGE, "Backing up (Copying files...)")
-	DirCreate(@ScriptDir & "\temp\")
 	DirCreate(@ScriptDir & "\temp\backups\")
 	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\behavior_packs", 1)
 	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\config", 1)
@@ -748,7 +766,19 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-startup()
+If ($CmdLine[0] > 0 ) Then
+	If ($CmdLine[1] = "backup") Then
+		logWrite(0, "Backup thread detected. Running backup...")
+		GUICtrlSetState($gui_mainWindow, @SW_HIDE)
+		backupServer()
+		logWrite(0, "Backup complete. Exiting backup thread.")
+		Exit
+	Else
+		startup()
+	EndIf
+Else
+	startup()		
+EndIf
 
 While 1
 	$nMsg = GUIGetMsg()
@@ -770,7 +800,15 @@ While 1
 			RestartServer(0)
 
 		Case $gui_backupBtn
-			backupServer()
+			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
+			ShellExecute(@ScriptFullPath, " backup")
+			Sleep(2000)
+			while 1
+				if(FileExists(@ScriptDir & "\temp\is_running") = 0) then
+					setServerStatus($COLOR_GREEN, "Online")
+				EndIf
+				ExitLoop
+			WEnd
 
 		Case $gui_sendCmdBtn
 			sendServerCommand()
