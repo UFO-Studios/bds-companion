@@ -41,6 +41,7 @@ bds-ui/
 - Q: My PC says this is a virus! A: Yup, that's because not many people have downloaded this exe, so windows (amongst others) don't yet trust it. The code is open source on Github, and you're welcome to check it!
 - Q: It can't find (BDS, server.properties, ect) A: Check that the folder in settings matches the one with BDS in it, and restart BDS-UI.
 - Q: Where can I get help? A: You can join our [Discord](https://thealiendoctor.com/r/Discord)! Make sure you have uploaded the logs using the `Upload Logs` button in the settings tab, and we'll be able to help you better!
+- Q: Why does it open twice? A: When auto-backing up, it'll open a seperate window to run the backup in (in case the backup window crashes). The window will close itself when the backup is done.
 
 
 ## Credits
