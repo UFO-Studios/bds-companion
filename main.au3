@@ -810,22 +810,22 @@ While 1
 		Case $gui_UploadLogsBtn
 			UploadLog()
 
-		Case $gui_FindServerBtn
-			$pid = FindServerPID()
-			if($pid = 0) then
-				MsgBox(0, $guiTitle, "BDS is not running.")
-			Else
-				$BDS_process = $pid
-				$serverRunning = True
-				AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
-				outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
-				GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-				GUICtrlSetData($gui_serverStatusIndicator, "Online")
-				BDScreateLog()
-				GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
-				GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
-				GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
-				MsgBox(0, $guiTitle, "BDS found! The console will update with any new messages")
-			EndIf
+		;~ Case $gui_FindServerBtn
+		;~ 	$pid = FindServerPID()
+		;~ 	if($pid = 0) then
+		;~ 		MsgBox(0, $guiTitle, "BDS is not running.")
+		;~ 	Else
+		;~ 		$BDS_process = $pid
+		;~ 		$serverRunning = True
+		;~ 		AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
+		;~ 		outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
+		;~ 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+		;~ 		GUICtrlSetData($gui_serverStatusIndicator, "Online")
+		;~ 		BDScreateLog()
+		;~ 		GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
+		;~ 		GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
+		;~ 		GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
+		;~ 		MsgBox(0, $guiTitle, "BDS found! The console will update with any new messages")
+		;~ 	EndIf
 	EndSwitch
 WEnd
