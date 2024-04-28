@@ -16,6 +16,8 @@ bds-ui/
         server.properties
         (and other BDS files)
 ```
+(The location of BDS can be changed in settings, but this is the default)
+
 
 ## Features
 
@@ -38,9 +40,9 @@ bds-ui/
 ## Troubleshooting
 - Q: My PC says this is a virus! A: Yup, that's because not many people have downloaded this exe, so windows (amongst others) don't yet trust it. The code is open source on Github, and you're welcome to check it!
 - Q: It can't find (BDS, server.properties, ect) A: Check that the folder in settings matches the one with BDS in it, and restart BDS-UI.
-- Q: Where can I get help? A: You can join our [Discord](https://thealiendoctor.com/r/Discord)! Make sure you have uploaded the logs to [pastebin](https://pastebin.com) or similar, so we can help you better.
+- Q: Where can I get help? A: You can join our [Discord](https://thealiendoctor.com/r/Discord)! Make sure you have uploaded the logs using the `Upload Logs` button in the settings tab, and we'll be able to help you better!
 
 
 ## Credits
-- TheAlienDoctor & Niceygy: Main Devs
+- [TheAlienDoctor](https://thealiendoctor.com) & [Niceygy](https://niceygylive.xyz): Main Devs
 - FoxyNoTail: Inspired by his [MCBE play](https://foxynotail.com/tools/mcbe-play)
