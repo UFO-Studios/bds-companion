@@ -27,7 +27,8 @@
 #include <WinAPI.au3>
 
 #include "UDF/Zip.au3"
-
+#include "UDF/WinHttp.au3"
+#include "UDF/JSON.au3"
 
 Global Const $currentVersionNumber = "100"
 Global Const $guiTitle = "BDS UI - V1.0.0"
@@ -371,6 +372,16 @@ Func ScheduledActions()
 EndFunc   ;==>ScheduledActions
 
 ;Functions (Misc) ##################################################################################
+
+Func UploadLog()
+	logWrite(0, "Uploading log (" &  $cfg_logsDir & "\log.latest) to server...")
+	$res = HttpPost("https://api.mclo.gs/1/log", $cfg_logsDir & "\log.latest")
+	logWrite(0, "Log uploaded to server. Getting url...")
+	$jsonObject = _JSONDecode($res)
+	$url = $jsonObject.url
+	logWrite(0, "URL: " & $url)
+	ShellExecute($url)
+EndFunc   ;==>UploadLog
 
 Func startup()
 	createLog()
@@ -791,5 +802,8 @@ While 1
 
 		Case $gui_readmeBtn
 			ShellExecute("https://github.com/ufo-studios/bds-ui/blob/main/README.md")
+
+		Case $gui_UploadLogsBtn
+			UploadLog()
 	EndSwitch
 WEnd
