@@ -375,11 +375,16 @@ EndFunc   ;==>ScheduledActions
 
 Func UploadLog()
 	logWrite(0, "Uploading log (" &  $cfg_logsDir & "\log.latest) to server...")
-	$res = HttpPost("https://api.mclo.gs/1/log", $cfg_logsDir & "\log.latest")
+	local $logFile = FileOpen($cfg_logsDir & "\log.latest", 0)
+	$logFile = FileRead($logFile)
+	$res = HttpPost("https://api.mclo.gs/1/log", "content=" & $logFile)
 	logWrite(0, "Log uploaded to server. Getting url...")
-	$jsonObject = _JSONDecode($res)
-	$url = $jsonObject.url
+	$tmp = StringSplit($res, '"')
+	$url = $tmp[10]
+	$url = StringReplace($url, "\/", "/")
 	logWrite(0, "URL: " & $url)
+	MsgBox(0, "Log Uploaded", "Log uploaded to server. URL: " & $url)
+	FileClose($logFile)
 	ShellExecute($url)
 EndFunc   ;==>UploadLog
 
