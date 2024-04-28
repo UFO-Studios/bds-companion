@@ -570,7 +570,16 @@ Func RestartServer($backup)
 			logWrite(0, "Restarting server...")
 			outputToConsole("Server Restart Triggered")
 			stopServer()
-			backupServer()
+			;~ backupServer()
+			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
+			ShellExecute(@ScriptFullPath, " backup")
+			Sleep(2000)
+			while 1
+				if(FileExists(@ScriptDir & "\temp\is_running") = 0) then
+					setServerStatus($COLOR_GREEN, "Online")
+				EndIf
+				ExitLoop
+			WEnd
 			startServer()
 			logWrite(0, "Server restarted")
 		ElseIf $backup = 0 Then
@@ -800,15 +809,7 @@ While 1
 			RestartServer(0)
 
 		Case $gui_backupBtn
-			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
-			ShellExecute(@ScriptFullPath, " backup")
-			Sleep(2000)
-			while 1
-				if(FileExists(@ScriptDir & "\temp\is_running") = 0) then
-					setServerStatus($COLOR_GREEN, "Online")
-				EndIf
-				ExitLoop
-			WEnd
+			backupServer()
 
 		Case $gui_sendCmdBtn
 			sendServerCommand()
