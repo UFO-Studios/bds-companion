@@ -88,7 +88,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 280, 352, 209, 121)
 Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 288, 376, 131, 25)
 Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 288, 408, 131, 25)
-Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 288, 440, 131, 25)
+;~ Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 288, 440, 131, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 488, 103, 17)
@@ -528,7 +528,6 @@ Func startServer()
 
 	GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
-
 	GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
 EndFunc   ;==>startServer
 
@@ -810,5 +809,23 @@ While 1
 
 		Case $gui_UploadLogsBtn
 			UploadLog()
+
+		Case $gui_FindServerBtn
+			$pid = FindServerPID()
+			if($pid = 0) then
+				MsgBox(0, $guiTitle, "BDS is not running.")
+			Else
+				$BDS_process = $pid
+				$serverRunning = True
+				AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
+				outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
+				GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+				GUICtrlSetData($gui_serverStatusIndicator, "Online")
+				BDScreateLog()
+				GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
+				GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
+				GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
+				MsgBox(0, $guiTitle, "BDS found! The console will update with any new messages")
+			EndIf
 	EndSwitch
 WEnd
