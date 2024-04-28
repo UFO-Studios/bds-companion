@@ -1,10 +1,10 @@
-# BDS-UI (name pending)
-A UI for MC Bedrock Dedicated server. Written in AutoIT
+# BDS-UI
+A UI for MC Bedrock Dedicated server. Written in AutoIT.
 
 ## Setup
 
-Download the exe from the releases page, and move it to an empty folder. <br></br>
-Extract a copy of MCBE's BDS to a folder named `BDS` within the folder the exe is in.<br></br>
+Download the exe from the releases page, and move it to an empty folder. </br>
+Extract a copy of MCBE's BDS to a folder named `BDS` within the folder the exe is in.</br>
 Then double click the exe to open! 
 
 Your folder should look like this:
@@ -29,12 +29,13 @@ bds-ui/
 - 🔵 Blue: Server Output. Anything with `[BDS-UI]` is info from bds-ui, the rest is BDS's own output.
 
 ### Settings
- ![An image of BDS-UI's settings page](https://github.com/UFO-Studios/bds-ui/assets/80964340/bab98037-248d-4989-a943-6b3058dd9739)
+ ![An image of BDS-UI's settings page](https://github.com/UFO-Studios/bds-ui/assets/80964340/9d468bfb-3733-43e1-8abd-b6a6f8283ef2)
 
 - 🔴 Red: The Backup & Restart Settings. Note: Backup won't work without restart also being enabled
 - 🟠 Orange: The time (in 24H) that BDS-UI will Restart/Backup. This is ignored if `Auto Restarts` is disabled
 - 🟢 Green: The file paths. We recommend having them in the same folder (`D:/TAD/bds-ui` in the image, for example) for ease of use, but this is not needed
 - 🔵 Blue: About. Shows info about your version of BDS-UI
+- 🩷 Pink: Debug settings.
 - 🟣 Purple: Save settings button. Make sure you save before leaving the tab!
 
 ## Troubleshooting
