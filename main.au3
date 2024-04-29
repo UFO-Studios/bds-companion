@@ -331,52 +331,65 @@ endfunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "Scheduled actions called")
-	; Check if the current time is 5 minutes before the hour
-	if(@MIN <> 55) then Return
+	If $cfg_autoRestart = "True" Then
+		logWrite(0, "Auto Restart is enabled")
+		; Split the autoRestartInterval string into an array
+		Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
+		logWrite(0, "Split intervals into array")
+		Local $hour = @HOUR
 
-	logWrite(0, "Running scheduled actions...")
+		If @HOUR = 23 Then
+			$hour = 0
+		Else
+			$hour += 1
+		EndIf
+		logWrite(0, "Added 1 to hour for check")
 
-	; Split the autoRestartInterval string into an array
-	Local $aIntervals = StringSplit($cfg_autoRestartInterval, ",")
+		logWrite(0, "Checking if hour matches config")
+		; Find the index of the current hour in the array
+		Local $iIndex = _ArraySearch($aIntervals, $hour)
+		If $iIndex > 0 Then
+			logWrite(0, "Auto Restart time reached")
+		Else
+			logWrite(0, "Auto Restart time not reached")
+			Return
+		EndIf
+		logWrite(0, $guiTitle, "Debug")
 
-	If @HOUR = 0 Then
-		$HR = 23
-	Else
-		$HR = @HOUR - 1
-	EndIf
-	; Find the index of the current hour in the array
-	Local $iIndex = _ArraySearch($aIntervals, $HR)
+		; Check if the current time is 5 minutes before the hour
+		If @MIN = 55 Then
+			logWrite(0, "Sending 5 minute warning")
+			If(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 5 minutes" & @CRLF)
+		EndIf
 
+		If @MIN = 59 Then
+			If(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 1 minute" & @CRLF)
+		EndIf
 
-	If $iIndex > 0 Then
-		If $cfg_autoRestart = "True" Then
-			logWrite(0, "Auto restart time is in 5 minutes. Sending in game warning if server is running")
-			if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 5 minutes" & @CRLF)
-			Sleep(5 * 60000) ;3m
-			if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 1 minute" & @CRLF)
-			Sleep(60000) ;1m
-			if(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server is restarting!" & @CRLF)
-			Sleep(5000) ;5s
-			logWrite(0, "Auto restart time reached. Restarting server...")
-			GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
-			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
-			If($cfg_backupDuringRestart = "True") Then
-				RestartServer(1) ;Backup during restart
-			Else
-				RestartServer(0)
-			EndIf
-		Endif
-	Else
-		Return
+		; For when restart time is reached
+		If @MIN = 0 Then
+			If _ArraySearch($aIntervals, @HOUR) > 0 Then
+				logWrite(0, "Auto restart time reached. Restarting server...")
+				GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
+				GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
+				If($cfg_backupDuringRestart = "True") Then
+					RestartServer(1)  ;Backup during restart
+				Else
+					RestartServer(0)
+				EndIf
+			Endif
+		Else
+			logWrite(0, "Auto Restart is not enabled")
+		EndIf
 	EndIf
 EndFunc   ;==>ScheduledActions
 
 ;Functions (Misc) ##################################################################################
 
 Func IsBackupThread()
-	;Check if the current thread is the backup thread 
-	If ($CmdLine[0] > 0 ) Then
-		If ($CmdLine[1] = "backup") Then
+	;Check if the current thread is the backup thread
+	If($CmdLine[0] > 0) Then
+		If($CmdLine[1] = "backup") Then
 			logWrite(0, "Backup thread detected. Running backup...")
 			backupServer()
 			logWrite(0, "Backup complete. Exiting backup thread.")
@@ -385,12 +398,12 @@ Func IsBackupThread()
 			logWrite(0, "Backup thread not detected. Continuing...")
 		EndIf
 	Else
-		logWrite(0, "Backup thread not detected. Continuing...")		
+		logWrite(0, "Backup thread not detected. Continuing...")
 	EndIf
 EndFunc   ;==>IsBackupThread
 
 Func UploadLog()
-	logWrite(0, "Uploading log (" &  $cfg_logsDir & "\log.latest) to server...")
+	logWrite(0, "Uploading log (" & $cfg_logsDir & "\log.latest) to server...")
 	local $logFile = FileOpen($cfg_logsDir & "\log.latest", 0)
 	$logFile = FileRead($logFile)
 	$res = HttpPost("https://api.mclo.gs/1/log", "content=" & $logFile)
@@ -570,7 +583,7 @@ Func RestartServer($backup)
 			logWrite(0, "Restarting server...")
 			outputToConsole("Server Restart Triggered")
 			stopServer()
-			;~ backupServer()
+;~ backupServer()
 			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
 			ShellExecute(@ScriptFullPath, " backup")
 			Sleep(2000)
@@ -684,8 +697,8 @@ Func backupServer()
 	$ServerWasRunning = False
 	DirCreate(@ScriptDir & "\temp\") ;for other thread
 	FileWrite("/temp/is_running", "1")
-	
-	if ($cfg_verboseLogging = "True") then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
+
+	if($cfg_verboseLogging = "True") then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
 	If(ProcessExists($BDS_process)) then
@@ -775,8 +788,8 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-If ($CmdLine[0] > 0 ) Then
-	If ($CmdLine[1] = "backup") Then
+If($CmdLine[0] > 0) Then
+	If($CmdLine[1] = "backup") Then
 		logWrite(0, "Backup thread detected. Running backup...")
 		GUICtrlSetState($gui_mainWindow, @SW_HIDE)
 		backupServer()
@@ -786,7 +799,7 @@ If ($CmdLine[0] > 0 ) Then
 		startup()
 	EndIf
 Else
-	startup()		
+	startup()
 EndIf
 
 While 1
@@ -849,22 +862,25 @@ While 1
 		Case $gui_UploadLogsBtn
 			UploadLog()
 
-		;~ Case $gui_FindServerBtn
-		;~ 	$pid = FindServerPID()
-		;~ 	if($pid = 0) then
-		;~ 		MsgBox(0, $guiTitle, "BDS is not running.")
-		;~ 	Else
-		;~ 		$BDS_process = $pid
-		;~ 		$serverRunning = True
-		;~ 		AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
-		;~ 		outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
-		;~ 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-		;~ 		GUICtrlSetData($gui_serverStatusIndicator, "Online")
-		;~ 		BDScreateLog()
-		;~ 		GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
-		;~ 		GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
-		;~ 		GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
-		;~ 		MsgBox(0, $guiTitle, "BDS found! The console will update with any new messages")
-		;~ 	EndIf
+		Case $gui_debugEnableBtn
+			ScheduledActions()
+
+;~ Case $gui_FindServerBtn
+;~ 	$pid = FindServerPID()
+;~ 	if($pid = 0) then
+;~ 		MsgBox(0, $guiTitle, "BDS is not running.")
+;~ 	Else
+;~ 		$BDS_process = $pid
+;~ 		$serverRunning = True
+;~ 		AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
+;~ 		outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
+;~ 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+;~ 		GUICtrlSetData($gui_serverStatusIndicator, "Online")
+;~ 		BDScreateLog()
+;~ 		GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
+;~ 		GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
+;~ 		GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
+;~ 		MsgBox(0, $guiTitle, "BDS found! The console will update with any new messages")
+;~ 	EndIf
 	EndSwitch
 WEnd
