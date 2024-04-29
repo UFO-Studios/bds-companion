@@ -350,25 +350,22 @@ Func ScheduledActions()
 		Local $iIndex = _ArraySearch($aIntervals, $hour)
 		If $iIndex > 0 Then
 			logWrite(0, "Auto Restart time reached")
-		Else
-			logWrite(0, "Auto Restart time not reached")
-			Return
-		EndIf
-		logWrite(0, $guiTitle, "Debug")
+			; Check if the current time is 5 minutes before the hour
+			If @MIN = 55 Then
+				logWrite(0, "Sending 5 minute warning")
+				sendServerCommand("say Server will restart in 5 minutes")
+			EndIf
 
-		; Check if the current time is 5 minutes before the hour
-		If @MIN = 55 Then
-			logWrite(0, "Sending 5 minute warning")
-			sendServerCommand("say Server will restart in 5 minutes")
-		EndIf
-
-		If @MIN = 59 Then
-			sendServerCommand("say Server will restart in 1 minute")
+			If @MIN = 59 Then
+				sendServerCommand("say Server will restart in 1 minute")
+			EndIf
 		EndIf
 
 		; For when restart time is reached
 		If @MIN = 0 Then
-			If _ArraySearch($aIntervals, @HOUR) > 0 Then
+			$iIndex = 0
+			$iIndex = _ArraySearch($aIntervals, @HOUR)
+			If $iIndex > 0 Then
 				logWrite(0, "Auto restart time reached. Restarting server...")
 				GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 				GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
@@ -379,7 +376,7 @@ Func ScheduledActions()
 				EndIf
 			Endif
 		Else
-			logWrite(0, "Auto Restart is not enabled")
+			logWrite(0, "Minute is not 0")
 		EndIf
 	EndIf
 EndFunc   ;==>ScheduledActions
