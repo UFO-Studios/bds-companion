@@ -249,6 +249,13 @@ Func createLog()
 	EndIf
 EndFunc   ;==>createLog
 
+Func closeLog()
+	FileOpen($cfg_logsDir & "\log.latest", 1)
+	logWrite(0, "###################################################################")
+	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+	FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+EndFunc
+
 ;Functions (Server Logging) #######################################################################
 
 Func BDScreateLog()
@@ -267,18 +274,18 @@ Func BDScreateLog()
 	EndIf
 EndFunc   ;==>BDScreateLog
 
-Func BDSwriteLog($content)
+Func BDScloseLog()
+	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+	BDSlogWrite("###################################################################")
+	BDSlogWrite("Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+	FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+EndFunc
+
+Func BDSlogWrite($content)
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 endfunc   ;==>BDSwriteLog
-
-Func closeLog()
-	FileOpen($cfg_logsDir & "\log.latest", 1)
-	logWrite(0, "###################################################################")
-	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-	FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
-EndFunc   ;==>closeLog
 
 Func outputToConsole($content)
 
@@ -571,7 +578,7 @@ Func updateConsole() ;not logging for this one
 			_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Scroll down to bottom of console, stops existing text from being overwritten
 			GUICtrlSetData($gui_console, $line, 1)
 			if $line <> "" Then ;if line has content
-				BDSwriteLog($line)
+				BDSlogWrite($line)
 			EndIf
 		EndIf
 	EndIf
@@ -651,10 +658,7 @@ Func stopServer()
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
-		FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-		logWrite(0, "###################################################################")
-		logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+BDScloseLog()
 	endif
 
 	Global $BDS_process = Null
@@ -680,9 +684,7 @@ Func killServer()
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
-		BDSwriteLog("###################################################################")
-		BDSwriteLog("Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
+BDScloseLog()
 
 		AdlibUnRegister("updateConsole")
 
