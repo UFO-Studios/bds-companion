@@ -6,11 +6,11 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS UI)
 #pragma compile(ProductName, BDS UI)
-#pragma compile(ProductVersion, 1.0.0)
-#pragma compile(FileVersion, 1.0.0)
+#pragma compile(ProductVersion, 0.1.0)
+#pragma compile(FileVersion, 0.1.0)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS_UI-V1.0.0)
+#pragma compile(OriginalFilename, BDS UI-V0.1.0)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
@@ -30,8 +30,8 @@
 #include "UDF/WinHttp.au3"
 #include "UDF/JSON.au3"
 
-Global Const $currentVersionNumber = "100"
-Global Const $guiTitle = "BDS UI - V1.0.0"
+Global Const $currentVersionNumber = "010"
+Global Const $guiTitle = "BDS UI - Beta-0.1.0"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
 ;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
