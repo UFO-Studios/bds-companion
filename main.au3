@@ -10,7 +10,7 @@
 #pragma compile(FileVersion, 0.1.0)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS UI-V0.1.0)
+#pragma compile(OriginalFilename, BDS UI Beta-0.1.0)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
