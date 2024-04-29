@@ -359,11 +359,11 @@ Func ScheduledActions()
 		; Check if the current time is 5 minutes before the hour
 		If @MIN = 55 Then
 			logWrite(0, "Sending 5 minute warning")
-			If(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 5 minutes" & @CRLF)
+			sendServerCommand("say Server will restart in 5 minutes")
 		EndIf
 
 		If @MIN = 59 Then
-			If(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, "say Server will restart in 1 minute" & @CRLF)
+			sendServerCommand("say Server will restart in 1 minute")
 		EndIf
 
 		; For when restart time is reached
@@ -425,6 +425,7 @@ Func startup()
 	;Disable buttons that can't be used
 	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+	GUICtrlSetState($gui_sendCmdBtn, $GUI_DISABLE)
 
 	;Register scheduled actions
 	AdlibRegister("ScheduledActions", 60 * 1000) ;every minute
@@ -557,6 +558,8 @@ Func startServer()
 
 	GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
+	GUICtrlSetState($gui_sendCmdBtn, $GUI_ENABLE)
+
 	GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
 EndFunc   ;==>startServer
 
@@ -628,11 +631,11 @@ Func stopServer()
 	logWrite(0, "Stopping server")
 	outputToConsole("Server Stop Triggered")
 	$attempts = 0
-	StdinWrite($BDS_process, "stop" & @CRLF)
+	sendServerCommand("stop")
 	Sleep(5 * 1000) ;5s
 	While($attempts < 5 And ProcessExists($BDS_process))
 		$attempts = $attempts + 1
-		StdinWrite($BDS_process, "stop" & @CRLF)
+		sendServerCommand("stop")
 		logWrite(0, "Server stop attempt " & $attempts & " of 4")
 		Sleep((5 - $attempts) * 1000) ;so it gets shorter each time
 	WEnd
@@ -647,6 +650,7 @@ Func stopServer()
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+		GUICtrlSetState($gui_sendCmdBtn, $GUI_DISABLE)
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
@@ -675,6 +679,7 @@ Func killServer()
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
+		GUICtrlSetState($gui_sendCmdBtn, $GUI_DISABLE)
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
@@ -692,22 +697,25 @@ EndFunc   ;==>killServer
 
 
 Func backupServer()
+	If(ProcessExists($BDS_process)) then
+		If MsgBox(4, $guiTitle, "The server is still running. Are you sure you want to backup? Backing up the server whilst its running can lead to world corruption if the server crashes.") = 6 Then
+			sendServerCommand("Server is backing up")
+			Sleep(2)
+			sendServerCommand("save hold")
+		Else
+			logWrite(0, "Backup Cancelled")
+			Return
+		endif
+	EndIf
+
 	;PRE PROCESSING & FILE LOCKS
 	logWrite(0, "Backing up server...")
-	$ServerWasRunning = False
 	DirCreate(@ScriptDir & "\temp\") ;for other thread
 	FileWrite("/temp/is_running", "1")
 
 	if($cfg_verboseLogging = "True") then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
-	If(ProcessExists($BDS_process)) then
-		logWrite(0, "BDS is running, stopping to avoid corruption")
-		$ServerWasRunning = True
-		outputToConsole("Beginning backup process")
-		stopServer()
-		Sleep(5000) ;5s
-	endif
 
 	;COPY FILES TO TEMP FOLDER
 	;backup: "behavior_packs/, config/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
@@ -725,12 +733,8 @@ Func backupServer()
 
 	;POST PROCESSING & RELEASE FILE LOCKS. Not (in theory) in use, but keeping it for edge cases.
 	if(processExists($BDS_process)) then
-		StdinWrite($BDS_process, "save resume" & @CRLF)
+		sendServerCommand("save resume")
 		logWrite(0, "BDS's Lock has been reacquired. Copy Complete.")
-	endif
-	;RESTART BDS IF IT WAS RUNNING
-	if($ServerWasRunning = True) then
-		startServer()
 	endif
 	logWrite(0, "Creating Zip & compressing files...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")
@@ -774,12 +778,9 @@ Func backupServer()
 	endif
 Endfunc   ;==>backupServer
 
-Func sendServerCommand()
-	$cmd = GUICtrlRead($gui_commandInput)     ;cmd input box
-	StdinWrite($BDS_process, $cmd & @CRLF)
-	outputToConsole("Command Sent: '" & $cmd & "'")
-	GUICtrlSetData($gui_commandInput, "")
-	Return
+Func sendServerCommand($content)
+	If(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, $content & @CRLF)
+	outputToConsole("Command Sent: '" & $content & "'")
 EndFunc   ;==>sendServerCommand
 
 
@@ -825,7 +826,8 @@ While 1
 			backupServer()
 
 		Case $gui_sendCmdBtn
-			sendServerCommand()
+			sendServerCommand(GUICtrlRead($gui_commandInput))
+			GUICtrlSetData($gui_commandInput, "")
 
 		Case $gui_saveSettingsBtn
 			saveConf()
