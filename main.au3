@@ -593,7 +593,7 @@ Func RestartServer($backup)
 ;~ backupServer()
 			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
 			ShellExecute(@ScriptFullPath, " backup")
-			Sleep(2000)
+			Sleep(5000)
 			while 1
 				if(FileExists(@ScriptDir & "\temp\is_running") = 0) then
 					setServerStatus($COLOR_GREEN, "Online")
