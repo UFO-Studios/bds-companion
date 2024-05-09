@@ -105,7 +105,7 @@ Global $bdsFolder = @ScriptDir & "\BDS"
 Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
-Global $BDS_process = null
+Global $BDS_process = Null
 
 
 ;Functions (Server Status) #############################################################################
@@ -113,7 +113,7 @@ Global $BDS_process = null
 Func setServerStatus($colour, $status)
 	GUICtrlSetColor($gui_serverStatusIndicator, $colour)
 	GUICtrlSetData($gui_serverStatusIndicator, $status)
-endfunc   ;==>setServerStatus
+EndFunc   ;==>setServerStatus
 
 ;Functions (Config) #############################################################################
 
@@ -123,14 +123,14 @@ Func loadConf()
 		GUICtrlSetState($gui_autoRestartCheck, $GUI_CHECKED)
 	ElseIf $cfg_autoRestart = "False" Then
 		GUICtrlSetState($gui_autoRestartCheck, $GUI_UNCHECKED)
-	Endif
+	EndIf
 
 	Global $cfg_backupDuringRestart = IniRead($settingsFile, "autoRestart", "backupDuringRestart", "False")
 	If $cfg_backupDuringRestart = "True" Then
 		GUICtrlSetState($gui_backupDuringRestartCheck, $GUI_CHECKED)
 	ElseIf $cfg_backupDuringRestart = "False" Then
 		GUICtrlSetState($gui_backupDuringRestartCheck, $GUI_UNCHECKED)
-	Endif
+	EndIf
 
 	Global $cfg_autoRestartInterval = IniRead($settingsFile, "autoRestart", "restartInterval", "6,12,18,24")
 	GUICtrlSetData($gui_autoRestartTimeInput, $cfg_autoRestartInterval)
@@ -213,13 +213,13 @@ Func logWrite($spaces, $content, $onlyVerbose = False)
 	EndIf
 
 	FileOpen($cfg_logsDir & "\log.latest", 1)
-	if($onlyVerbose = True) then
-		if($cfg_verboseLogging = "True") then ;if both are true then write to log, else drop it
+	If ($onlyVerbose = True) Then
+		If ($cfg_verboseLogging = "True") Then ;if both are true then write to log, else drop it
 			FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 		EndIf
 	Else ;write to log as normal
 		FileWrite($cfg_logsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
-	endif
+	EndIf
 	FileClose($cfg_logsDir & "\log.latest")
 
 	If $spaces = 1 Then
@@ -254,7 +254,7 @@ Func closeLog()
 	logWrite(0, "###################################################################")
 	logWrite(0, "Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 	FileMove($cfg_logsDir & "\log.latest", $cfg_logsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
-EndFunc
+EndFunc   ;==>closeLog
 
 ;Functions (Server Logging) #######################################################################
 
@@ -264,12 +264,12 @@ Func BDScreateLog()
 	EndIf
 
 	If FileExists($cfg_bdsLogsDir) Then ;If directory exists then begin writing logs
-		fileWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		fileWrite(0, "###################################################################")
+		FileWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		FileWrite(0, "###################################################################")
 	ElseIf FileExists($cfg_bdsLogsDir) = 0 Then ;If directory doesn't exist create it then begin writing logs
 		DirCreate($cfg_bdsLogsDir)
-		fileWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
-		fileWrite(0, "###################################################################")
+		FileWrite(0, "Log file generated at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+		FileWrite(0, "###################################################################")
 		logWrite(0, "Created logging directory!")
 	EndIf
 EndFunc   ;==>BDScreateLog
@@ -279,13 +279,13 @@ Func BDScloseLog()
 	BDSlogWrite("###################################################################")
 	BDSlogWrite("Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 	FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
-EndFunc
+EndFunc   ;==>BDScloseLog
 
 Func BDSlogWrite($content)
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 	FileClose($cfg_bdsLogsDir & "\log.latest")
-endfunc   ;==>BDSwriteLog
+EndFunc   ;==>BDSlogWrite
 
 Func outputToConsole($content)
 
@@ -294,6 +294,8 @@ Func outputToConsole($content)
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF)
 	FileClose($cfg_bdsLogsDir & "\log.latest")
+
+	logWrite(0, "Output to console: [BDS-UI]: " & $content)
 EndFunc   ;==>outputToConsole
 
 ;Functions (BDS Config) #########################################################################
@@ -321,18 +323,18 @@ Func LoadBDSConf()
 		logWrite(0, "Error opening file. Error code: " & @error)
 		MsgBox(0, $guiTitle, "Error: cannot open server.properties! " & @CRLF & " is it in " & $cfg_bdsDir & "?" & @CRLF & "Error code: " & @error)
 		GUICtrlSetData($gui_ServerPropertiesEdit, "Error opening file! Is it in  " & $bdsFolder & "? (Code: " & @error & ")")
-	else
+	Else
 		logWrite(0, "File opened successfully.")
 		GUICtrlSetData($gui_ServerPropertiesEdit, $FileOpened)
-	endif
+	EndIf
 EndFunc   ;==>LoadBDSConf
 
 Func SaveBDSConf()
 	Local $BDSconfFile = $cfg_bdsDir & "/server.properties"
-	local $NewFileValue = GUICtrlRead($gui_ServerPropertiesEdit)
+	Local $NewFileValue = GUICtrlRead($gui_ServerPropertiesEdit)
 	logWrite(0, "Saved BDS conf file to " & $BDSconfFile)
 	ReplaceFileContents($BDSconfFile, $NewFileValue)
-endfunc   ;==>SaveBDSConf
+EndFunc   ;==>SaveBDSConf
 
 ;Functions (Scheduled Actions) ##################################################################
 
@@ -376,12 +378,12 @@ Func ScheduledActions()
 				logWrite(0, "Auto restart time reached. Restarting server...")
 				GUICtrlSetData($gui_serverStatusIndicator, "Running scheduled restart")
 				GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_PURPLE)
-				If($cfg_backupDuringRestart = "True") Then
+				If ($cfg_backupDuringRestart = "True") Then
 					RestartServer(1)  ;Backup during restart
 				Else
 					RestartServer(0)
 				EndIf
-			Endif
+			EndIf
 		Else
 			logWrite(0, "Minute is not 0")
 		EndIf
@@ -392,8 +394,8 @@ EndFunc   ;==>ScheduledActions
 
 Func IsBackupThread()
 	;Check if the current thread is the backup thread
-	If($CmdLine[0] > 0) Then
-		If($CmdLine[1] = "backup") Then
+	If ($CmdLine[0] > 0) Then
+		If ($CmdLine[1] = "backup") Then
 			logWrite(0, "Backup thread detected. Running backup...")
 			backupServer()
 			logWrite(0, "Backup complete. Exiting backup thread.")
@@ -408,7 +410,7 @@ EndFunc   ;==>IsBackupThread
 
 Func UploadLog()
 	logWrite(0, "Uploading log (" & $cfg_logsDir & "\log.latest) to server...")
-	local $logFile = FileOpen($cfg_logsDir & "\log.latest", 0)
+	Local $logFile = FileOpen($cfg_logsDir & "\log.latest", 0)
 	$logFile = FileRead($logFile)
 	$res = HttpPost("https://api.mclo.gs/1/log", "content=" & $logFile)
 	logWrite(0, "Log uploaded to server. Getting url...")
@@ -454,7 +456,7 @@ EndFunc   ;==>startup
 Func exitScript()
 	logWrite(0, "Exiting script...")
 	AdlibUnRegister("ScheduledActions")
-	If $BDS_process = Null then ;stopServer has closed it properly
+	If $BDS_process = Null Then ;stopServer has closed it properly
 		logWrite(0, "BDS Process isn't running. Closing script")
 	ElseIf ProcessExists($BDS_process) Then
 		_WinAPI_FlashWindow($gui_mainWindow, 1)
@@ -464,7 +466,7 @@ Func exitScript()
 			RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
 		ElseIf $msgBox = 7 Then ;No
 			logWrite(0, "User chose not to kill BDS process. Canceling close")
-			return
+			Return
 		EndIf
 
 		$serverRunning = False
@@ -472,7 +474,7 @@ Func exitScript()
 		logWrite(0, "BDS Process killed. Closing script")
 	Else
 		logWrite(0, "BDS Process is not running. Closing script")
-	endif
+	EndIf
 	closeLog()
 
 	DirRemove(@ScriptDir & "\temp\", 1)
@@ -546,11 +548,11 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer()
 	logWrite(0, "Starting BDS...")
-	if(ProcessExists($BDS_process)) Then
+	If (ProcessExists($BDS_process)) Then
 		logWrite(0, "BDS process already running. Skipping startServer()")
 		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
 		Return
-	endif
+	EndIf
 	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
@@ -577,7 +579,7 @@ Func updateConsole() ;not logging for this one
 			Local $lineCount = _GUICtrlEdit_GetLineCount($gui_console) ;Get line count
 			_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Scroll down to bottom of console, stops existing text from being overwritten
 			GUICtrlSetData($gui_console, $line, 1)
-			if $line <> "" Then ;if line has content
+			If $line <> "" Then ;if line has content
 				BDSlogWrite($line)
 			EndIf
 		EndIf
@@ -585,7 +587,7 @@ Func updateConsole() ;not logging for this one
 EndFunc   ;==>updateConsole
 
 Func RestartServer($backup)
-	if(ProcessExists($BDS_process)) Then
+	If (ProcessExists($BDS_process)) Then
 		If $backup = 1 Then
 			logWrite(0, "Restarting server...")
 			outputToConsole("Server Restart Triggered")
@@ -594,8 +596,8 @@ Func RestartServer($backup)
 			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
 			ShellExecute(@ScriptFullPath, " backup")
 			Sleep(5000)
-			while 1
-				if(FileExists(@ScriptDir & "\temp\is_running") = 0) then
+			While 1
+				If (FileExists(@ScriptDir & "\temp\is_running") = 0) Then
 					setServerStatus($COLOR_GREEN, "Online")
 				EndIf
 				ExitLoop
@@ -609,17 +611,17 @@ Func RestartServer($backup)
 			startServer()
 			logWrite(0, "Server restarted")
 		EndIf
-	else
+	Else
 		logWrite(0, "BDS process not found. Skipping restart.")
-	endif
+	EndIf
 EndFunc   ;==>RestartServer
 
 Func FindServerPID()
 	logWrite(0, "Finding BDS PID...")
-	local $cmd = "pwsh -c (Get-Process bedrock_server.exe).Id"
-	local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
-	local $tmp = StdoutRead($output)
-	if($tmp = "") Then
+	Local $cmd = "pwsh -c (Get-Process bedrock_server.exe).Id"
+	Local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
+	Local $tmp = StdoutRead($output)
+	If ($tmp = "") Then
 		logWrite(0, "BDS PID not found. BDS is not running.")
 		Return 0
 	Else
@@ -629,7 +631,7 @@ Func FindServerPID()
 		logWrite(0, "BDS PID is " & $BDS_process)
 		Return $BDS_process
 	EndIf
-endfunc   ;==>FindServerPID
+EndFunc   ;==>FindServerPID
 
 Func stopServer()
 	logWrite(0, "Stopping server")
@@ -637,13 +639,13 @@ Func stopServer()
 	$attempts = 0
 	sendServerCommand("stop")
 	Sleep(5 * 1000) ;5s
-	While($attempts < 5 And ProcessExists($BDS_process))
+	While ($attempts < 5 And ProcessExists($BDS_process))
 		$attempts = $attempts + 1
 		sendServerCommand("stop")
 		logWrite(0, "Server stop attempt " & $attempts & " of 4")
 		Sleep((5 - $attempts) * 1000) ;so it gets shorter each time
 	WEnd
-	If(ProcessExists($BDS_process)) then
+	If (ProcessExists($BDS_process)) Then
 		logWrite(0, "Server stop failed.")
 		MsgBox(0, $guiTitle, "Server stop failed. Please kill the process manually.")
 	Else
@@ -658,8 +660,8 @@ Func stopServer()
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
-BDScloseLog()
-	endif
+		BDScloseLog()
+	EndIf
 
 	Global $BDS_process = Null
 EndFunc   ;==>stopServer
@@ -684,7 +686,7 @@ Func killServer()
 
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
-BDScloseLog()
+		BDScloseLog()
 
 		AdlibUnRegister("updateConsole")
 
@@ -696,7 +698,7 @@ EndFunc   ;==>killServer
 
 
 Func backupServer()
-	If(ProcessExists($BDS_process)) then
+	If (ProcessExists($BDS_process)) Then
 		If MsgBox(4, $guiTitle, "The server is still running. Are you sure you want to backup? Backing up the server whilst its running can lead to world corruption if the server crashes.") = 6 Then
 			sendServerCommand("Server is backing up")
 			Sleep(2)
@@ -704,7 +706,7 @@ Func backupServer()
 		Else
 			logWrite(0, "Backup Cancelled")
 			Return
-		endif
+		EndIf
 	EndIf
 
 	;PRE PROCESSING & FILE LOCKS
@@ -712,7 +714,7 @@ Func backupServer()
 	DirCreate(@ScriptDir & "\temp\") ;for other thread
 	FileWrite("/temp/is_running", "1")
 
-	if($cfg_verboseLogging = "True") then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
+	If ($cfg_verboseLogging = "True") Then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
 	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
 	outputToConsole("Server Backup Started")
 
@@ -731,10 +733,10 @@ Func backupServer()
 	logWrite(0, "Files copied to temporary folder. Restarting BDS if it was running")
 
 	;POST PROCESSING & RELEASE FILE LOCKS. Not (in theory) in use, but keeping it for edge cases.
-	if(processExists($BDS_process)) then
+	If (ProcessExists($BDS_process)) Then
 		sendServerCommand("save resume")
 		logWrite(0, "BDS's Lock has been reacquired. Copy Complete.")
-	endif
+	EndIf
 	logWrite(0, "Creating Zip & compressing files...")
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")
 
@@ -748,31 +750,31 @@ Func backupServer()
 	;COMPRESS FILES
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 1/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\behavior_packs", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 1/7). Code " & @error, True)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 2/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\config", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 2/7). Code " & @error, True)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 3/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\resource_packs", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 3/7). Code " & @error, True)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 4/7)")
 	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\worlds", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 4/7). Code " & @error, True)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 5/7)")
 	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\allowlist.json", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 5/7). Code " & @error, True)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 6/7)")
 	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\permissions.json", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 6/7). Code " & @error, True)
 	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 7/7)")
 	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\server.properties", 0)
-	if @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
+	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
 	logWrite(0, "Backup (Compressed files 7/7). Code " & @error, True)
 	logWrite(0, "Backup (Complete)", True)
 	outputToConsole("Server Backup Complete")
@@ -783,17 +785,18 @@ Func backupServer()
 	logWrite(0, "Temporary files cleaned up")
 
 	;SET STATUS
-	if(processExists($BDS_process)) then
+	If (ProcessExists($BDS_process)) Then
 		setServerStatus($COLOR_GREEN, "Online")
 		outputToConsole("Server backup complete")
-	else
+	Else
 		setServerStatus($COLOR_RED, "Offline")
-	endif
-Endfunc   ;==>backupServer
+	EndIf
+EndFunc   ;==>backupServer
 
 Func sendServerCommand($content)
-	If(ProcessExists($BDS_process)) Then StdinWrite($BDS_process, $content & @CRLF)
+	If (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, $content & @CRLF)
 	outputToConsole("Command Sent: '" & $content & "'")
+	logWrite(0, "Sent server command: " & $content)
 EndFunc   ;==>sendServerCommand
 
 
@@ -802,8 +805,8 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-If($CmdLine[0] > 0) Then
-	If($CmdLine[1] = "backup") Then
+If ($CmdLine[0] > 0) Then
+	If ($CmdLine[1] = "backup") Then
 		logWrite(0, "Backup thread detected. Running backup...")
 		GUICtrlSetState($gui_mainWindow, @SW_HIDE)
 		backupServer()
