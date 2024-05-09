@@ -30,6 +30,8 @@
 #include "UDF/WinHttp.au3"
 #include "UDF/JSON.au3"
 
+#RequireAdmin
+
 Global Const $currentVersionNumber = "010"
 Global Const $guiTitle = "BDS UI - Beta-0.1.0"
 
@@ -592,16 +594,10 @@ Func RestartServer($backup)
 			logWrite(0, "Restarting server...")
 			outputToConsole("Server Restart Triggered")
 			stopServer()
-;~ backupServer()
 			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
-			ShellExecute(@ScriptFullPath, " backup")
-			Sleep(5000)
-			While 1
-				If (FileExists(@ScriptDir & "\temp\is_running") = 0) Then
-					setServerStatus($COLOR_GREEN, "Online")
-				EndIf
-				ExitLoop
-			WEnd
+			logWrite(0, "Backup during restart enabled. Starting backup...")
+;~ ShellExecute(@ScriptFullPath, " backup");start the backup func. NOT finish it!
+			backupServer()
 			startServer()
 			logWrite(0, "Server restarted")
 		ElseIf $backup = 0 Then
@@ -696,7 +692,6 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
-
 Func backupServer()
 	If (ProcessExists($BDS_process)) Then
 		If MsgBox(4, $guiTitle, "The server is still running. Are you sure you want to backup? Backing up the server whilst its running can lead to world corruption if the server crashes.") = 6 Then
@@ -709,80 +704,23 @@ Func backupServer()
 		EndIf
 	EndIf
 
-	;PRE PROCESSING & FILE LOCKS
-	logWrite(0, "Backing up server...")
-	DirCreate(@ScriptDir & "\temp\") ;for other thread
-	FileWrite("/temp/is_running", "1")
-
-	If ($cfg_verboseLogging = "True") Then logWrite(0, "Verbose logging for backup enabled! Current status: 'Pre Processing...'")
-	setServerStatus($COLOR_ORANGE, "Backing up (Pre Processing...)")
-	outputToConsole("Server Backup Started")
-
-	;COPY FILES TO TEMP FOLDER
-	;backup: "behavior_packs/, config/, resource_packs/, worlds/, allowlist.json, permissions.json, server.properties"
-	logWrite(0, "Copying files to tempory folder")
-	setServerStatus($COLOR_ORANGE, "Backing up (Copying files...)")
-	DirCreate(@ScriptDir & "\temp\backups\")
-	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\behavior_packs", 1)
-	DirCopy($cfg_bdsDir & "\behavior_packs", @ScriptDir & "\temp\backups\config", 1)
-	DirCopy($cfg_bdsDir & "\resource_packs", @ScriptDir & "\temp\backups\resource_packs", 1)
-	DirCopy($cfg_bdsDir & "\worlds", @ScriptDir & "\temp\backups\worlds", 1)
-	FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\backups\allowlist.json", 1)
-	FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\temp\backups\permissions.json", 1)
-	FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\backups\server.properties", 1)
-	logWrite(0, "Files copied to temporary folder. Restarting BDS if it was running")
-
-	;POST PROCESSING & RELEASE FILE LOCKS. Not (in theory) in use, but keeping it for edge cases.
-	If (ProcessExists($BDS_process)) Then
-		sendServerCommand("save resume")
-		logWrite(0, "BDS's Lock has been reacquired. Copy Complete.")
+	If (FileExists(@ScriptDir & "\backup.exe")) Then
+		$bdsbkp = RunWait(@ScriptDir & "\backup.exe", $cfg_bdsDir & " " & $cfg_backupsDir & " " & $cfg_logsDir)
+	Else
+		$bdsbkp = RunWait(@ScriptDir & "\backup.au3", $cfg_bdsDir & " " & $cfg_backupsDir & " " & $cfg_logsDir)
 	EndIf
-	logWrite(0, "Creating Zip & compressing files...")
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files...)")
+	MsgBox(0, "", $bdsbkp)
 
-	;CREATE ZIP
-	Local $backupDateTime = "[" & @HOUR & "-" & @MIN & "-" & @SEC & "][" & @MDAY & "." & @MON & "." & @YEAR & "]"
-	Local $ZIPname = $cfg_backupsDir & "\Backup-" & $backupDateTime & ".zip"
-	_Zip_Create($ZIPname)
-	logWrite(0, "Backup zip created at " & $ZIPname)
-	Sleep(100)
+	Sleep(3 * 1000)
 
-	;COMPRESS FILES
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 1/7)")
-	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\behavior_packs", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 1/7). Code " & @error, True)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 2/7)")
-	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\config", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 2/7). Code " & @error, True)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 3/7)")
-	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\resource_packs", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 3/7). Code " & @error, True)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 4/7)")
-	_Zip_AddFolder($ZIPname, @ScriptDir & "\temp\backups\worlds", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 4/7). Code " & @error, True)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 5/7)")
-	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\allowlist.json", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 5/7). Code " & @error, True)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 6/7)")
-	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\permissions.json", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 6/7). Code " & @error, True)
-	setServerStatus($COLOR_ORANGE, "Backing up (Compressing files 7/7)")
-	_Zip_AddFile($ZIPname, @ScriptDir & "\temp\backups\server.properties", 0)
-	If @error Then MsgBox(0, "Error", "Error adding folder to zip: " & @error)
-	logWrite(0, "Backup (Compressed files 7/7). Code " & @error, True)
+	$i = 0
+	While ProcessExists("BDS-UI-Backup") Or ProcessExists("backup.exe") Or ProcessExists("backup.au3") Or ProcessExists($bdsbkp)
+		$i = $i + 1
+		logWrite(0, "Backup in progress (" & $i & "/?)")
+		Sleep(200)
+	WEnd
 	logWrite(0, "Backup (Complete)", True)
 	outputToConsole("Server Backup Complete")
-
-	;CLEANUP
-	logWrite(0, "Cleaning up temporary files")
-	DirRemove(@ScriptDir & "\temp\", 1)
-	logWrite(0, "Temporary files cleaned up")
 
 	;SET STATUS
 	If (ProcessExists($BDS_process)) Then
@@ -805,19 +743,21 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-If ($CmdLine[0] > 0) Then
-	If ($CmdLine[1] = "backup") Then
-		logWrite(0, "Backup thread detected. Running backup...")
-		GUICtrlSetState($gui_mainWindow, @SW_HIDE)
-		backupServer()
-		logWrite(0, "Backup complete. Exiting backup thread.")
-		Exit
-	Else
-		startup()
-	EndIf
-Else
-	startup()
-EndIf
+;If ($CmdLine[0] > 0) Then
+;	If ($CmdLine[1] = "backup") Then
+;		logWrite(0, "Backup thread detected. Running backup...")
+;		AutoItWinSetTitle($guiTitle & "-Backup")
+;		WinSetState($guiTitle & "-Backup", "", @SW_HIDE)
+;		backupServer()
+;		ConsoleWrite("0")
+;		logWrite(0, "Backup complete. Exiting backup thread.")
+;		Exit
+;	Else
+;		startup()
+;	EndIf
+;Else
+;	startup()
+;EndIf
 
 While 1
 	$nMsg = GUIGetMsg()
@@ -836,10 +776,11 @@ While 1
 			killServer()
 
 		Case $gui_restartBtn
-			RestartServer(0)
+			RestartServer(1)
 
 		Case $gui_backupBtn
-			backupServer()
+;~ backupServer()
+			ShellExecute(@ScriptFullPath, " backup")
 
 		Case $gui_sendCmdBtn
 			sendServerCommand(GUICtrlRead($gui_commandInput))
