@@ -115,6 +115,7 @@ Global $BDS_process = Null
 Func setServerStatus($colour, $status)
 	GUICtrlSetColor($gui_serverStatusIndicator, $colour)
 	GUICtrlSetData($gui_serverStatusIndicator, $status)
+	Sleep(200) ;to avoid lagg
 EndFunc   ;==>setServerStatus
 
 ;Functions (Config) #############################################################################
@@ -394,21 +395,6 @@ EndFunc   ;==>ScheduledActions
 
 ;Functions (Misc) ##################################################################################
 
-Func IsBackupThread()
-	;Check if the current thread is the backup thread
-	If ($CmdLine[0] > 0) Then
-		If ($CmdLine[1] = "backup") Then
-			logWrite(0, "Backup thread detected. Running backup...")
-			backupServer()
-			logWrite(0, "Backup complete. Exiting backup thread.")
-			Exit
-		Else
-			logWrite(0, "Backup thread not detected. Continuing...")
-		EndIf
-	Else
-		logWrite(0, "Backup thread not detected. Continuing...")
-	EndIf
-EndFunc   ;==>IsBackupThread
 
 Func UploadLog()
 	logWrite(0, "Uploading log (" & $cfg_logsDir & "\log.latest) to server...")
@@ -594,9 +580,7 @@ Func RestartServer($backup)
 			logWrite(0, "Restarting server...")
 			outputToConsole("Server Restart Triggered")
 			stopServer()
-			setServerStatus($COLOR_ORANGE, "Backing up (see other window for progress...)")
 			logWrite(0, "Backup during restart enabled. Starting backup...")
-;~ ShellExecute(@ScriptFullPath, " backup");start the backup func. NOT finish it!
 			backupServer()
 			startServer()
 			logWrite(0, "Server restarted")
@@ -692,43 +676,62 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
+Func IsFileLocked($sFilePath)
+	Local $hFile = DllCall("kernel32.dll", "handle", "CreateFileW", "wstr", $sFilePath, "dword", 0x80000000, "dword", 0, "ptr", 0, "dword", 3, "dword", 0, "handle", 0)
+	If @error Or $hFile[0] = Ptr(-1) Then
+		Return True
+	Else
+		DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hFile[0])
+		Return False
+	EndIf
+EndFunc
+
 Func backupServer()
-	If (ProcessExists($BDS_process)) Then
-		If MsgBox(4, $guiTitle, "The server is still running. Are you sure you want to backup? Backing up the server whilst its running can lead to world corruption if the server crashes.") = 6 Then
-			sendServerCommand("Server is backing up")
-			Sleep(2)
-			sendServerCommand("save hold")
-		Else
-			logWrite(0, "Backup Cancelled")
-			Return
-		EndIf
-	EndIf
+	logWrite(0, "Backing up BDS server")
+	Local $finished = False
+	While @error == 0 And $finished == False
+		setServerStatus($COLOR_ORANGE, "Backing up server...")
+		local $backupFileName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
+		local $backupFile = _Zip_Create($backupFileName)
 
-	If (FileExists(@ScriptDir & "\backup.exe")) Then
-		$bdsbkp = RunWait(@ScriptDir & "\backup.exe", $cfg_bdsDir & " " & $cfg_backupsDir & " " & $cfg_logsDir)
-	Else
-		$bdsbkp = RunWait(@ScriptDir & "\backup.au3", $cfg_bdsDir & " " & $cfg_backupsDir & " " & $cfg_logsDir)
-	EndIf
-	MsgBox(0, "", $bdsbkp)
+		;COPY DIRS TO TMP DIR
+		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
+		DirCreate(@ScriptDir & "\temp\")
+		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\temp\behavior_packs", 1)
+		setServerStatus($COLOR_ORANGE, "Copying folders (2/5)")
+		DirCopy($cfg_bdsDir & "\worlds\", @ScriptDir & "\temp\worlds", 1)
+		setServerStatus($COLOR_ORANGE, "Copying folders (3/5)")
+		DirCopy($cfg_bdsDir & "\resource_packs\", @ScriptDir & "\temp\resource_packs", 1)
+		setServerStatus($COLOR_ORANGE, "Copying folders (4/5)")
+		DirCopy($cfg_bdsDir & "\development_behavior_packs\", @ScriptDir & "\temp\development_behavior_packs", 1)
+		setServerStatus($COLOR_ORANGE, "Copying folders (5/5)")
+		DirCopy($cfg_bdsDir & "\development_resource_packs\", @ScriptDir & "\temp\development_resource_packs", 1)
 
-	Sleep(3 * 1000)
+		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
+		;COPY FILES
+		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "permissions.json", "whitelist.json"]
+		For $i In $files
+			setServerStatus($COLOR_ORANGE, "Copying files (" & $i & "/5)")
+			if IsFileLocked($files[$i]) == True Then
+				logWrite(0, "File " & $files[$i] & " is locked. Skipping...")
+			Else
+				FileCopy($cfg_bdsDir & "\" & $files[$i], @ScriptDir & "\temp\" & $files[$i], 1)
+			EndIf
+		Next
 
-	$i = 0
-	While ProcessExists("BDS-UI-Backup") Or ProcessExists("backup.exe") Or ProcessExists("backup.au3") Or ProcessExists($bdsbkp)
-		$i = $i + 1
-		logWrite(0, "Backup in progress (" & $i & "/?)")
-		Sleep(200)
+		;ZIP DIR
+		setServerStatus($COLOR_ORANGE, "Zipping files")
+		_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
+
+
+		;CLEAN UP
+		DirRemove(@ScriptDir & "\temp\", 1)
+
+		;FINISH
+		$finished = True
+		setServerStatus($COLOR_GREEN, "Backup complete!")
 	WEnd
-	logWrite(0, "Backup (Complete)", True)
-	outputToConsole("Server Backup Complete")
 
-	;SET STATUS
-	If (ProcessExists($BDS_process)) Then
-		setServerStatus($COLOR_GREEN, "Online")
-		outputToConsole("Server backup complete")
-	Else
-		setServerStatus($COLOR_RED, "Offline")
-	EndIf
 EndFunc   ;==>backupServer
 
 Func sendServerCommand($content)
@@ -743,21 +746,6 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
-;If ($CmdLine[0] > 0) Then
-;	If ($CmdLine[1] = "backup") Then
-;		logWrite(0, "Backup thread detected. Running backup...")
-;		AutoItWinSetTitle($guiTitle & "-Backup")
-;		WinSetState($guiTitle & "-Backup", "", @SW_HIDE)
-;		backupServer()
-;		ConsoleWrite("0")
-;		logWrite(0, "Backup complete. Exiting backup thread.")
-;		Exit
-;	Else
-;		startup()
-;	EndIf
-;Else
-;	startup()
-;EndIf
 
 While 1
 	$nMsg = GUIGetMsg()
@@ -779,8 +767,8 @@ While 1
 			RestartServer(1)
 
 		Case $gui_backupBtn
-;~ backupServer()
-			ShellExecute(@ScriptFullPath, " backup")
+			backupServer()
+
 
 		Case $gui_sendCmdBtn
 			sendServerCommand(GUICtrlRead($gui_commandInput))
