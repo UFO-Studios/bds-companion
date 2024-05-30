@@ -651,7 +651,7 @@ Func killServer()
 	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS process, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
+		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose (except when it doesn't)
 
 		$serverRunning = False
 		$BDS_process = Null
@@ -684,15 +684,31 @@ Func IsFileLocked($sFilePath)
 		DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hFile[0])
 		Return False
 	EndIf
-EndFunc
+EndFunc   ;==>IsFileLocked
 
 Func backupServer()
+
+	If $serverRunning = True Then ;Manual Backup
+		Local $confirmBox = MsgBox(4, $guiTitle, "Are you sure you want to backup?" & @CRLF & "If the server crashes during a backup, it can lead to world corruption. It's recommended to stop the server before restarting." & @CRLF & "Continue?")
+		If $confirmBox = 7 Then
+			logWrite(0, "Manual Restart Aborted")
+			Return
+		EndIf
+	EndIf
+
 	logWrite(0, "Backing up BDS server")
 	Local $finished = False
 	While @error == 0 And $finished == False
 		setServerStatus($COLOR_ORANGE, "Backing up server...")
-		local $backupFileName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
-		local $backupFile = _Zip_Create($backupFileName)
+
+		If $serverRunning = True Then
+			outputToConsole("Server Backup Requested")
+			sendServerCommand("save hold")
+			Sleep(5000)
+		EndIf
+
+		Local $backupFileName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
+		Local $backupFile = _Zip_Create($backupFileName)
 
 		;COPY DIRS TO TMP DIR
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
@@ -719,7 +735,11 @@ Func backupServer()
 		FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\allowlist.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (5/5)")
 		FileCopy($cfg_bdsDir & "\valid_known_packs.json", @ScriptDir & "\temp\valid_known_packs.json", 1)
-		
+
+		If $serverRunning = True Then ;Files have been copied so server can continue running as normal
+			sendServerCommand("save resume")
+			Sleep(5000)
+		EndIf
 
 		;ZIP DIR
 		setServerStatus($COLOR_ORANGE, "Zipping files")
@@ -732,6 +752,11 @@ Func backupServer()
 		;FINISH
 		$finished = True
 		setServerStatus($COLOR_GREEN, "Backup complete!")
+
+		If $serverRunning = True Then ;Reset server status
+			GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
+			GUICtrlSetData($gui_serverStatusIndicator, "Online")
+		EndIf
 	WEnd
 
 EndFunc   ;==>backupServer
