@@ -343,6 +343,12 @@ EndFunc   ;==>SaveBDSConf
 
 Func ScheduledActions()
 	logWrite(0, "Scheduled actions called")
+
+	If $serverRunning = False Then
+		logWrite(0, "Server not running, scheduled action cancelled")
+		Return
+	EndIf
+
 	If $cfg_autoRestart = "True" Then
 		logWrite(0, "Auto Restart is enabled")
 		; Split the autoRestartInterval string into an array
@@ -762,8 +768,11 @@ Func backupServer()
 EndFunc   ;==>backupServer
 
 Func sendServerCommand($content)
-	If (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, $content & @CRLF)
+	If $serverRunning = False Then
+		Return
+	EndIf
 	outputToConsole("Command Sent: '" & $content & "'")
+	If (ProcessExists($BDS_process)) Then StdinWrite($BDS_process, $content & @CRLF)
 	logWrite(0, "Sent server command: " & $content)
 EndFunc   ;==>sendServerCommand
 
