@@ -40,25 +40,25 @@ Global Const $guiTitle = "BDS UI - Beta-0.1.0"
 ;Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
 ;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
 
-#Region ### START Koda GUI section ###
+#Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
-Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 481)
+Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 497)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
-Global $gui_commandInput = GUICtrlCreateInput("", 16, 408, 585, 21)
-Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 608, 407, 91, 25)
-Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 440, 75, 33)
-Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 440, 75, 33)
-Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 440, 75, 33)
-Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 440, 83, 33)
+Global $gui_commandInput = GUICtrlCreateInput("", 16, 424, 585, 21)
+Global $gui_sendCmdBtn = GUICtrlCreateButton("Send Command", 608, 423, 91, 25)
+Global $gui_startServerBtn = GUICtrlCreateButton("Start Server", 16, 456, 75, 33)
+Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 456, 75, 33)
+Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 456, 75, 33)
+Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 456, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 345, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
-Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 440, 75, 33)
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 456, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
-Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 441)
-Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 24, 56, 673, 377)
+Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 457)
+Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 24, 56, 673, 393)
 GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
-Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 624, 440, 75, 25)
+Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 624, 456, 75, 25)
 Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
@@ -69,7 +69,7 @@ Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21
 Global $gui_backupDuringRestartCheck = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
 Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 616, 48, 79, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 600, 440, 107, 33)
+Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 600, 456, 107, 33)
 Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 112, 689, 153)
 Global $gui_bdsDirInput = GUICtrlCreateInput("", 120, 136, 577, 21)
 Global $gui_bdsDirLabel = GUICtrlCreateLabel("BDS File Location:", 24, 136, 92, 17)
@@ -80,23 +80,32 @@ Global $gui_bdsLogsDirInput = GUICtrlCreateInput("", 112, 200, 585, 21)
 Global $gui_backupsDirTitle = GUICtrlCreateLabel("Backup Folder:", 24, 232, 76, 17)
 Global $gui_backupsDirInput = GUICtrlCreateInput("", 104, 232, 593, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 352, 257, 121)
-Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 380, 119, 17)
-Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 152, 408, 107, 25)
-Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 152, 376, 107, 25)
-Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 408, 115, 25)
-Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 440, 243, 25)
+Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 368, 257, 121)
+Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 396, 119, 17)
+Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 160, 424, 107, 25)
+Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 160, 392, 107, 25)
+Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 424, 123, 25)
+Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 456, 243, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 280, 352, 209, 121)
-Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 288, 376, 131, 25)
-Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 288, 408, 131, 25)
-;~ Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 288, 440, 131, 25)
+Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 280, 400, 289, 89)
+Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 288, 424, 131, 25)
+Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 424, 456, 131, 25)
+Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 288, 456, 131, 25)
+Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 424, 424, 131, 25)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $gui_discordIntegrationGroup = GUICtrlCreateGroup("gui_discordIntegrationGroup", 16, 272, 689, 89)
+Global $gui_discNotifCheck = GUICtrlCreateCheckbox("Output Server Notifications", 24, 296, 145, 17)
+Global $gui_discConsoleCheck = GUICtrlCreateCheckbox("Output Console", 24, 320, 97, 17)
+Global $gui_discNotifLabel = GUICtrlCreateLabel("Notification Webhook URL:", 176, 296, 135, 17)
+Global $gui_discConsoleLabel = GUICtrlCreateLabel("Console Webhook URL:", 176, 328, 120, 17)
+Global $gui_discNotifInput = GUICtrlCreateInput("", 320, 296, 369, 21)
+Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
-Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 488, 103, 17)
+Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
 GUICtrlSetCursor(-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 488, 69, 17)
-Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 488, 270, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
+Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -108,7 +117,6 @@ Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = Null
-
 
 ;Functions (Server Status) #############################################################################
 
@@ -163,6 +171,26 @@ Func loadConf()
 	Global $cfg_backupsDir = IniRead($settingsFile, "dirs", "backupsDir", @ScriptDir & "\Backups")
 	GUICtrlSetData($gui_backupsDirInput, $cfg_backupsDir)
 
+	Global $cfg_discOutputNotifs = IniRead($settingsFile, "discordIntegration", "outputNotifs", "False")
+	If $cfg_discOutputNotifs = "True" Then
+		GUICtrlSetState($gui_discNotifCheck, $GUI_CHECKED)
+	ElseIf $cfg_discOutputNotifs = "False" Then
+		GUICtrlSetState($gui_discNotifCheck, $GUI_UNCHECKED)
+	EndIf
+
+	Global $cfg_discNotifUrl = IniRead($settingsFile, "discordIntegration", "notifUrl", "")
+	GUICtrlSetData($gui_discNotifInput, $cfg_discNotifUrl)
+
+	Global $cfg_discOutputConsole = IniRead($settingsFile, "discordIntegration", "outputConsole", "False")
+	If $cfg_discOutputConsole = "True" Then
+		GUICtrlSetState($gui_discConsoleCheck, $GUI_CHECKED)
+	ElseIf $cfg_discOutputConsole = "False" Then
+		GUICtrlSetState($gui_discConsoleCheck, $GUI_UNCHECKED)
+	EndIf
+
+	Global $cfg_discConsoleUrl = IniRead($settingsFile, "discordIntegration", "consoleUrl", "")
+	GUICtrlSetData($gui_discConsoleInput, $cfg_discConsoleUrl)
+
 	Global $cfg_verboseLogging = IniRead($settingsFile, "debug", "verboseLogging", "False")
 
 	saveConf()
@@ -199,6 +227,26 @@ Func saveConf()
 
 	$cfg_backupsDir = GUICtrlRead($gui_backupsDirInput)
 	IniWrite($settingsFile, "dirs", "backupsDir", $cfg_backupsDir)
+
+	If GUICtrlRead($gui_discNotifCheck) = $GUI_CHECKED Then
+		$cfg_discOutputNotifs = "True"
+	ElseIf GUICtrlRead($gui_discNotifCheck) = $GUI_UNCHECKED Then
+		$cfg_discOutputNotifs = "False"
+	EndIf
+	IniWrite($settingsFile, "discordIntegration", "outputNotifs", $cfg_discOutputNotifs)
+
+	$cfg_discNotifUrl = GUICtrlRead($gui_discNotifInput)
+	IniWrite($settingsFile, "discordIntegration", "notifUrl", $cfg_discNotifUrl)
+
+	If GUICtrlRead($gui_discConsoleCheck) = $GUI_CHECKED Then
+		$cfg_discOutputConsole = "True"
+	ElseIf GUICtrlRead($gui_discConsoleCheck) = $GUI_UNCHECKED Then
+		$cfg_discOutputConsole = "False"
+	EndIf
+	IniWrite($settingsFile, "discordIntegration", "outputConsole", $cfg_discOutputConsole)
+
+	$cfg_discConsoleUrl = GUICtrlRead($gui_discConsoleInput)
+	IniWrite($settingsFile, "discordIntegration", "consoleUrl", $cfg_discConsoleUrl)
 EndFunc   ;==>saveConf
 
 
@@ -280,19 +328,29 @@ EndFunc   ;==>BDScreateLog
 Func BDScloseLog()
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	BDSlogWrite("###################################################################")
-	BDSlogWrite("Log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
+	BDSlogWrite("Server log file closed at " & @HOUR & ":" & @MIN & ":" & @SEC & " on " & @MDAY & "/" & @MON & "/" & @YEAR & " (HH:MM:SS on DD.MM.YY)")
 	FileMove($cfg_bdsLogsDir & "\log.latest", $cfg_bdsLogsDir & "\log[" & @MDAY & '.' & @MON & '.' & @YEAR & '-' & @HOUR & '.' & @MIN & '.' & @SEC & "].txt")
 EndFunc   ;==>BDScloseLog
 
 Func BDSlogWrite($content)
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
+
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
+
+	If $cfg_discOutputConsole = "True" Then
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
+	EndIf
+
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 EndFunc   ;==>BDSlogWrite
 
 Func outputToConsole($content)
 
 	GUICtrlSetData($gui_console, @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF, 1)
+
+	If $cfg_discOutputConsole = "True" Then
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
+	EndIf
 
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF)
@@ -399,8 +457,16 @@ Func ScheduledActions()
 	EndIf
 EndFunc   ;==>ScheduledActions
 
-;Functions (Misc) ##################################################################################
+;Functions (Discord Integration) ###################################################################
 
+Func outputToDiscNotif($content) ;Sends content to notifcations channel on Discord
+	If $cfg_discOutputNotifs = "True" Then
+		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $content & '"}', "application/json")
+		logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+	EndIf
+EndFunc   ;==>outputToDiscNotif
+
+;Functions (Misc) ##################################################################################
 
 Func UploadLog()
 	logWrite(0, "Uploading log (" & $cfg_logsDir & "\log.latest) to server...")
@@ -547,7 +613,9 @@ Func startServer()
 		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
 		Return
 	EndIf
+	outputToDiscNotif(":yellow_square: Server is starting")
 	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
+	outputToDiscNotif(":white_check_mark: Server has started")
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
@@ -570,10 +638,10 @@ Func updateConsole() ;not logging for this one
 			$serverRunning = False
 			AdlibUnRegister("updateConsole")
 		Else
-			Local $lineCount = _GUICtrlEdit_GetLineCount($gui_console) ;Get line count
-			_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Scroll down to bottom of console, stops existing text from being overwritten
-			GUICtrlSetData($gui_console, $line, 1)
-			If $line <> "" Then ;if line has content
+			If $line <> "" Then ;if line has content then write it to output
+				Local $lineCount = _GUICtrlEdit_GetLineCount($gui_console) ;Get line count
+				_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Scroll down to bottom of console, stops existing text from being overwritten
+				GUICtrlSetData($gui_console, $line, 1)
 				BDSlogWrite($line)
 			EndIf
 		EndIf
@@ -621,6 +689,7 @@ EndFunc   ;==>FindServerPID
 
 Func stopServer()
 	logWrite(0, "Stopping server")
+	outputToDiscNotif(":yellow_square: Server stopping")
 	outputToConsole("Server Stop Triggered")
 	$attempts = 0
 	sendServerCommand("stop")
@@ -639,6 +708,7 @@ Func stopServer()
 		GUICtrlSetData($gui_serverStatusIndicator, "Offline")
 		logWrite(0, "Server stopped.")
 		outputToConsole("Server Stopped")
+		outputToDiscNotif(":octagonal_sign: Server stopped")
 
 		GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 		GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
@@ -658,6 +728,7 @@ Func killServer()
 	Local $msgBox = MsgBox(4, $guiTitle, "Warning: This will kill BDS process, which could corrupt server files. This should only be used when server is unresponsive." & @CRLF & "Continue?")
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
+		outputToDiscNotif(":red_square: Server kill triggered")
 		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose (except when it doesn't)
 
 		$serverRunning = False
@@ -704,6 +775,7 @@ Func backupServer()
 	EndIf
 
 	logWrite(0, "Backing up BDS server")
+	outputToDiscNotif(":blue_square: Server backup started")
 	Local $finished = False
 	While @error == 0 And $finished == False
 		setServerStatus($COLOR_ORANGE, "Backing up server...")
@@ -764,7 +836,7 @@ Func backupServer()
 			GUICtrlSetData($gui_serverStatusIndicator, "Online")
 		EndIf
 	WEnd
-
+	outputToDiscNotif(":blue_square: Server backup complete")
 EndFunc   ;==>backupServer
 
 Func sendServerCommand($content)
