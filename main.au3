@@ -641,6 +641,7 @@ Func stopServer()
 		GUICtrlSetState($gui_startServerBtn, $GUI_ENABLE)
 
 		BDScloseLog()
+		$serverRunning = False
 	EndIf
 
 	Global $BDS_process = Null
@@ -744,7 +745,6 @@ Func backupServer()
 		;ZIP DIR
 		setServerStatus($COLOR_ORANGE, "Zipping files")
 		_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
-
 
 		;CLEAN UP
 		DirRemove(@ScriptDir & "\temp\", 1)
