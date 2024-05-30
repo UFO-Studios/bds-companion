@@ -754,7 +754,6 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			exitScript()
-;~ exit ;this is done in exitScript()
 
 		Case $gui_startServerBtn
 			startServer()
