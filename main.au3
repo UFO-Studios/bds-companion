@@ -623,13 +623,13 @@ Func startServer()
 	EndIf
 	outputToDiscNotif(":yellow_square: Server is starting")
 	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
-	outputToDiscNotif(":white_check_mark: Server has started")
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	BDScreateLog()
+	outputToDiscNotif(":white_check_mark: Server has started")
 	logWrite(0, "Server started. BDS PID is " & $BDS_process)
 
 	GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
