@@ -710,16 +710,16 @@ Func backupServer()
 		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
 		;COPY FILES
 		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "allowlist.json", "valid_known_packs.json"]
-		For $i In $files
-			setServerStatus($COLOR_ORANGE, "Copying files (" & $i & "/5)")
-			if False then
-				logWrite(0, "File " & $files[$i] & " is locked. Skipping...")
-				MsgBox(0, $guiTitle, "File " & $files[$i] & " is locked. Skipping...")
-			Else
-				FileCopy($cfg_bdsDir & "\" & $files[$i], @ScriptDir & "\temp\" & $files[$i], 1)
-			EndIf
-			$i = $i + 1
-		Next
+		FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\temp\permissions.json", 1)
+		setServerStatus($COLOR_ORANGE, "Copying files (2/5)")
+		FileCopy($cfg_bdsDir & "\whitelist.json", @ScriptDir & "\temp\whitelist.json", 1)
+		setServerStatus($COLOR_ORANGE, "Copying files (3/5)")
+		FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\server.properties", 1)
+		setServerStatus($COLOR_ORANGE, "Copying files (4/5)")
+		FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\allowlist.json", 1)
+		setServerStatus($COLOR_ORANGE, "Copying files (5/5)")
+		FileCopy($cfg_bdsDir & "\valid_known_packs.json", @ScriptDir & "\temp\valid_known_packs.json", 1)
+		
 
 		;ZIP DIR
 		setServerStatus($COLOR_ORANGE, "Zipping files")
