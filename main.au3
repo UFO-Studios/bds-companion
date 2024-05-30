@@ -709,14 +709,16 @@ Func backupServer()
 
 		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
 		;COPY FILES
-		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "permissions.json", "whitelist.json"]
+		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "allowlist.json", "valid_known_packs.json"]
 		For $i In $files
 			setServerStatus($COLOR_ORANGE, "Copying files (" & $i & "/5)")
-			if IsFileLocked($files[$i]) == True Then
+			if False then
 				logWrite(0, "File " & $files[$i] & " is locked. Skipping...")
+				MsgBox(0, $guiTitle, "File " & $files[$i] & " is locked. Skipping...")
 			Else
 				FileCopy($cfg_bdsDir & "\" & $files[$i], @ScriptDir & "\temp\" & $files[$i], 1)
 			EndIf
+			$i = $i + 1
 		Next
 
 		;ZIP DIR
