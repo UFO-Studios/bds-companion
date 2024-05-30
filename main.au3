@@ -52,7 +52,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 456, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 456, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 456, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 456, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 457)
@@ -103,10 +103,10 @@ Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 ;Variables ###################################################################################
@@ -336,15 +336,17 @@ Func BDSlogWrite($content)
 
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
-	If $cfg_discOutputConsole = "True" Then
-		If StringInStr($content, @CRLF) Then
-			$contentSplit = StringSplit($content, @CRLF)
-			For $i = 1 To $contentSplit[0]
-				HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $contentSplit[$i] & '"}', "application/json")
-				logWrite(0, 'Sent "' & $contentSplit[$i] & '" to Discord notifcation channel')
-			Next
-		EndIf
-		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
+	;If $cfg_discOutputConsole = "True" Then
+	;If StringInStr($content, @CRLF) Then
+	;	$contentSplit = StringSplit($content, @CRLF)
+	;	For $i = 1 To $contentSplit[0]
+	;		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $contentSplit[$i] & '"}', "application/json")
+	;		logWrite(0, 'Sent "' & $contentSplit[$i] & '" to Discord notifcation channel')
+	;	Next
+	;EndIf
+	If StringReplace($content, @CRLF, "\n") Then
+		$newContent = StringReplace($content, @CRLF, "\n")
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $newContent & '"}', "application/json")
 	EndIf
 
 	FileClose($cfg_bdsLogsDir & "\log.latest")
