@@ -2,7 +2,7 @@
 
 Global Const $HTTP_STATUS_OK = 200
 
-Func HttpPost($sURL, $sData = "" $sHeader = "application/x-www-form-urlencoded")
+Func HttpPost($sURL, $sData = "", $sHeader = "application/x-www-form-urlencoded")
 Local $oHTTP = ObjCreate("WinHttp.WinHttpRequest.5.1")
 
 $oHTTP.Open("POST", $sURL, False)
