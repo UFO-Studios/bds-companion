@@ -336,10 +336,8 @@ Func BDSlogWrite($content)
 
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
-	If StringReplace($content, @CRLF, "\n") Then
-		$newContent = StringReplace($content, @CRLF, "\n")
-		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $newContent & '"}', "application/json")
-	EndIf
+	$newContent = StringReplace($content, @CRLF, "\n")
+	HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "[BDS-UI]: ' & $newContent & '"}', "application/json")
 
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 EndFunc   ;==>BDSlogWrite
@@ -349,7 +347,7 @@ Func outputToConsole($content)
 	GUICtrlSetData($gui_console, @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF, 1)
 
 	If $cfg_discOutputConsole = "True" Then
-		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
 	EndIf
 
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
@@ -461,16 +459,8 @@ EndFunc   ;==>ScheduledActions
 
 Func outputToDiscNotif($content) ;Sends content to notifcations channel on Discord
 	If $cfg_discOutputNotifs = "True" Then
-		If StringInStr($content, "\n") Then
-			$contentSplit = StringSplit($content, "\n")
-			For $i = 1 To $contentSplit[0]
-				HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $contentSplit[$i] & '"}', "application/json")
-				logWrite(0, 'Sent "' & $contentSplit[$i] & '" to Discord notifcation channel')
-			Next
-		Else
-			HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $content & '"}', "application/json")
-			logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
-		EndIf
+		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "' & $content & '"}', "application/json")
+		logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
 	EndIf
 EndFunc   ;==>outputToDiscNotif
 
@@ -921,7 +911,8 @@ While 1
 			ScheduledActions()
 
 		Case $gui_testDiscWebhooks
-			outputToDiscNotif("Test Notification")
+			outputToDiscNotif("This is a test message sent to the notifications channel")
+			HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "This is a test message sent to the console channel"}', "application/json")
 
 ;~ Case $gui_FindServerBtn
 ;~ 	$pid = FindServerPID()
