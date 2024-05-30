@@ -544,7 +544,7 @@
 									<properties>
 										<property name="Left" vt="Int8">8</property>
 										<property name="Top" vt="Int8">28</property>
-										<property name="Width" vt="Int8">119</property>
+										<property name="Width" vt="Int8">127</property>
 										<property name="Height" vt="Int8">17</property>
 										<property name="Caption" vt="String">Version: &quot; &amp; $guiTitle &amp; &quot;</property>
 										<property name="TabOrder" vt="Int8">0</property>

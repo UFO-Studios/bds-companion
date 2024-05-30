@@ -338,6 +338,13 @@ Func BDSlogWrite($content)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
 	If $cfg_discOutputConsole = "True" Then
+		If StringInStr($content, @CRLF) Then
+			$contentSplit = StringSplit($content, @CRLF)
+			For $i = 1 To $contentSplit[0]
+				HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $contentSplit[$i] & '"}', "application/json")
+				logWrite(0, 'Sent "' & $contentSplit[$i] & '" to Discord notifcation channel')
+			Next
+		EndIf
 		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
 	EndIf
 
@@ -461,8 +468,16 @@ EndFunc   ;==>ScheduledActions
 
 Func outputToDiscNotif($content) ;Sends content to notifcations channel on Discord
 	If $cfg_discOutputNotifs = "True" Then
-		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $content & '"}', "application/json")
-		logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+		If StringInStr($content, "\n") Then
+			$contentSplit = StringSplit($content, "\n")
+			For $i = 1 To $contentSplit[0]
+				HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $contentSplit[$i] & '"}', "application/json")
+				logWrite(0, 'Sent "' & $contentSplit[$i] & '" to Discord notifcation channel')
+			Next
+		Else
+			HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $content & '"}', "application/json")
+			logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+		EndIf
 	EndIf
 EndFunc   ;==>outputToDiscNotif
 
@@ -754,15 +769,7 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
-Func IsFileLocked($sFilePath)
-	Local $hFile = DllCall("kernel32.dll", "handle", "CreateFileW", "wstr", $sFilePath, "dword", 0x80000000, "dword", 0, "ptr", 0, "dword", 3, "dword", 0, "handle", 0)
-	If @error Or $hFile[0] = Ptr(-1) Then
-		Return True
-	Else
-		DllCall("kernel32.dll", "bool", "CloseHandle", "handle", $hFile[0])
-		Return False
-	EndIf
-EndFunc   ;==>IsFileLocked
+
 
 Func backupServer()
 
@@ -898,7 +905,7 @@ While 1
 				InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp URL until release
 				logWrite(0, "Re-downloaded license")
 				ShellExecute(@ScriptDir & "\LICENSE.txt")
-			ElseIf FileExists(@ScriptDir & "\LICENSE.txt") Then
+			Else
 				ShellExecute(@ScriptDir & "\LICENSE.txt")
 			EndIf
 
@@ -919,6 +926,9 @@ While 1
 
 		Case $gui_debugEnableBtn
 			ScheduledActions()
+
+		Case $gui_testDiscWebhooks
+			outputToDiscNotif("Test Notification")
 
 ;~ Case $gui_FindServerBtn
 ;~ 	$pid = FindServerPID()
