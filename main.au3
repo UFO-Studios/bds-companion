@@ -748,6 +748,7 @@ If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
 	logWrite(0, "Re-downloaded license")
 EndIf
 
+startup()
 
 While 1
 	$nMsg = GUIGetMsg()
