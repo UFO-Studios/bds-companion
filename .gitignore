@@ -1,14 +1,7 @@
 BDS/
-bedrock-server-1.20.51.01/
-bedrock-server-1.20.62.02/
 backups/
-logs/
-*.ini
 BackUp/
+logs/
+Server Logs/
+Temp/
 package.json
-dist
-Server Logs/*
-*.log
-BDS
-settings.ini
-settings.ini
