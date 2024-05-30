@@ -336,14 +336,6 @@ Func BDSlogWrite($content)
 
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
-	;If $cfg_discOutputConsole = "True" Then
-	;If StringInStr($content, @CRLF) Then
-	;	$contentSplit = StringSplit($content, @CRLF)
-	;	For $i = 1 To $contentSplit[0]
-	;		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "content": "' & $contentSplit[$i] & '"}', "application/json")
-	;		logWrite(0, 'Sent "' & $contentSplit[$i] & '" to Discord notifcation channel')
-	;	Next
-	;EndIf
 	If StringReplace($content, @CRLF, "\n") Then
 		$newContent = StringReplace($content, @CRLF, "\n")
 		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "content": "[BDS-UI]: ' & $newContent & '"}', "application/json")
