@@ -6,11 +6,11 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS UI)
 #pragma compile(ProductName, BDS UI)
-#pragma compile(ProductVersion, 0.1.0)
-#pragma compile(FileVersion, 0.1.0)
+#pragma compile(ProductVersion, 0.1.1)
+#pragma compile(FileVersion, 0.1.1)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS UI Beta-0.1.0)
+#pragma compile(OriginalFilename, BDS UI Beta-0.1.1)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
@@ -32,15 +32,15 @@
 
 #RequireAdmin
 
-Global Const $currentVersionNumber = "010"
-Global Const $guiTitle = "BDS UI - Beta-0.1.0"
+Global Const $currentVersionNumber = "011"
+Global Const $guiTitle = "BDS UI - Beta-0.1.1"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
 ;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
 ;Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
 ;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
 
-#Region ### START Koda GUI section ### Form=d:\06 code\bds-ui\gui.kxf
+#Region ### START Koda GUI section ###
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 497)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
@@ -52,7 +52,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 456, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 456, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 456, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 456, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 457)
@@ -93,7 +93,7 @@ Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 424, 456
 Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 288, 456, 131, 25)
 Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 424, 424, 131, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_discordIntegrationGroup = GUICtrlCreateGroup("gui_discordIntegrationGroup", 16, 272, 689, 89)
+Global $gui_discordIntegrationGroup = GUICtrlCreateGroup("Discord Intergration", 16, 272, 689, 89)
 Global $gui_discNotifCheck = GUICtrlCreateCheckbox("Output Server Notifications", 24, 296, 145, 17)
 Global $gui_discConsoleCheck = GUICtrlCreateCheckbox("Output Console", 24, 320, 97, 17)
 Global $gui_discNotifLabel = GUICtrlCreateLabel("Notification Webhook URL:", 176, 296, 135, 17)
@@ -103,13 +103,12 @@ Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
-
 ;Variables ###################################################################################
 
 Global $bdsFolder = @ScriptDir & "\BDS"
