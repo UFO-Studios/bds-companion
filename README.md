@@ -1,5 +1,5 @@
 # BDS-UI
-A UI for MC Bedrock Dedicated server. Written in AutoIT.
+A GUI and companion software for the Minecraft Bedrock Dedicated Server Software.
 
 ## Setup
 
@@ -47,4 +47,6 @@ bds-ui/
 
 ## Credits
 - [TheAlienDoctor](https://thealiendoctor.com) & [Niceygy](https://niceygylive.xyz): Main Devs
-- FoxyNoTail: Inspired by his [MCBE play](https://foxynotail.com/tools/mcbe-play)
+- [FoxyNoTail](https://foxynotail.com/): Originally inspired by [MCBEplay](https://foxynotail.com/tools/mcbe-play). Despite being recently open sourced, all code is original and his not been reused from his project.
+- [Zip.au3](https://www.autoitscript.com/forum/topic/73425-zipau3-udf-in-pure-autoit/) UDF
+- [WinHttp.au3](https://www.autoitscript.com/forum/topic/147621-http-get-and-post-request-as-simple-as-possible/) UDF
