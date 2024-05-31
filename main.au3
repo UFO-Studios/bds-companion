@@ -1,16 +1,25 @@
-; This is Bedrock Dedicated Server UI (BDS-UI) licensed under the BSD 3-Clause license
+#cs ----------------------------------------------------------------------------
+
+ AutoIt Version: 3.3.16.1
+ Author:         UFO Studios
+
+ Script Function:
+	A GUI and companion software for the Minecraft Bedrock Dedicated Server Software.
+
+#ce ----------------------------------------------------------------------------
+
 ; Created with ❤️ & 👽 by the UFO Studios Dev Team (https://github.com/UFO-Studios).
-; Check out the github repository of this project for more info @ https://github.com/UFO-Studios/bds-ui.
+; Check out the github repository of this project for more info @ https://github.com/UFO-Studios/bds-companion.
 ; Copyright UFO Studios. All rights reserved. For more info, email us: UFOStudios@TheAlienDoctor.com
 
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
-#pragma compile(FileDescription, BDS UI)
-#pragma compile(ProductName, BDS UI)
+#pragma compile(FileDescription, BDS Companion)
+#pragma compile(ProductName, BDS Companion)
 #pragma compile(ProductVersion, 0.1.0)
 #pragma compile(FileVersion, 0.1.0)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS UI Beta-0.1.0)
+#pragma compile(OriginalFilename, BDS Companion Beta-0.1.0)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
@@ -33,7 +42,7 @@
 #RequireAdmin
 
 Global Const $currentVersionNumber = "010"
-Global Const $guiTitle = "BDS UI - Beta-0.1.0"
+Global Const $guiTitle = "BDS Companion - Beta-0.1.0"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
 ;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
@@ -337,24 +346,24 @@ Func BDSlogWrite($content)
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
 	$newContent = StringReplace($content, @CRLF, "\n")
-	HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "[BDS-UI]: ' & $newContent & '"}', "application/json")
+	HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
 
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 EndFunc   ;==>BDSlogWrite
 
 Func outputToConsole($content)
 
-	GUICtrlSetData($gui_console, @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF, 1)
+	GUICtrlSetData($gui_console, @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-Companion]: " & $content & @CRLF, 1)
 
 	If $cfg_discOutputConsole = "True" Then
-		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "[BDS-UI]: ' & $content & '"}', "application/json")
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-companion]: ' & $content & '"}', "application/json")
 	EndIf
 
 	FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
-	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-UI]: " & $content & @CRLF)
+	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & "[BDS-companion]: " & $content & @CRLF)
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 
-	logWrite(0, "Output to console: [BDS-UI]: " & $content)
+	logWrite(0, "Output to console: [BDS-Companion]: " & $content)
 EndFunc   ;==>outputToConsole
 
 ;Functions (BDS Config) #########################################################################
@@ -459,7 +468,7 @@ EndFunc   ;==>ScheduledActions
 
 Func outputToDiscNotif($content) ;Sends content to notifcations channel on Discord
 	If $cfg_discOutputNotifs = "True" Then
-		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "' & $content & '"}', "application/json")
+		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "' & $content & '"}', "application/json")
 		logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
 	EndIf
 EndFunc   ;==>outputToDiscNotif
@@ -502,7 +511,7 @@ Func startup()
 	logWrite(0, "Startup functions complete, starting main loop")
 
 	;Set initial server status
-	GUICtrlSetData($gui_console, "[BDS-UI]: Server Offline" & @CRLF, 1)
+	GUICtrlSetData($gui_console, "[BDS-Companion]: Server Offline" & @CRLF, 1)
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_RED)
 	_GUICtrlEdit_SetLimitText($gui_console, 200000)
 	logWrite(0, "Server status set to offline.")
@@ -567,7 +576,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 
 	If $ping > 0 Then
 		DirCreate(@ScriptDir & "\temp\")
-		InetGet("https://thealiendoctor.com/software-versions/bds-ui-versions.ini", @ScriptDir & "\temp\versions.ini", 1)
+		InetGet("https://thealiendoctor.com/software-versions/bds-companion-versions.ini", @ScriptDir & "\temp\versions.ini", 1)
 		Global $latestVersionNum = IniRead(@ScriptDir & "\temp\versions.ini", "latest", "latest-version-num", "100")
 
 		If $latestVersionNum > $currentVersionNumber Then
@@ -575,7 +584,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 			Local $updateMsgBox = MsgBox(4, $guiTitle, "There is a new update out now!" & @CRLF & $updateMsg & @CRLF & @CRLF & "Would you like to download it?")
 
 			If $updateMsgBox = 6 Then
-				ShellExecute("https://www.thealiendoctor.com/downloads/bds-ui")
+				ShellExecute("https://www.thealiendoctor.com/downloads/bds-companion")
 				Exit
 			EndIf
 		Else
@@ -893,7 +902,7 @@ While 1
 			EndIf
 
 		Case $gui_githubLabel
-			ShellExecute("https://github.com/ufo-studios/bds-ui")
+			ShellExecute("https://github.com/ufo-studios/bds-companion")
 
 		Case $gui_patreonBtn
 			ShellExecute("https://TheAlienDoctor.com/r/Patreon")
@@ -902,7 +911,7 @@ While 1
 			ShellExecute("https://TheAlienDoctor.com/r/Discord")
 
 		Case $gui_readmeBtn
-			ShellExecute("https://github.com/ufo-studios/bds-ui/blob/main/README.md")
+			ShellExecute("https://github.com/ufo-studios/bds-companion/blob/main/README.md")
 
 		Case $gui_UploadLogsBtn
 			UploadLog()
@@ -912,7 +921,7 @@ While 1
 
 		Case $gui_testDiscWebhooks
 			outputToDiscNotif("This is a test message sent to the notifications channel")
-			HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-ui.png", "content": "This is a test message sent to the console channel"}', "application/json")
+			HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "This is a test message sent to the console channel"}', "application/json")
 
 ;~ Case $gui_FindServerBtn
 ;~ 	$pid = FindServerPID()
