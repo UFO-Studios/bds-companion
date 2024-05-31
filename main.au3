@@ -345,8 +345,10 @@ Func BDSlogWrite($content)
 
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
-	$newContent = StringReplace($content, @CRLF, "\n")
-	HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+	If $cfg_discOutputConsole = "True" Then
+		$newContent = StringReplace($content, @CRLF, "\n")
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+	EndIf
 
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 EndFunc   ;==>BDSlogWrite
