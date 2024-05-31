@@ -1,4 +1,4 @@
-# BDS-UI
+# BDS-Companion
 A GUI and companion software for the Minecraft Bedrock Dedicated Server Software.
 
 ## Setup
@@ -9,44 +9,52 @@ Then double click the exe to open!
 
 Your folder should look like this:
 ``` plaintext
-bds-ui/
-    BDS-UI.exe
+bds-companion/
+    BDS-Companion.exe
     BDS/
         bedrock_server.exe
         server.properties
         (and other BDS files)
 ```
-(The location of BDS can be changed in settings, but this is the default)
+(The location of BDS can be changed in settings, but this is the default) </br>
+You can find the latest release [here](https://www.minecraft.net/en-us/download/server/bedrock). Please note that this application only supports Windows.
 
 
 ## Features
 
 ### Server Management
-![An image of BDS-UI's main page](https://github.com/UFO-Studios/bds-ui/assets/80964340/189e9689-f0dd-4a74-9af7-8046a814d4c9)
+![An image of BDS-UI's main page](./img/wiki/ServerControl.png)
 
 - 🔴 Red: Main server control buttons
 - 🟠 Orange: The server status. E.G: Online, Offline or Backing up.
 - 🔵 Blue: Server Output. Anything with `[BDS-UI]` is info from bds-ui, the rest is BDS's own output.
 
 ### Settings
- ![An image of BDS-UI's settings page](https://github.com/UFO-Studios/bds-ui/assets/80964340/9d468bfb-3733-43e1-8abd-b6a6f8283ef2)
+ ![An image of BDS-UI's settings page](./img/wiki/Settings.png)
 
-- 🔴 Red: The Backup & Restart Settings. Note: Backup won't work without restart also being enabled
+- 🔴 Red: The Backup & Restart Settings. Note: Backup won't work without restart also being enabled.
 - 🟠 Orange: The time (in 24H) that BDS-UI will Restart/Backup. This is ignored if `Auto Restarts` is disabled
+- 🟡 Yellow: The about tab, with (these) instructions, updates, discord & support the project link.
 - 🟢 Green: The file paths. We recommend having them in the same folder (`D:/TAD/bds-ui` in the image, for example) for ease of use, but this is not needed
-- 🔵 Blue: About. Shows info about your version of BDS-UI
-- 🩷 Pink: Debug settings.
+- 🔵 Blue: Discord Intergration. Allows BDS-Companion to send the console messages and the server status messages (Stop, start & ect) to discord. See [here](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
+- ⚫ Black: The debug tab. Only use these if something is broken!
 - 🟣 Purple: Save settings button. Make sure you save before leaving the tab!
 
 ## Troubleshooting
-- Q: My PC says this is a virus! A: Yup, that's because not many people have downloaded this exe, so windows (amongst others) don't yet trust it. The code is open source on Github, and you're welcome to check it!
-- Q: It can't find (BDS, server.properties, ect) A: Check that the folder in settings matches the one with BDS in it, and restart BDS-UI.
-- Q: Where can I get help? A: You can join our [Discord](https://thealiendoctor.com/r/Discord)! Make sure you have uploaded the logs using the `Upload Logs` button in the settings tab, and we'll be able to help you better!
-- Q: Why does it open twice? A: When auto-backing up, it'll open a seperate window to run the backup in (in case the backup window crashes). The window will close itself when the backup is done.
+
+- ### <b>Q:</b> My PC says this is a virus! </br> 
+    <b>A:</b> Yup, that's because not many people have downloaded this exe, so windows (amongst others) don't yet trust it. The code is open source on Github, and you're welcome to check it!
+- ### <b>Q:</b> It can't find (BDS, server.properties, ect) </br>
+    <b>A:</b> Check that the folder in settings matches the one with BDS in it, and restart BDS-UI. Please note it needs full (e.g `C:/BDS-Companion/BDS`) paths, not relative ones (e.g `./BDS`).
+- ### <b>Q:</b> Where can I get help?</br>
+     <b>A:</b> You can join our [Discord](https://thealiendoctor.com/r/Discord)! Make sure you have uploaded the logs using the `Upload Logs` button in the settings tab, and we'll be able to help you better!
+- ### <b>Q:</b> Why does it open twice? </br>
+     <b>A:</b> When auto-backing up, it'll open a seperate window to run the backup in (in case the backup window crashes). The window will close itself when the backup is done.
 
 
 ## Credits
 - [TheAlienDoctor](https://thealiendoctor.com) & [Niceygy](https://niceygylive.xyz): Main Devs
+- [RSBuilt](https://www.youtube.com/channel/UCsavfiVWuImW2ghluEoKXtg) and the whole Project Bedrock team, for letting us using their server for testing.
 - [FoxyNoTail](https://foxynotail.com/): Originally inspired by [MCBEplay](https://foxynotail.com/tools/mcbe-play). Despite being recently open sourced, all code is original and his not been reused from his project.
 - [Zip.au3](https://www.autoitscript.com/forum/topic/73425-zipau3-udf-in-pure-autoit/) UDF
 - [WinHttp.au3](https://www.autoitscript.com/forum/topic/147621-http-get-and-post-request-as-simple-as-possible/) UDF
