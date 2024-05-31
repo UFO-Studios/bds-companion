@@ -37,7 +37,6 @@
 
 #include "UDF/Zip.au3"
 #include "UDF/WinHttp.au3"
-#include "UDF/JSON.au3"
 
 #RequireAdmin
 
