@@ -258,7 +258,6 @@ Func saveConf()
 	IniWrite($settingsFile, "discordIntegration", "consoleUrl", $cfg_discConsoleUrl)
 EndFunc   ;==>saveConf
 
-
 ;Functions (Logging) ############################################################################
 
 Func logWrite($spaces, $content, $onlyVerbose = False)
@@ -763,8 +762,6 @@ Func killServer()
 		logWrite(0, "Aborted server killing. It will live for another day!")
 	EndIf
 EndFunc   ;==>killServer
-
-
 
 Func backupServer()
 
