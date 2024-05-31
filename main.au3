@@ -517,6 +517,8 @@ Func startup()
 	_GUICtrlEdit_SetLimitText($gui_console, 200000)
 	logWrite(0, "Server status set to offline.")
 
+	checkForUpdates(0)
+
 	GUICtrlSetData($gui_serverPropertiesLabel, "File Location: " & $cfg_bdsDir & "\server.properties")
 	logWrite(0, "Complete! Started main loop", True)
 EndFunc   ;==>startup
@@ -577,7 +579,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 
 	If $ping > 0 Then
 		DirCreate(@ScriptDir & "\temp\")
-		InetGet("https://thealiendoctor.com/software-versions/bds-companion-versions.ini", @ScriptDir & "\temp\versions.ini", 1)
+		InetGet("https://updates.thealiendoctor.com/bds-companion.ini", @ScriptDir & "\temp\versions.ini", 1)
 		Global $latestVersionNum = IniRead(@ScriptDir & "\temp\versions.ini", "latest", "latest-version-num", "100")
 
 		If $latestVersionNum > $currentVersionNumber Then
@@ -850,7 +852,7 @@ EndFunc   ;==>sendServerCommand
 
 
 If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
-	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
+	InetGet("https://updates.thealiendoctor.com/license/bds-companion.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
 	logWrite(0, "Re-downloaded license")
 EndIf
 
@@ -895,7 +897,7 @@ While 1
 
 		Case $gui_copyright
 			If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then
-				InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp URL until release
+				InetGet("https://updates.thealiendoctor.com/license/bds-companion.txt", @ScriptDir & "\LICENSE.txt") ;Temp URL until release
 				logWrite(0, "Re-downloaded license")
 				ShellExecute(@ScriptDir & "\LICENSE.txt")
 			Else
