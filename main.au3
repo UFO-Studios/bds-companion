@@ -43,11 +43,13 @@ Global Const $currentVersionNumber = "010"
 Global Const $guiTitle = "BDS Companion - Beta-0.1.0"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
-;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
+;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 522)
 ;Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
+;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 464, 598, 17)
+;Global $gui_abtVerNum = GUICtrlCreateLabel("" & $guiTitle & "", 24, 460, 254, 17)
 
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 506)
+#Region ### START Koda GUI section ###
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 522)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 497)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
@@ -65,12 +67,12 @@ Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 
 Global $gui_ServerPropertiesEdit = GUICtrlCreateEdit("", 24, 56, 673, 393)
 GUICtrlSetData(-1, "gui_ServerPropertiesEdit")
 Global $gui_serverPropertiesSaveBtn = GUICtrlCreateButton("Save", 624, 456, 75, 25)
-Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 448, 590, 17)
+Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 464, 598, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_settingsTab = GUICtrlCreateTabItem("Settings")
 Global $gui_restartSettingsGroup = GUICtrlCreateGroup("Restart Settings", 16, 29, 689, 73)
 Global $gui_autoRestartTimeInput = GUICtrlCreateInput("", 445, 48, 169, 21)
-Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 373, 48, 72, 17)
+Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 365, 48, 72, 17)
 Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 48, 129, 17)
 Global $gui_backupDuringRestartCheck = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
 Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 616, 48, 79, 17)
@@ -87,9 +89,9 @@ Global $gui_backupsDirTitle = GUICtrlCreateLabel("Backup Folder:", 24, 232, 76, 
 Global $gui_backupsDirInput = GUICtrlCreateInput("", 104, 232, 593, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_aboutGroup = GUICtrlCreateGroup("About", 16, 368, 273, 121)
-Global $gui_abtVerNum = GUICtrlCreateLabel("Version: " & $guiTitle & "", 24, 460, 255, 17)
-Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 176, 424, 107, 25)
-Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 176, 392, 107, 25)
+Global $gui_abtVerNum = GUICtrlCreateLabel("" & $guiTitle & "", 24, 460, 254, 17)
+Global $gui_discordBtn = GUICtrlCreateButton("Join Our Discord!", 160, 424, 123, 25)
+Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 160, 392, 123, 25)
 Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 424, 123, 25)
 Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 392, 123, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -109,12 +111,13 @@ Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
+
 ;Variables ###################################################################################
 
 Global $bdsFolder = @ScriptDir & "\BDS"
@@ -254,7 +257,6 @@ Func saveConf()
 	IniWrite($settingsFile, "discordIntegration", "consoleUrl", $cfg_discConsoleUrl)
 EndFunc   ;==>saveConf
 
-
 ;Functions (Logging) ############################################################################
 
 Func logWrite($spaces, $content, $onlyVerbose = False)
@@ -342,8 +344,10 @@ Func BDSlogWrite($content)
 
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
-	$newContent = StringReplace($content, @CRLF, "\n")
-	HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+	If $cfg_discOutputConsole = "True" Then
+		$newContent = StringReplace($content, @CRLF, "\n")
+		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+	EndIf
 
 	FileClose($cfg_bdsLogsDir & "\log.latest")
 EndFunc   ;==>BDSlogWrite
@@ -513,6 +517,8 @@ Func startup()
 	_GUICtrlEdit_SetLimitText($gui_console, 200000)
 	logWrite(0, "Server status set to offline.")
 
+	checkForUpdates(0)
+
 	GUICtrlSetData($gui_serverPropertiesLabel, "File Location: " & $cfg_bdsDir & "\server.properties")
 	logWrite(0, "Complete! Started main loop", True)
 EndFunc   ;==>startup
@@ -573,7 +579,7 @@ Func checkForUpdates($updateCheckOutputMsg) ; from alien's pack converter. Thank
 
 	If $ping > 0 Then
 		DirCreate(@ScriptDir & "\temp\")
-		InetGet("https://thealiendoctor.com/software-versions/bds-companion-versions.ini", @ScriptDir & "\temp\versions.ini", 1)
+		InetGet("https://updates.thealiendoctor.com/bds-companion.ini", @ScriptDir & "\temp\versions.ini", 1)
 		Global $latestVersionNum = IniRead(@ScriptDir & "\temp\versions.ini", "latest", "latest-version-num", "100")
 
 		If $latestVersionNum > $currentVersionNumber Then
@@ -758,8 +764,6 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
-
-
 Func backupServer()
 
 	If $serverRunning = True Then ;Manual Backup
@@ -778,6 +782,7 @@ Func backupServer()
 
 		If $serverRunning = True Then
 			outputToConsole("Server Backup Requested")
+   logWrite(0, "Requested save-hold. This can be buggy!")
 			sendServerCommand("save hold")
 			Sleep(5000)
 		EndIf
@@ -786,6 +791,7 @@ Func backupServer()
 		Local $backupFile = _Zip_Create($backupFileName)
 
 		;COPY DIRS TO TMP DIR
+  logWrite(0, "Copying....")
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
 		DirCreate(@ScriptDir & "\temp\")
 		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\temp\behavior_packs", 1)
@@ -818,6 +824,7 @@ Func backupServer()
 
 		;ZIP DIR
 		setServerStatus($COLOR_ORANGE, "Zipping files")
+  logWrite(0, "Zipping...")
 		_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
 
 		;CLEAN UP
@@ -846,7 +853,7 @@ EndFunc   ;==>sendServerCommand
 
 
 If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
-	InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
+	InetGet("https://updates.thealiendoctor.com/license/bds-companion.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
 	logWrite(0, "Re-downloaded license")
 EndIf
 
@@ -891,7 +898,7 @@ While 1
 
 		Case $gui_copyright
 			If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then
-				InetGet("https://thealiendoctor.com/software-license/pack-converter-2022.txt", @ScriptDir & "\LICENSE.txt") ;Temp URL until release
+				InetGet("https://updates.thealiendoctor.com/license/bds-companion.txt", @ScriptDir & "\LICENSE.txt") ;Temp URL until release
 				logWrite(0, "Re-downloaded license")
 				ShellExecute(@ScriptDir & "\LICENSE.txt")
 			Else
