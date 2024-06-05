@@ -782,6 +782,7 @@ Func backupServer()
 
 		If $serverRunning = True Then
 			outputToConsole("Server Backup Requested")
+   logWrite(0, "Requested save-hold. This can be buggy!")
 			sendServerCommand("save hold")
 			Sleep(5000)
 		EndIf
@@ -790,6 +791,7 @@ Func backupServer()
 		Local $backupFile = _Zip_Create($backupFileName)
 
 		;COPY DIRS TO TMP DIR
+  logWrite(0, "Copying....")
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
 		DirCreate(@ScriptDir & "\temp\")
 		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\temp\behavior_packs", 1)
@@ -822,6 +824,7 @@ Func backupServer()
 
 		;ZIP DIR
 		setServerStatus($COLOR_ORANGE, "Zipping files")
+  logWrite(0, "Zipping...")
 		_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
 
 		;CLEAN UP
