@@ -19,7 +19,7 @@
 #pragma compile(FileVersion, 0.1.0)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS Companion Beta-0.1.0)
+#pragma compile(OriginalFilename, BDS-Companion.exe)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
@@ -38,7 +38,6 @@
 #include "UDF/Zip.au3"
 #include "UDF/WinHttp.au3"
 
-#RequireAdmin
 
 Global Const $currentVersionNumber = "010"
 Global Const $guiTitle = "BDS Companion - Beta-0.1.0"
@@ -925,22 +924,5 @@ While 1
 			outputToDiscNotif("This is a test message sent to the notifications channel")
 			HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "This is a test message sent to the console channel"}', "application/json")
 
-;~ Case $gui_FindServerBtn
-;~ 	$pid = FindServerPID()
-;~ 	if($pid = 0) then
-;~ 		MsgBox(0, $guiTitle, "BDS is not running.")
-;~ 	Else
-;~ 		$BDS_process = $pid
-;~ 		$serverRunning = True
-;~ 		AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
-;~ 		outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
-;~ 		GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
-;~ 		GUICtrlSetData($gui_serverStatusIndicator, "Online")
-;~ 		BDScreateLog()
-;~ 		GUICtrlSetState($gui_stopServerBtn, $GUI_ENABLE)
-;~ 		GUICtrlSetState($gui_restartBtn, $GUI_ENABLE)
-;~ 		GUICtrlSetState($gui_startServerBtn, $GUI_DISABLE)
-;~ 		MsgBox(0, $guiTitle, "BDS found! The console will update with any new messages")
-;~ 	EndIf
 	EndSwitch
 WEnd
