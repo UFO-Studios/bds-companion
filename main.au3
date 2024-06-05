@@ -773,7 +773,7 @@ Func backupServer()
 	logWrite(0, "Backing up BDS server")
 	outputToDiscNotif(":blue_square: Server backup started")
 	Local $finished = False
-	While @error == 0 And $finished == False
+	While @error == 0 Or $finished == False
 		setServerStatus($COLOR_ORANGE, "Backing up server...")
 
 		If $serverRunning = True Then
