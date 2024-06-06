@@ -100,6 +100,7 @@ Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 304, 424, 
 Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 440, 456, 131, 25)
 Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 304, 456, 131, 25)
 Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 440, 424, 131, 25)
+Global $gui_zipServerBackup = GUICtrlCreateCheckbox("Zip Server Backups", 312, 464, 121, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_discordIntegrationGroup = GUICtrlCreateGroup("Discord Intergration", 16, 272, 689, 89)
 Global $gui_discNotifCheck = GUICtrlCreateCheckbox("Output Server Notifications", 24, 296, 145, 17)
@@ -407,7 +408,7 @@ EndFunc   ;==>SaveBDSConf
 
 ;Functions (Scheduled Actions) ##################################################################
 
-Func ScheduledActions()
+Func ScheduledActions($debug = "false")
 	logWrite(0, "Scheduled actions called")
 
 	If $serverRunning = False Then
@@ -427,9 +428,8 @@ Func ScheduledActions()
 		Else
 			$hour += 1
 		EndIf
-		logWrite(0, "Added 1 to hour for check")
 
-		logWrite(0, "Checking if hour matches config")
+		logWrite(0, "Checking if hour matches config Current hour is " & $hour)
 		; Find the index of the current hour in the array
 		Local $iIndex = _ArraySearch($aIntervals, $hour)
 		If $iIndex > 0 Then
@@ -777,12 +777,12 @@ Func backupServer()
 	logWrite(0, "Backing up BDS server")
 	outputToDiscNotif(":blue_square: Server backup started")
 	Local $finished = False
-	While @error == 0 Or $finished == False
+	While @error == 0 And $finished == False
 		setServerStatus($COLOR_ORANGE, "Backing up server...")
 
 		If $serverRunning = True Then
 			outputToConsole("Server Backup Requested")
-   logWrite(0, "Requested save-hold. This can be buggy!")
+   			logWrite(0, "Requested save-hold. This can be buggy!")
 			sendServerCommand("save hold")
 			Sleep(5000)
 		EndIf
@@ -791,7 +791,7 @@ Func backupServer()
 		Local $backupFile = _Zip_Create($backupFileName)
 
 		;COPY DIRS TO TMP DIR
-  logWrite(0, "Copying....")
+  		logWrite(0, "Copying....")
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
 		DirCreate(@ScriptDir & "\temp\")
 		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\temp\behavior_packs", 1)
@@ -824,7 +824,7 @@ Func backupServer()
 
 		;ZIP DIR
 		setServerStatus($COLOR_ORANGE, "Zipping files")
-  logWrite(0, "Zipping...")
+  		logWrite(0, "Zipping...")
 		_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
 
 		;CLEAN UP
@@ -879,7 +879,6 @@ While 1
 
 		Case $gui_backupBtn
 			backupServer()
-
 
 		Case $gui_sendCmdBtn
 			sendServerCommand(GUICtrlRead($gui_commandInput))
