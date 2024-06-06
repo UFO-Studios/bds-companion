@@ -95,11 +95,11 @@ Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 160, 392, 
 Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 424, 123, 25)
 Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 392, 123, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 296, 400, 289, 89)
-Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 304, 424, 131, 25)
-Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 440, 456, 131, 25)
-Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 304, 456, 131, 25)
-Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 440, 424, 131, 25)
+Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 296, 376, 289, 113)
+Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 304, 400, 131, 25)
+Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 440, 432, 131, 25)
+Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 304, 432, 131, 25)
+Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 440, 400, 131, 25)
 Global $gui_zipServerBackup = GUICtrlCreateCheckbox("Zip Server Backups", 312, 464, 121, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_discordIntegrationGroup = GUICtrlCreateGroup("Discord Intergration", 16, 272, 689, 89)
@@ -112,12 +112,13 @@ Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
-GUICtrlSetCursor(-1, 0)
+GUICtrlSetCursor (-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
+
 
 ;Variables ###################################################################################
 
@@ -202,6 +203,13 @@ Func loadConf()
 
 	Global $cfg_verboseLogging = IniRead($settingsFile, "debug", "verboseLogging", "False")
 
+	Global $cfg_zipServerBackup = IniRead($settingsFile, "autoRestart", "zipServerBackup", "False")
+	If $cfg_zipServerBackup = "True" Then
+		GUICtrlSetState($gui_zipServerBackup, $GUI_CHECKED)
+	ElseIf $cfg_discOutputConsole = "False" Then
+		GUICtrlSetState($gui_zipServerBackup, $GUI_UNCHECKED)
+	EndIf
+
 	saveConf()
 EndFunc   ;==>loadConf
 
@@ -256,6 +264,14 @@ Func saveConf()
 
 	$cfg_discConsoleUrl = GUICtrlRead($gui_discConsoleInput)
 	IniWrite($settingsFile, "discordIntegration", "consoleUrl", $cfg_discConsoleUrl)
+
+	$cfg_zipServerBackup = GUICtrlRead($gui_zipServerBackup)
+	if $cfg_zipServerBackup = $GUI_CHECKED Then
+		$cfg_zipServerBackup = "True"
+	Else
+		$cfg_zipServerBackup = "False"
+	EndIf
+	IniWrite($settingsFile, "autoRestart", "zipServerBackup", $cfg_zipServerBackup)
 EndFunc   ;==>saveConf
 
 ;Functions (Logging) ############################################################################
