@@ -803,35 +803,34 @@ Func backupServer()
 			Sleep(5000)
 		EndIf
 
-		Local $backupFileName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
-		Local $backupFile = _Zip_Create($backupFileName)
+		Local $backupFolderName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC
 
 		;COPY DIRS TO TMP DIR
   		logWrite(0, "Copying....")
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
-		DirCreate(@ScriptDir & "\temp\")
-		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\temp\behavior_packs", 1)
+		DirCreate(@ScriptDir & " \ " & $backupFolderName)
+		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\" & $backupFolderName & "\behavior_packs", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (2/5)")
-		DirCopy($cfg_bdsDir & "\worlds\", @ScriptDir & "\temp\worlds", 1)
+		DirCopy($cfg_bdsDir & "\worlds\", @ScriptDir & "\" & $backupFolderName & "\worlds", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (3/5)")
-		DirCopy($cfg_bdsDir & "\resource_packs\", @ScriptDir & "\temp\resource_packs", 1)
+		DirCopy($cfg_bdsDir & "\resource_packs\", @ScriptDir & "\" & $backupFolderName & "\resource_packs", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (4/5)")
-		DirCopy($cfg_bdsDir & "\development_behavior_packs\", @ScriptDir & "\temp\development_behavior_packs", 1)
+		DirCopy($cfg_bdsDir & "\development_behavior_packs\", @ScriptDir & "\" & $backupFolderName & "\development_behavior_packs", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (5/5)")
-		DirCopy($cfg_bdsDir & "\development_resource_packs\", @ScriptDir & "\temp\development_resource_packs", 1)
+		DirCopy($cfg_bdsDir & "\development_resource_packs\", @ScriptDir & "\" & $backupFolderName & "\development_resource_packs", 1)
 
 		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
 		;COPY FILES
 		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "allowlist.json", "valid_known_packs.json"]
-		FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\temp\permissions.json", 1)
+		FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\" & $backupFolderName & "\permissions.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (2/5)")
-		FileCopy($cfg_bdsDir & "\whitelist.json", @ScriptDir & "\temp\whitelist.json", 1)
+		FileCopy($cfg_bdsDir & "\whitelist.json", @ScriptDir & "\" & $backupFolderName & "\whitelist.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (3/5)")
-		FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\temp\server.properties", 1)
+		FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\" & $backupFolderName & "\server.properties", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (4/5)")
-		FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\temp\allowlist.json", 1)
+		FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\" & $backupFolderName & "\allowlist.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (5/5)")
-		FileCopy($cfg_bdsDir & "\valid_known_packs.json", @ScriptDir & "\temp\valid_known_packs.json", 1)
+		FileCopy($cfg_bdsDir & "\valid_known_packs.json", @ScriptDir & "\" & $backupFolderName & "\valid_known_packs.json", 1)
 
 		If $serverRunning = True Then ;Files have been copied so server can continue running as normal
 			sendServerCommand("save resume")
@@ -839,10 +838,14 @@ Func backupServer()
 		EndIf
 
 		;ZIP DIR
-		setServerStatus($COLOR_ORANGE, "Zipping files")
-  		logWrite(0, "Zipping...")
-		_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
-
+		if $cfg_zipServerBackup = "True" Then
+			$backupFile = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
+			$zipFile = _Zip_Create($backupFile)
+			setServerStatus($COLOR_ORANGE, "Zipping files")
+  			logWrite(0, "Zipping...")
+			_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
+		endif
+		
 		;CLEAN UP
 		DirRemove(@ScriptDir & "\temp\", 1)
 
