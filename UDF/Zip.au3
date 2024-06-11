@@ -12,9 +12,9 @@
 
 ; Commented out to remove tidy.exe error. - Nicey @ 21.02.24
 
-;~ If UBound($CMDLine) > 1 Then 
-;~ 	If $CMDLine[1] <> "" Then _Zip_VirtualZipOpen()
-;~ EndIf
+If UBound($CMDLine) > 1 Then 
+	If $CMDLine[1] <> "" Then _Zip_VirtualZipOpen()
+EndIf
 
 ;===============================================================================
 ;
@@ -465,6 +465,7 @@ EndFunc
 ;					@error = 1 no Zip file
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
+; 					@error = 4 CMDLine is null
 ; Author(s):        torels_
 ; Notes:			none
 ;
@@ -472,14 +473,15 @@ EndFunc
 
 ; Commented out to remove tidy.exe error. - Nicey @ 21.02.24
 
-;~ Func _Zip_VirtualZipOpen()
-;~ 	$ZipSplit = StringSplit($CMDLine[1], ",")
-;~ 	$ZipName = $ZipSplit[1]
-;~ 	$ZipFile = $ZipSplit[2]
-;~ 	_Zip_Unzip($ZipName, $ZipFile, @TempDir & "\", 4+16) ;no progress + yes to all
-;~ 	If @error Then Return SetError(@error,0,0)
-;~ 	ShellExecute(@TempDir & "\" & $ZipFile)
-;~ EndFunc
+Func _Zip_VirtualZipOpen()
+	$ZipSplit = StringSplit($CMDLine[1], ",")
+	if $CMDLine == "" then Return SetError(4,0,0)
+	$ZipName = $ZipSplit[1]
+	$ZipFile = $ZipSplit[2]
+	_Zip_Unzip($ZipName, $ZipFile, @TempDir & "\", 4+16) ;no progress + yes to all
+	If @error Then Return SetError(@error,0,0)
+	ShellExecute(@TempDir & "\" & $ZipFile)
+EndFunc
 
 ;===============================================================================
 ;
