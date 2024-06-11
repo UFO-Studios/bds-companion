@@ -127,13 +127,15 @@ Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = Null
-Global $ZipMessageDotsCount = 0
+Global $zipMessageDotsCount = 0
+Global $currentServerStatus = "Offline"
 
 ;Functions (Server Status) #############################################################################
 
 Func setServerStatus($colour, $status)
 	GUICtrlSetColor($gui_serverStatusIndicator, $colour)
 	GUICtrlSetData($gui_serverStatusIndicator, $status)
+	$currentServerStatus = $status
 	Sleep(200) ;to avoid lagg
 EndFunc   ;==>setServerStatus
 
@@ -784,15 +786,15 @@ EndFunc   ;==>killServer
 Func niceZipMessage()
 	$ZipMessageDotsCount = $ZipMessageDotsCount + 1
 	If $ZipMessageDotsCount = 1 Then
-		setServerStatus($COLOR_ORANGE, "Zipping files.")
+		setServerStatus($COLOR_ORANGE, $currentServerStatus & ".")
 	ElseIf $ZipMessageDotsCount = 2 Then
-		setServerStatus($COLOR_ORANGE, "Zipping files..")
+		setServerStatus($COLOR_ORANGE, $currentServerStatus & "..")
 	ElseIf $ZipMessageDotsCount = 3 Then
-		setServerStatus($COLOR_ORANGE, "Zipping files...")
+		setServerStatus($COLOR_ORANGE, $currentServerStatus & "...")
 	ElseIf $ZipMessageDotsCount = 4 Then
-		setServerStatus($COLOR_ORANGE, "Zipping files....")
-	Else; 5
-		setServerStatus($COLOR_ORANGE, "Zipping files.....")
+		setServerStatus($COLOR_ORANGE, $currentServerStatus & "....")
+	Else; something gone wrong, reset
+		setServerStatus($COLOR_ORANGE, $currentServerStatus & "")
 		$ZipMessageDotsCount = 0
 	EndIf
 	
@@ -813,6 +815,7 @@ Func backupServer()
 	Local $finished = False
 	While @error == 0 And $finished == False
 		setServerStatus($COLOR_ORANGE, "Backing up server...")
+		AdlibRegister("niceZipMessage", 500)
 
 		If $serverRunning = True Then
 			outputToConsole("Server Backup Requested")
@@ -825,7 +828,6 @@ Func backupServer()
 
 		;COPY DIRS TO TMP DIR
   		logWrite(0, "Copying....")
-		MsgBox(0, "Backup", "Copying folders to " & $backupFolderName)
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
 		DirCreate($backupFolderName)
 		DirCopy($cfg_bdsDir & "\behavior_packs\", $backupFolderName & "\behavior_packs", 1)
@@ -840,7 +842,6 @@ Func backupServer()
 
 		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
 		;COPY FILES
-		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "allowlist.json", "valid_known_packs.json"]
 		FileCopy($cfg_bdsDir & "\permissions.json",  $backupFolderName & "\permissions.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (2/5)")
 		FileCopy($cfg_bdsDir & "\whitelist.json",  $backupFolderName & "\whitelist.json", 1)
@@ -858,13 +859,11 @@ Func backupServer()
 
 		;ZIP DIR
 		if $cfg_zipServerBackup = "True" Then
-			AdlibRegister("niceZipMessage", 500)
 			$backupFile = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
 			$zipFile = _Zip_Create($backupFile)
 			setServerStatus($COLOR_ORANGE, "Zipping files")
   			logWrite(0, "Zipping...")
 			_Zip_AddFolder($backupFile, $backupFolderName, 0)
-			AdlibUnRegister("niceZipMessage")
 			DirRemove($backupFolderName, 1)
 		endif
 		
@@ -873,6 +872,8 @@ Func backupServer()
 
 		;FINISH
 		$finished = True
+		AdlibUnRegister("niceZipMessage")
+		Sleep(100); avoid conflict
 		setServerStatus($COLOR_GREEN, "Backup complete!")
 
 		If $serverRunning = True Then ;Reset server status
