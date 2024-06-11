@@ -333,6 +333,8 @@ EndFunc
 ;					@error = 1 no Zip file
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
+;					@error = 4 zip file isn't a full path
+;					@error = 5 unable to get Shell Folder for zip file (usually means the zip file is corrupt)
 ; Author(s):        torels_
 ;
 ;===============================================================================
@@ -343,7 +345,11 @@ Func _Zip_List($hZipFile)
 	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
 	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
 	$oApp = ObjCreate("Shell.Application")
-	$hList = $oApp.Namespace($hZipFile).Items
+
+	Local $oZipFolder = $oApp.Namespace($hZipFile)
+	If Not IsObj($oZipFolder) Then Return SetError(5, 0, 0) ;unable to get Shell Folder for zip file
+    
+	$hList = $oZipFolder.Items
 	For $item in $hList
 		_ArrayAdd($aArray,$item.name)
 	Next
