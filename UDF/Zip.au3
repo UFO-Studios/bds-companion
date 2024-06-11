@@ -90,25 +90,35 @@ EndFunc   ;==>_Zip_AddFile
 ;					@error = 1 no Zip file
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
-; Author(s):        torels_
+;					@error = 4 zip file isn't a full path
+;					@error = 5 unable to get Shell Folder for zip file (usually means the zip file is corrupt)
+;					@error = 6 unable to get Shell Folder for folder to be added (usually means the folder doesn't exist)
+; Author(s):        torels_, Niceygy
 ; Notes:			The return values will be given once the compressing process is complete... it takes some time with big files
 ;
 ;===============================================================================
-Func _Zip_AddFolder($hZipFile, $hFolder, $flag = 1)
-	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
-	If StringRight($hFolder, 1) <> "\" Then $hFolder &= "\"
-	$files = _Zip_Count($hZipFile)
-	$oApp = ObjCreate("Shell.Application")
-	$oCopy = $oApp.NameSpace($hZipFile).CopyHere($oApp.Namespace($hFolder))
-	While 1
-		If $flag = 1 then _Hide()
-		If _Zip_Count($hZipFile) = ($files+1) Then ExitLoop
-		Sleep(10)
-	WEnd
-	Return SetError(0,0,1)
+Func _Zip_AddFolder($hZipFile, $hFolder, $flag = 1); Added error handling - Nicey @ 11.06.24
+    Local $DLLChk = _Zip_DllChk()
+    If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
+    If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
+    If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+    If StringRight($hFolder, 1) <> "\" Then $hFolder &= "\"
+    $files = _Zip_Count($hZipFile)
+    $oApp = ObjCreate("Shell.Application")
+    
+    Local $oZipFolder = $oApp.NameSpace($hZipFile)
+    If Not IsObj($oZipFolder) Then Return SetError(5, 0, 0) ;unable to get Shell Folder for zip file
+    
+    Local $oFolder = $oApp.Namespace($hFolder)
+    If Not IsObj($oFolder) Then Return SetError(6, 0, 0) ;unable to get Shell Folder for folder to be added
+    
+    $oCopy = $oZipFolder.CopyHere($oFolder)
+    While 1
+        If $flag = 1 then _Hide()
+        If _Zip_Count($hZipFile) = ($files+1) Then ExitLoop
+        Sleep(10)
+    WEnd
+    Return SetError(0,0,1)
 EndFunc   ;==>_Zip_AddFolder
 
 ;===============================================================================
