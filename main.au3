@@ -127,6 +127,7 @@ Global $bdsExe = $bdsFolder & "\bedrock_server.exe"
 Global $settingsFile = @ScriptDir & "\settings.ini"
 Global $serverRunning = False
 Global $BDS_process = Null
+Global $ZipMessageDotsCount = 0
 
 ;Functions (Server Status) #############################################################################
 
@@ -780,6 +781,23 @@ Func killServer()
 	EndIf
 EndFunc   ;==>killServer
 
+Func niceZipMessage()
+	$ZipMessageDotsCount = $ZipMessageDotsCount + 1
+	If $ZipMessageDotsCount = 1 Then
+		setServerStatus($COLOR_ORANGE, "Zipping files.")
+	ElseIf $ZipMessageDotsCount = 2 Then
+		setServerStatus($COLOR_ORANGE, "Zipping files..")
+	ElseIf $ZipMessageDotsCount = 3 Then
+		setServerStatus($COLOR_ORANGE, "Zipping files...")
+	ElseIf $ZipMessageDotsCount = 4 Then
+		setServerStatus($COLOR_ORANGE, "Zipping files....")
+	Else; 5
+		setServerStatus($COLOR_ORANGE, "Zipping files.....")
+		$ZipMessageDotsCount = 0
+	EndIf
+	
+EndFunc   ;==>niceZipMessage
+
 Func backupServer()
 
 	If $serverRunning = True Then ;Manual Backup
@@ -807,30 +825,31 @@ Func backupServer()
 
 		;COPY DIRS TO TMP DIR
   		logWrite(0, "Copying....")
+		MsgBox(0, "Backup", "Copying folders to " & $backupFolderName)
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
-		DirCreate(@ScriptDir & " \ " & $backupFolderName)
-		DirCopy($cfg_bdsDir & "\behavior_packs\", @ScriptDir & "\" & $backupFolderName & "\behavior_packs", 1)
+		DirCreate($backupFolderName)
+		DirCopy($cfg_bdsDir & "\behavior_packs\", $backupFolderName & "\behavior_packs", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (2/5)")
-		DirCopy($cfg_bdsDir & "\worlds\", @ScriptDir & "\" & $backupFolderName & "\worlds", 1)
+		DirCopy($cfg_bdsDir & "\worlds\", $backupFolderName & "\worlds", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (3/5)")
-		DirCopy($cfg_bdsDir & "\resource_packs\", @ScriptDir & "\" & $backupFolderName & "\resource_packs", 1)
+		DirCopy($cfg_bdsDir & "\resource_packs\", $backupFolderName & "\resource_packs", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (4/5)")
-		DirCopy($cfg_bdsDir & "\development_behavior_packs\", @ScriptDir & "\" & $backupFolderName & "\development_behavior_packs", 1)
+		DirCopy($cfg_bdsDir & "\development_behavior_packs\", $backupFolderName & "\development_behavior_packs", 1)
 		setServerStatus($COLOR_ORANGE, "Copying folders (5/5)")
-		DirCopy($cfg_bdsDir & "\development_resource_packs\", @ScriptDir & "\" & $backupFolderName & "\development_resource_packs", 1)
+		DirCopy($cfg_bdsDir & "\development_resource_packs\", $backupFolderName & "\development_resource_packs", 1)
 
 		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
 		;COPY FILES
 		Dim $files[5] = ["permissions.json", "whitelist.json", "server.properties", "allowlist.json", "valid_known_packs.json"]
-		FileCopy($cfg_bdsDir & "\permissions.json", @ScriptDir & "\" & $backupFolderName & "\permissions.json", 1)
+		FileCopy($cfg_bdsDir & "\permissions.json",  $backupFolderName & "\permissions.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (2/5)")
-		FileCopy($cfg_bdsDir & "\whitelist.json", @ScriptDir & "\" & $backupFolderName & "\whitelist.json", 1)
+		FileCopy($cfg_bdsDir & "\whitelist.json",  $backupFolderName & "\whitelist.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (3/5)")
-		FileCopy($cfg_bdsDir & "\server.properties", @ScriptDir & "\" & $backupFolderName & "\server.properties", 1)
+		FileCopy($cfg_bdsDir & "\server.properties", $backupFolderName & "\server.properties", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (4/5)")
-		FileCopy($cfg_bdsDir & "\allowlist.json", @ScriptDir & "\" & $backupFolderName & "\allowlist.json", 1)
+		FileCopy($cfg_bdsDir & "\allowlist.json", $backupFolderName & "\allowlist.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (5/5)")
-		FileCopy($cfg_bdsDir & "\valid_known_packs.json", @ScriptDir & "\" & $backupFolderName & "\valid_known_packs.json", 1)
+		FileCopy($cfg_bdsDir & "\valid_known_packs.json", $backupFolderName & "\valid_known_packs.json", 1)
 
 		If $serverRunning = True Then ;Files have been copied so server can continue running as normal
 			sendServerCommand("save resume")
@@ -839,11 +858,14 @@ Func backupServer()
 
 		;ZIP DIR
 		if $cfg_zipServerBackup = "True" Then
+			AdlibRegister("niceZipMessage", 500)
 			$backupFile = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
 			$zipFile = _Zip_Create($backupFile)
 			setServerStatus($COLOR_ORANGE, "Zipping files")
   			logWrite(0, "Zipping...")
-			_Zip_AddFolder($backupFile, @ScriptDir & "\temp\", 0)
+			_Zip_AddFolder($backupFile, $backupFolderName, 0)
+			AdlibUnRegister("niceZipMessage")
+			DirRemove($backupFolderName, 1)
 		endif
 		
 		;CLEAN UP

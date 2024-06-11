@@ -98,6 +98,7 @@ EndFunc   ;==>_Zip_AddFile
 ;
 ;===============================================================================
 Func _Zip_AddFolder($hZipFile, $hFolder, $flag = 1); Added error handling - Nicey @ 11.06.24
+	MsgBox(0, "Zip", "AddFolder")
     Local $DLLChk = _Zip_DllChk()
     If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
     If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
