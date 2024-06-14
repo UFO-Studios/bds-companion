@@ -112,10 +112,10 @@ Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -269,7 +269,7 @@ Func saveConf()
 	IniWrite($settingsFile, "discordIntegration", "consoleUrl", $cfg_discConsoleUrl)
 
 	$cfg_zipServerBackup = GUICtrlRead($gui_zipServerBackup)
-	if $cfg_zipServerBackup = $GUI_CHECKED Then
+	If $cfg_zipServerBackup = $GUI_CHECKED Then
 		$cfg_zipServerBackup = "True"
 	Else
 		$cfg_zipServerBackup = "False"
@@ -784,20 +784,20 @@ Func killServer()
 EndFunc   ;==>killServer
 
 Func niceZipMessage()
-	$ZipMessageDotsCount = $ZipMessageDotsCount + 1
-	If $ZipMessageDotsCount = 1 Then
+	$zipMessageDotsCount = $zipMessageDotsCount + 1
+	If $zipMessageDotsCount = 1 Then
 		setServerStatus($COLOR_ORANGE, $currentServerStatus & ".")
-	ElseIf $ZipMessageDotsCount = 2 Then
+	ElseIf $zipMessageDotsCount = 2 Then
 		setServerStatus($COLOR_ORANGE, $currentServerStatus & "..")
-	ElseIf $ZipMessageDotsCount = 3 Then
+	ElseIf $zipMessageDotsCount = 3 Then
 		setServerStatus($COLOR_ORANGE, $currentServerStatus & "...")
-	ElseIf $ZipMessageDotsCount = 4 Then
+	ElseIf $zipMessageDotsCount = 4 Then
 		setServerStatus($COLOR_ORANGE, $currentServerStatus & "....")
-	Else; something gone wrong, reset
+	Else ; something gone wrong, reset
 		setServerStatus($COLOR_ORANGE, $currentServerStatus & "")
-		$ZipMessageDotsCount = 0
+		$zipMessageDotsCount = 0
 	EndIf
-	
+
 EndFunc   ;==>niceZipMessage
 
 Func backupServer()
@@ -819,7 +819,7 @@ Func backupServer()
 
 		If $serverRunning = True Then
 			outputToConsole("Server Backup Requested")
-   			logWrite(0, "Requested save-hold. This can be buggy!")
+			logWrite(0, "Requested save-hold. This can be buggy!")
 			sendServerCommand("save hold")
 			Sleep(5000)
 		EndIf
@@ -827,7 +827,7 @@ Func backupServer()
 		Local $backupFolderName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC
 
 		;COPY DIRS TO TMP DIR
-  		logWrite(0, "Copying....")
+		logWrite(0, "Copying....")
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
 		DirCreate($backupFolderName)
 		DirCopy($cfg_bdsDir & "\behavior_packs\", $backupFolderName & "\behavior_packs", 1)
@@ -842,9 +842,9 @@ Func backupServer()
 
 		setServerStatus($COLOR_ORANGE, "Copying files (1/5)")
 		;COPY FILES
-		FileCopy($cfg_bdsDir & "\permissions.json",  $backupFolderName & "\permissions.json", 1)
+		FileCopy($cfg_bdsDir & "\permissions.json", $backupFolderName & "\permissions.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (2/5)")
-		FileCopy($cfg_bdsDir & "\whitelist.json",  $backupFolderName & "\whitelist.json", 1)
+		FileCopy($cfg_bdsDir & "\whitelist.json", $backupFolderName & "\whitelist.json", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (3/5)")
 		FileCopy($cfg_bdsDir & "\server.properties", $backupFolderName & "\server.properties", 1)
 		setServerStatus($COLOR_ORANGE, "Copying files (4/5)")
@@ -858,22 +858,22 @@ Func backupServer()
 		EndIf
 
 		;ZIP DIR
-		if $cfg_zipServerBackup = "True" Then
+		If $cfg_zipServerBackup = "True" Then
 			$backupFile = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC & ".zip"
 			$zipFile = _Zip_Create($backupFile)
 			setServerStatus($COLOR_ORANGE, "Zipping files")
-  			logWrite(0, "Zipping...")
+			logWrite(0, "Zipping...")
 			_Zip_AddFolder($backupFile, $backupFolderName, 0)
 			DirRemove($backupFolderName, 1)
-		endif
-		
+		EndIf
+
 		;CLEAN UP
 		DirRemove(@ScriptDir & "\temp\", 1)
 
 		;FINISH
 		$finished = True
 		AdlibUnRegister("niceZipMessage")
-		Sleep(100); avoid conflict
+		Sleep(100) ; avoid conflict
 		setServerStatus($COLOR_GREEN, "Backup complete!")
 
 		If $serverRunning = True Then ;Reset server status
