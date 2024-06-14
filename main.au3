@@ -76,6 +76,7 @@ Global $gui_autoRestartTimeLabel = GUICtrlCreateLabel("Restart Times:", 365, 48,
 Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21, 48, 129, 17)
 Global $gui_backupDuringRestartCheck = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
 Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 616, 48, 79, 17)
+Global $gui_zipServerBackup = GUICtrlCreateCheckbox("Add to ZIP folder", 160, 48, 105, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 600, 456, 107, 33)
 Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 112, 689, 153)
@@ -95,12 +96,11 @@ Global $gui_UpdateCheckBtn = GUICtrlCreateButton("Check for Updates", 160, 392, 
 Global $gui_patreonBtn = GUICtrlCreateButton("Support this project :)", 24, 424, 123, 25)
 Global $gui_readmeBtn = GUICtrlCreateButton("Instructions and Credits", 24, 392, 123, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 296, 376, 289, 113)
-Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 304, 400, 131, 25)
-Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 440, 432, 131, 25)
-Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 304, 432, 131, 25)
-Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 440, 400, 131, 25)
-Global $gui_zipServerBackup = GUICtrlCreateCheckbox("Zip Server Backups", 312, 464, 121, 17)
+Global $gui_DebugGroup = GUICtrlCreateGroup("Debug", 296, 400, 289, 89)
+Global $gui_debugEnableBtn = GUICtrlCreateButton("Enable Debug Mode", 304, 424, 131, 25)
+Global $gui_UploadLogsBtn = GUICtrlCreateButton("Upload Logs For Help", 440, 456, 131, 25)
+Global $gui_FindServerBtn = GUICtrlCreateButton("Find Running BDS Server", 304, 456, 131, 25)
+Global $gui_testDiscWebhooks = GUICtrlCreateButton("Test Discord Webhook", 440, 424, 131, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_discordIntegrationGroup = GUICtrlCreateGroup("Discord Intergration", 16, 272, 689, 89)
 Global $gui_discNotifCheck = GUICtrlCreateCheckbox("Output Server Notifications", 24, 296, 145, 17)
@@ -917,7 +917,7 @@ While 1
 			killServer()
 
 		Case $gui_restartBtn
-			RestartServer(1)
+			RestartServer(0)
 
 		Case $gui_backupBtn
 			backupServer()

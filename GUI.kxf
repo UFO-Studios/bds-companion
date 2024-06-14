@@ -383,6 +383,20 @@
 									</properties>
 									<components/>
 								</object>
+								<object type="TACheckbox" name="gui_zipServerBackup">
+									<properties>
+										<property name="Left" vt="Int16">144</property>
+										<property name="Top" vt="Int8">19</property>
+										<property name="Width" vt="Int8">105</property>
+										<property name="Height" vt="Int8">17</property>
+										<property name="Caption" vt="String">Add to ZIP folder</property>
+										<property name="TabOrder" vt="Int8">5</property>
+										<property name="CtrlStyle" vt="Int32">1342242819</property>
+										<property name="CtrlExStyle" vt="Int8">0</property>
+										<property name="Resizing" vt="Set">DockHeight</property>
+									</properties>
+									<components/>
+								</object>
 							</components>
 						</object>
 						<object type="TAButton" name="gui_saveSettingsBtn">
@@ -620,9 +634,9 @@
 						<object type="TAGroup" name="gui_DebugGroup">
 							<properties>
 								<property name="Left" vt="Int16">284</property>
-								<property name="Top" vt="Int16">351</property>
+								<property name="Top" vt="Int16">375</property>
 								<property name="Width" vt="Int16">289</property>
-								<property name="Height" vt="Int8">113</property>
+								<property name="Height" vt="Int8">89</property>
 								<property name="CtrlStyle" vt="Int32">1342308359</property>
 								<property name="CtrlExStyle" vt="Int8">0</property>
 								<property name="Caption" vt="String">Debug</property>
@@ -687,20 +701,6 @@
 										<property name="CtrlStyle" vt="Int32">1342373888</property>
 										<property name="CtrlExStyle" vt="Int8">0</property>
 										<property name="Resizing" vt="Set">DockWidth, DockHeight</property>
-									</properties>
-									<components/>
-								</object>
-								<object type="TACheckbox" name="gui_zipServerBackup">
-									<properties>
-										<property name="Left" vt="Int8">16</property>
-										<property name="Top" vt="Int8">88</property>
-										<property name="Width" vt="Int8">121</property>
-										<property name="Height" vt="Int8">17</property>
-										<property name="Caption" vt="String">Zip Server Backups</property>
-										<property name="TabOrder" vt="Int8">4</property>
-										<property name="CtrlStyle" vt="Int32">1342242819</property>
-										<property name="CtrlExStyle" vt="Int8">0</property>
-										<property name="Resizing" vt="Set">DockHeight</property>
 									</properties>
 									<components/>
 								</object>
