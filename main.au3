@@ -15,8 +15,8 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS Companion)
 #pragma compile(ProductName, BDS Companion)
-#pragma compile(ProductVersion, 0.1.0)
-#pragma compile(FileVersion, 0.1.0)
+#pragma compile(ProductVersion, 0.1.1)
+#pragma compile(FileVersion, 0.1.1)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
 #pragma compile(OriginalFilename, BDS-Companion.exe)
@@ -39,17 +39,17 @@
 #include "UDF/WinHttp.au3"
 
 
-Global Const $currentVersionNumber = "010"
-Global Const $guiTitle = "BDS Companion - Beta-0.1.0"
+Global Const $currentVersionNumber = "011"
+Global Const $guiTitle = "BDS Companion - Beta-0.1.1"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
-;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 522)
+;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
 ;Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
 ;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 464, 598, 17)
 ;Global $gui_abtVerNum = GUICtrlCreateLabel("" & $guiTitle & "", 24, 460, 254, 17)
 
-#Region ### START Koda GUI section ###
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 522)
+#Region ### START Koda GUI section ### Form=d:\06 code\bds-companion\gui.kxf
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 497)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
@@ -113,7 +113,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
 GUICtrlSetCursor(-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: Beta-0.1.1", 624, 504, 94, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)

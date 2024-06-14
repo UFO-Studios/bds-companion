@@ -3,8 +3,8 @@
 	<properties>
 		<property name="Left" vt="Int16">806</property>
 		<property name="Top" vt="Int16">325</property>
-		<property name="Width" vt="Int16">738</property>
-		<property name="Height" vt="Int16">560</property>
+		<property name="Width" vt="Int16">737</property>
+		<property name="Height" vt="Int16">566</property>
 		<property name="Caption" vt="String">&quot; &amp; $guiTitle &amp; &quot;</property>
 		<property name="Color" vt="Ident">clBtnFace</property>
 		<property name="Font.Charset" vt="Ident">DEFAULT_CHARSET</property>
@@ -827,11 +827,11 @@
 		</object>
 		<object type="TALabel" name="gui_versionNum">
 			<properties>
-				<property name="Left" vt="Int16">648</property>
+				<property name="Left" vt="Int16">624</property>
 				<property name="Top" vt="Int16">504</property>
-				<property name="Width" vt="Int8">69</property>
+				<property name="Width" vt="Int8">94</property>
 				<property name="Height" vt="Int8">17</property>
-				<property name="Caption" vt="String">Version: 1.0.0</property>
+				<property name="Caption" vt="String">Version: Beta-0.1.1</property>
 				<property name="TabOrder" vt="Int8">2</property>
 				<property name="HaveVariable" vt="False">False</property>
 				<property name="CtrlStyle" vt="Int32">1342308608</property>

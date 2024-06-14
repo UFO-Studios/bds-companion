@@ -1,8 +1,8 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS Companion)
 #pragma compile(ProductName, BDS Companion)
-#pragma compile(ProductVersion, 0.1.0)
-#pragma compile(FileVersion, 0.1.0)
+#pragma compile(ProductVersion, 0.1.1)
+#pragma compile(FileVersion, 0.1.1)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
 #pragma compile(OriginalFilename, BDS-Companion.exe)
@@ -408,9 +408,9 @@ If(@error) Then Return SetError(2, 0, 0)
 If($oHTTP.Status <> $HTTP_STATUS_OK) Then Return SetError(3, 0, 0)
 Return SetError(0, 0, $oHTTP.ResponseText)
 EndFunc
-Global Const $currentVersionNumber = "010"
-Global Const $guiTitle = "BDS Companion - Beta-0.1.0"
-Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 723, 522)
+Global Const $currentVersionNumber = "011"
+Global Const $guiTitle = "BDS Companion - Beta-0.1.1"
+Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 497)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
 Global $gui_serverStatusLabel = GUICtrlCreateLabel("Server Status:", 16, 32, 71, 17)
@@ -474,7 +474,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
 GUICtrlSetCursor(-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 648, 504, 69, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: Beta-0.1.1", 624, 504, 94, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
