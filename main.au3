@@ -136,7 +136,7 @@ Func setServerStatus($colour, $status)
 	GUICtrlSetColor($gui_serverStatusIndicator, $colour)
 	GUICtrlSetData($gui_serverStatusIndicator, $status)
 	$currentServerStatus = $status
-	Sleep(200) ;to avoid lagg
+	Sleep(200) ;to avoid lag
 EndFunc   ;==>setServerStatus
 
 ;Functions (Config) #############################################################################
@@ -364,9 +364,16 @@ Func BDSlogWrite($content)
 
 	FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 
+	;Discord Integration
 	If $cfg_discOutputConsole = "True" Then
-		$newContent = StringReplace($content, @CRLF, "\n")
-		HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+		Local $ping = Ping("https://discord.com")
+		If $ping > 0 Then
+			logWrite(0, "Ping to Discord.com failed, abort Discord console output")
+		Else
+			$newContent = StringReplace($content, @CRLF, "\n")
+			HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+			logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+		EndIf
 	EndIf
 
 	FileClose($cfg_bdsLogsDir & "\log.latest")
@@ -486,7 +493,13 @@ EndFunc   ;==>ScheduledActions
 
 ;Functions (Discord Integration) ###################################################################
 
-Func outputToDiscNotif($content) ;Sends content to notifcations channel on Discord
+Func outputToDiscNotif($content) ;Sends server notfications to Discord webhook
+	Local $ping = Ping("https://discord.com")
+	If $ping > 0 Then
+		logWrite(0, "Ping to Discord.com failed, abort Discord notification")
+		Return
+	EndIf
+
 	If $cfg_discOutputNotifs = "True" Then
 		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "' & $content & '"}', "application/json")
 		logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
