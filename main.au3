@@ -496,7 +496,7 @@ EndFunc   ;==>ScheduledActions
 Func outputToDiscNotif($content) ;Sends server notfications to Discord webhook
 	Local $ping = Ping("https://discord.com")
 	If $ping > 0 Then
-		logWrite(0, "Ping to Discord.com failed, abort Discord notification")
+		logWrite(0, "Ping to Discord.com failed, aborting Discord notification")
 		Return
 	EndIf
 
