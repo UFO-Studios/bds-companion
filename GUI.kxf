@@ -816,7 +816,7 @@
 				<property name="Width" vt="Int8">103</property>
 				<property name="Height" vt="Int8">17</property>
 				<property name="Cursor" vt="Ident">crHandPoint</property>
-				<property name="Caption" vt="UTF8String">© UFO Studios 2024</property>
+				<property name="Caption" vt="UTF8String">ï¿½ UFO Studios 2024</property>
 				<property name="TabOrder" vt="Int8">1</property>
 				<property name="HaveVariable" vt="False">False</property>
 				<property name="CtrlStyle" vt="Int32">1342308608</property>
@@ -831,7 +831,7 @@
 				<property name="Top" vt="Int16">504</property>
 				<property name="Width" vt="Int8">94</property>
 				<property name="Height" vt="Int8">17</property>
-				<property name="Caption" vt="String">Version: Beta-0.1.1</property>
+				<property name="Caption" vt="String">Version: Beta-0.1.2</property>
 				<property name="TabOrder" vt="Int8">2</property>
 				<property name="HaveVariable" vt="False">False</property>
 				<property name="CtrlStyle" vt="Int32">1342308608</property>

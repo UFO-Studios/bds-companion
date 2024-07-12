@@ -1,8 +1,8 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS Companion)
 #pragma compile(ProductName, BDS Companion)
-#pragma compile(ProductVersion, 0.1.1)
-#pragma compile(FileVersion, 0.1.1)
+#pragma compile(ProductVersion, 0.1.2)
+#pragma compile(FileVersion, 0.1.2)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
 #pragma compile(OriginalFilename, BDS-Companion.exe)
@@ -408,8 +408,8 @@ If(@error) Then Return SetError(2, 0, 0)
 If($oHTTP.Status <> $HTTP_STATUS_OK) Then Return SetError(3, 0, 0)
 Return SetError(0, 0, $oHTTP.ResponseText)
 EndFunc
-Global Const $currentVersionNumber = "011"
-Global Const $guiTitle = "BDS Companion - Beta-0.1.1"
+Global Const $currentVersionNumber = "012"
+Global Const $guiTitle = "BDS Companion - Beta-0.1.2"
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
 Global $gui_tabs = GUICtrlCreateTab(8, 0, 705, 497)
 Global $gui_serverCtrlTab = GUICtrlCreateTabItem("Server Control")
@@ -474,7 +474,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
 GUICtrlSetCursor(-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: Beta-0.1.1", 624, 504, 94, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: Beta-0.1.2", 624, 504, 94, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
@@ -672,8 +672,14 @@ Func BDSlogWrite($content)
 FileOpen($cfg_bdsLogsDir & "\log.latest", 1)
 FileWrite($cfg_bdsLogsDir & "\log.latest", @MDAY & "/" & @MON & "/" & @YEAR & " @ " & @HOUR & ":" & @MIN & ":" & @SEC & " > " & $content & @CRLF)
 If $cfg_discOutputConsole = "True" Then
+Local $ping = Ping("https://discord.com")
+If $ping > 0 Then
+logWrite(0, "Ping to Discord.com failed, abort Discord console output")
+Else
 $newContent = StringReplace($content, @CRLF, "\n")
 HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
+logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+EndIf
 EndIf
 FileClose($cfg_bdsLogsDir & "\log.latest")
 EndFunc
@@ -766,6 +772,11 @@ EndIf
 EndIf
 EndFunc
 Func outputToDiscNotif($content)
+Local $ping = Ping("https://discord.com")
+If $ping > 0 Then
+logWrite(0, "Ping to Discord.com failed, aborting Discord notification")
+Return
+EndIf
 If $cfg_discOutputNotifs = "True" Then
 HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "' & $content & '"}', "application/json")
 logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
