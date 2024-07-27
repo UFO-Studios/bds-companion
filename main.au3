@@ -523,6 +523,14 @@ Func UploadLog()
 	ShellExecute($url)
 EndFunc   ;==>UploadLog
 
+Func SaveBDSPID() ;used in the event of a bds-companion crash
+	logWrite(0, "Saving BDS PID to file...")
+	FileOpen($cfg_bdsDir & "\bds.pid", 1)
+	FileWrite($cfg_bdsDir & "\bds.pid", $BDS_process)
+	FileClose($cfg_bdsDir & "\bds.pid")
+	logWrite(0, "PID saved to file.")
+EndFunc   ;==>SaveBDSPID
+
 Func startup()
 	createLog()
 	logWrite(0, "Starting " & $guiTitle & "...")
@@ -648,18 +656,27 @@ EndFunc   ;==>checkForUpdates
 
 ;Functions (Server Management) ################################################################################
 
-Func startServer()
+Func startServer($reattach = False, $reattach_pid = 0)
 	logWrite(0, "Starting BDS...")
-	If (ProcessExists($BDS_process)) Then
+	If ($serverRunning = True) Then
 		logWrite(0, "BDS process already running. Skipping startServer()")
 		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
 		Return
 	EndIf
+	if ($reattach = True) Then
+		$BDS_process = $reattach_pid
+	Else
+		Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
+	EndIf
 	outputToDiscNotif(":yellow_square: Server is starting")
-	Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
+	SaveBDSPID()
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
-	outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
+	if ($reattach = False) Then
+		outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
+	Else
+		outputToConsole("Server Reattach Triggered. BDS PID is " & $BDS_process)
+	Endif
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	BDScreateLog()
@@ -976,6 +993,21 @@ While 1
 
 		Case $gui_debugEnableBtn
 			ScheduledActions()
+
+		Case $gui_FindServerBtn
+			If FileExists($cfg_bdsDir & "\bds.pid") Then
+				local $f = FileRead($cfg_bdsDir & "\bds.pid")
+				if (ProcessExists($f)) Then
+					$BDS_process = $f
+					startServer(True, $BDS_process)
+					MsgBox(0, "BDS Instance Found!", "Found a BDS instance with PID " & $BDS_process & @CRLF & "BDS Companion has now attached to it.")
+				Else
+					MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
+				EndIf
+			Else
+				MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
+			EndIf
+			
 
 		Case $gui_testDiscWebhooks
 			outputToDiscNotif("This is a test message sent to the notifications channel")
