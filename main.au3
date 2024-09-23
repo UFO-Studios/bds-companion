@@ -6,11 +6,12 @@
  Script Function:
 	A GUI and companion software for the Minecraft Bedrock Dedicated Server Software.
 
-#ce ----------------------------------------------------------------------------
+ Script Description:
+ 	Created with ❤️ & 👽 by the UFO Studios Dev Team (https://github.com/UFO-Studios).
+	Check out the github repository of this project for more info @ https://github.com/UFO-Studios/bds-companion.
+	Copyright UFO Studios. All rights reserved. For more info, email us: UFOStudios@TheAlienDoctor.com
 
-; Created with ❤️ & 👽 by the UFO Studios Dev Team (https://github.com/UFO-Studios).
-; Check out the github repository of this project for more info @ https://github.com/UFO-Studios/bds-companion.
-; Copyright UFO Studios. All rights reserved. For more info, email us: UFOStudios@TheAlienDoctor.com
+#ce ----------------------------------------------------------------------------
 
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS Companion)
@@ -523,14 +524,6 @@ Func UploadLog()
 	ShellExecute($url)
 EndFunc   ;==>UploadLog
 
-Func SaveBDSPID() ;used in the event of a bds-companion crash
-	logWrite(0, "Saving BDS PID to file...")
-	FileOpen($cfg_bdsDir & "\bds.pid", 1)
-	FileWrite($cfg_bdsDir & "\bds.pid", $BDS_process)
-	FileClose($cfg_bdsDir & "\bds.pid")
-	logWrite(0, "PID saved to file.")
-EndFunc   ;==>SaveBDSPID
-
 Func startup()
 	createLog()
 	logWrite(0, "Starting " & $guiTitle & "...")
@@ -669,7 +662,6 @@ Func startServer($reattach = False, $reattach_pid = 0)
 		Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
 	EndIf
 	outputToDiscNotif(":yellow_square: Server is starting")
-	SaveBDSPID()
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
 	if ($reattach = False) Then
@@ -731,16 +723,22 @@ EndFunc   ;==>RestartServer
 
 Func FindServerPID()
 	logWrite(0, "Finding BDS PID...")
-	Local $cmd = "pwsh -c (Get-Process bedrock_server.exe).Id"
+	Local $cmd = "pwsh -c Tasklist /svc /FI 'ImageName EQ bedrock_server.exe' /FO csv"
 	Local $output = Run($cmd, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
+	Sleep(3000)
 	Local $tmp = StdoutRead($output)
-	If ($tmp = "") Then
+	If ($tmp = "" Or StringInStr($tmp, "No tasks are running")) Then
 		logWrite(0, "BDS PID not found. BDS is not running.")
+		MsgBox(0, $guiTitle, "BDS process not found. BDS is not running or is malfunctioning. " & @CRLF & "If you can still see bedrock_server.exe you may need to restart your device.")
 		Return 0
 	Else
 		logWrite(0, "BDS PID found. BDS is running.")
-		$BDS_process = $tmp
+		$tmp = StringReplace($tmp, @CRLF, "")
+		$tmp = StringReplace(StringSplit($tmp, ",")[4], '"', "")
 
+		MsgBox(0, $guiTitle, "BDS process found. PID is " & $tmp & @CRLF & "It has now been reattached.")
+		$BDS_process = $tmp
+		startServer(True, $BDS_process)
 		logWrite(0, "BDS PID is " & $BDS_process)
 		Return $BDS_process
 	EndIf
@@ -995,18 +993,19 @@ While 1
 			ScheduledActions()
 
 		Case $gui_FindServerBtn
-			If FileExists($cfg_bdsDir & "\bds.pid") Then
-				local $f = FileRead($cfg_bdsDir & "\bds.pid")
-				if (ProcessExists($f)) Then
-					$BDS_process = $f
-					startServer(True, $BDS_process)
-					MsgBox(0, "BDS Instance Found!", "Found a BDS instance with PID " & $BDS_process & @CRLF & "BDS Companion has now attached to it.")
-				Else
-					MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
-				EndIf
-			Else
-				MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
-			EndIf
+			;~ If FileExists($cfg_bdsDir & "\bds.pid") Then
+			;~ 	local $f = FileRead($cfg_bdsDir & "\bds.pid")
+			;~ 	if (ProcessExists($f)) Then
+			;~ 		$BDS_process = $f
+			;~ 		startServer(True, $BDS_process)
+			;~ 		MsgBox(0, "BDS Instance Found!", "Found a BDS instance with PID " & $BDS_process & @CRLF & "BDS Companion has now attached to it.")
+			;~ 	Else
+			;~ 		MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
+			;~ 	EndIf
+			;~ Else
+			;~ 	MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
+			;~ EndIf
+			FindServerPID()
 			
 
 		Case $gui_testDiscWebhooks
