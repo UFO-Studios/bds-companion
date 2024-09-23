@@ -736,7 +736,7 @@ Func FindServerPID()
 		$tmp = StringReplace($tmp, @CRLF, "")
 		$tmp = StringReplace(StringSplit($tmp, ",")[4], '"', "")
 
-		MsgBox(0, $guiTitle, "BDS process found. PID is " & $tmp & @CRLF & "It has now been reattached.")
+		MsgBox(0, $guiTitle, "BDS process found. PID is " & $tmp & @CRLF & "It has now been reattached." & @CRLF & "(Please not that this is not 100% effective)")
 		$BDS_process = $tmp
 		startServer(True, $BDS_process)
 		logWrite(0, "BDS PID is " & $BDS_process)
