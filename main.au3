@@ -39,7 +39,6 @@
 #include "UDF/Zip.au3"
 #include "UDF/WinHttp.au3"
 
-
 Global Const $currentVersionNumber = "012"
 Global Const $guiTitle = "BDS Companion - Beta-0.1.2"
 
@@ -566,7 +565,7 @@ Func exitScript()
 		logWrite(0, "BDS Process is still running. Checking if user wants it closed")
 		Local $msgBox = MsgBox(4, $guiTitle, "BDS process is still running. Would you like to kill it?" & @CRLF & "This can result in loss of data, so  only do this if you need to")
 		If $msgBox = 6 Then ;Yes
-			RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose
+			;ProcessClose("bedrock_server.exe")
 		ElseIf $msgBox = 7 Then ;No
 			logWrite(0, "User chose not to kill BDS process. Canceling close")
 			Return
@@ -651,9 +650,10 @@ EndFunc   ;==>checkForUpdates
 
 Func startServer($reattach = False, $reattach_pid = 0)
 	logWrite(0, "Starting BDS...")
-	If ($serverRunning = True) Then
+	If ProcessExists("bedrock_server.exe") Then
+		$serverRunning = True
 		logWrite(0, "BDS process already running. Skipping startServer()")
-		;MsgBox(0, $guiTitle, "BDS process already running. Skipping startServer()")
+		MsgBox(0, $guiTitle, "BDS process already running. Please try killing it with the kill button or task manager.")
 		Return
 	EndIf
 	if ($reattach = True) Then
@@ -786,7 +786,7 @@ Func killServer()
 	If $msgBox = 6 Then ;Yes
 		outputToConsole("Server Kill Triggered")
 		outputToDiscNotif(":red_square: Server kill triggered")
-		RunWait("taskkill /IM bedrock_server.exe /F", @SW_HIDE) ;Kills all bedrock_server.exe instances, works better than ProcessClose (except when it doesn't)
+		ProcessClose("bedrock_server.exe")
 
 		$serverRunning = False
 		$BDS_process = Null
