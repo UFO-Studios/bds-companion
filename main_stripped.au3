@@ -827,6 +827,7 @@ _WinAPI_FlashWindow($gui_mainWindow, 1)
 logWrite(0, "BDS Process is still running. Checking if user wants it closed")
 Local $msgBox = MsgBox(4, $guiTitle, "BDS process is still running. Would you like to kill it?" & @CRLF & "This can result in loss of data, so  only do this if you need to")
 If $msgBox = 6 Then
+ProcessClose("bedrock_server.exe")
 ElseIf $msgBox = 7 Then
 logWrite(0, "User chose not to kill BDS process. Canceling close")
 Return
@@ -898,7 +899,7 @@ logWrite(0, "BDS process already running. Skipping startServer()")
 MsgBox(0, $guiTitle, "BDS process already running. Please try killing it with the kill button or task manager.")
 Return
 EndIf
-if($reattach = True) Then
+If($reattach = True) Then
 $BDS_process = $reattach_pid
 Else
 Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)
@@ -906,11 +907,11 @@ EndIf
 outputToDiscNotif(":yellow_square: Server is starting")
 $serverRunning = True
 AdlibRegister("updateConsole", 1000)
-if($reattach = False) Then
+If($reattach = False) Then
 outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
 Else
 outputToConsole("Server Reattach Triggered. BDS PID is " & $BDS_process)
-Endif
+EndIf
 GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 GUICtrlSetData($gui_serverStatusIndicator, "Online")
 BDScreateLog()
