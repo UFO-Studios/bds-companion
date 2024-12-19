@@ -39,8 +39,8 @@
 #include "UDF/Zip.au3"
 #include "UDF/WinHttp.au3"
 
-Global Const $currentVersionNumber = "012"
-Global Const $guiTitle = "BDS Companion - Beta-0.1.2"
+Global Const $currentVersionNumber = "100"
+Global Const $guiTitle = "BDS Companion - V1.0.0"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
 ;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
