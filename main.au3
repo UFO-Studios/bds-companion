@@ -565,7 +565,7 @@ Func exitScript()
 		logWrite(0, "BDS Process is still running. Checking if user wants it closed")
 		Local $msgBox = MsgBox(4, $guiTitle, "BDS process is still running. Would you like to kill it?" & @CRLF & "This can result in loss of data, so  only do this if you need to")
 		If $msgBox = 6 Then ;Yes
-			;ProcessClose("bedrock_server.exe")
+			ProcessClose("bedrock_server.exe")
 		ElseIf $msgBox = 7 Then ;No
 			logWrite(0, "User chose not to kill BDS process. Canceling close")
 			Return
@@ -656,7 +656,7 @@ Func startServer($reattach = False, $reattach_pid = 0)
 		MsgBox(0, $guiTitle, "BDS process already running. Please try killing it with the kill button or task manager.")
 		Return
 	EndIf
-	if ($reattach = True) Then
+	If ($reattach = True) Then
 		$BDS_process = $reattach_pid
 	Else
 		Global $BDS_process = Run($bdsExeRun, @ScriptDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD + $STDIN_CHILD)     ;DO NOT forget $STDIN_CHILD
@@ -664,11 +664,11 @@ Func startServer($reattach = False, $reattach_pid = 0)
 	outputToDiscNotif(":yellow_square: Server is starting")
 	$serverRunning = True
 	AdlibRegister("updateConsole", 1000)     ; Call updateConsole every 1s
-	if ($reattach = False) Then
+	If ($reattach = False) Then
 		outputToConsole("Server Startup Triggered. BDS PID is " & $BDS_process)
 	Else
 		outputToConsole("Server Reattach Triggered. BDS PID is " & $BDS_process)
-	Endif
+	EndIf
 	GUICtrlSetColor($gui_serverStatusIndicator, $COLOR_GREEN)
 	GUICtrlSetData($gui_serverStatusIndicator, "Online")
 	BDScreateLog()
@@ -993,20 +993,20 @@ While 1
 			ScheduledActions()
 
 		Case $gui_FindServerBtn
-			;~ If FileExists($cfg_bdsDir & "\bds.pid") Then
-			;~ 	local $f = FileRead($cfg_bdsDir & "\bds.pid")
-			;~ 	if (ProcessExists($f)) Then
-			;~ 		$BDS_process = $f
-			;~ 		startServer(True, $BDS_process)
-			;~ 		MsgBox(0, "BDS Instance Found!", "Found a BDS instance with PID " & $BDS_process & @CRLF & "BDS Companion has now attached to it.")
-			;~ 	Else
-			;~ 		MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
-			;~ 	EndIf
-			;~ Else
-			;~ 	MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
-			;~ EndIf
+;~ If FileExists($cfg_bdsDir & "\bds.pid") Then
+;~ 	local $f = FileRead($cfg_bdsDir & "\bds.pid")
+;~ 	if (ProcessExists($f)) Then
+;~ 		$BDS_process = $f
+;~ 		startServer(True, $BDS_process)
+;~ 		MsgBox(0, "BDS Instance Found!", "Found a BDS instance with PID " & $BDS_process & @CRLF & "BDS Companion has now attached to it.")
+;~ 	Else
+;~ 		MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
+;~ 	EndIf
+;~ Else
+;~ 	MsgBox(0, $guiTitle, "No instance found. Maybe it closed too?")
+;~ EndIf
 			FindServerPID()
-			
+
 
 		Case $gui_testDiscWebhooks
 			outputToDiscNotif("This is a test message sent to the notifications channel")
