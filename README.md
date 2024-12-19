@@ -54,7 +54,7 @@ You can find the latest release [here](https://www.minecraft.net/en-us/download/
 
 ## Credits
 - [TheAlienDoctor](https://thealiendoctor.com) & [Niceygy](https://niceygylive.xyz): Main Devs
-- [RsBuilt](https://www.youtube.com/channel/UCsavfiVWuImW2ghluEoKXtg) and the whole Project Bedrock team, for letting us using their server for testing.
+- Project Bedrock team
 - [FoxyNoTail](https://foxynotail.com/): Originally inspired by [MCBEplay](https://foxynotail.com/tools/mcbe-play). Despite being recently open sourced, all code is original and has not been reused from his project.
 - [Zip.au3](https://www.autoitscript.com/forum/topic/73425-zipau3-udf-in-pure-autoit/) UDF
 - [WinHttp.au3](https://www.autoitscript.com/forum/topic/147621-http-get-and-post-request-as-simple-as-possible/) UDF
