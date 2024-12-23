@@ -60,7 +60,7 @@ Global $gui_stopServerBtn = GUICtrlCreateButton("Stop Server", 96, 456, 75, 33)
 Global $gui_restartBtn = GUICtrlCreateButton("Restart Server", 256, 456, 75, 33)
 Global $gui_backupBtn = GUICtrlCreateButton("Backup Server", 336, 456, 83, 33)
 Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT,$ES_READONLY))
+Global $gui_console = GUICtrlCreateEdit("", 16, 56, 689, 361, BitOR($GUI_SS_DEFAULT_EDIT, $ES_READONLY))
 Global $gui_killServerBtn = GUICtrlCreateButton("Kill Server", 177, 456, 75, 33)
 Global $gui_serverPropertiesTab = GUICtrlCreateTabItem("Server Properties")
 Global $gui_ServerPropertiesGroup = GUICtrlCreateGroup("Server.Properties", 16, 32, 689, 457)
@@ -112,10 +112,10 @@ Global $gui_discConsoleInput = GUICtrlCreateInput("", 304, 328, 385, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 640, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
-GUICtrlSetCursor (-1, 0)
+GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
@@ -449,7 +449,7 @@ Func ScheduledActions($debug = "false")
 		logWrite(0, "Split intervals into array")
 		Local $hour = @HOUR
 
-		If @HOUR = 23 Then
+		If @HOUR = 23 Then ;So 5 minute warning is 50 mins before restart time
 			$hour = 0
 		Else
 			$hour += 1
@@ -523,6 +523,12 @@ Func UploadLog()
 	ShellExecute($url)
 EndFunc   ;==>UploadLog
 
+Func closeBDS() ;For unexpected exit
+	If ProcessExists("bedrock_server.exe") Then
+		sendServerCommand("stop")
+	EndIf
+EndFunc   ;==>closeBDS
+
 Func startup()
 	createLog()
 	logWrite(0, "Starting " & $guiTitle & "...")
@@ -532,10 +538,14 @@ Func startup()
 	GUICtrlSetState($gui_stopServerBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_restartBtn, $GUI_DISABLE)
 	GUICtrlSetState($gui_sendCmdBtn, $GUI_DISABLE)
+	logWrite(0, "Buttons Disabled")
 
 	;Register scheduled actions
 	AdlibRegister("ScheduledActions", 60 * 1000) ;every minute
 	logWrite(0, "Auto restart scheduled actions registered.")
+
+	;In case the script crashes or unexpectedly closes
+	OnAutoItExitRegister("closeBDS")
 
 	;Config
 	checkForBDS()
