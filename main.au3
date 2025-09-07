@@ -113,7 +113,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
 GUICtrlSetCursor(-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.0", 640, 504, 69, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.1", 640, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
@@ -704,10 +704,29 @@ Func updateConsole() ;not logging for this one
 				_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Scroll down to bottom of console, stops existing text from being overwritten
 				GUICtrlSetData($gui_console, $line, 1)
 				BDSlogWrite($line)
+
+				trimConsoleOutput(199990) ;Delete old lines to stop it reaching the max, otherwise it won't be able to write anymore lines
+
 			EndIf
 		EndIf
 	EndIf
 EndFunc   ;==>updateConsole
+
+Func trimConsoleOutput($maxLines)
+	Local $text = GUICtrlRead($gui_console)
+	Local $lines = StringSplit($text, @CRLF, 1)
+
+	If $lines[0] > $maxLines Then ;Trim oldest lines
+		Local $start = $lines[0] - $maxLines + 1
+		Local $newText = ""
+
+		For $i = $start To $lines[0]
+			$newText &= $lines[$i] & @CRLF
+		Next
+
+		GUICtrlSetData($gui_console, $newText)
+	EndIf
+EndFunc   ;==>trimConsoleOutput
 
 Func RestartServer($backup)
 	If (ProcessExists($BDS_process)) Then

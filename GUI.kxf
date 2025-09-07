@@ -831,7 +831,7 @@
 				<property name="Top" vt="Int16">504</property>
 				<property name="Width" vt="Int8">69</property>
 				<property name="Height" vt="Int8">17</property>
-				<property name="Caption" vt="String">Version: 1.0.0</property>
+				<property name="Caption" vt="String">Version: 1.0.1</property>
 				<property name="TabOrder" vt="Int8">2</property>
 				<property name="HaveVariable" vt="False">False</property>
 				<property name="CtrlStyle" vt="Int32">1342308608</property>
