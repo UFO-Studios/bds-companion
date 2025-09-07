@@ -16,8 +16,8 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS Companion)
 #pragma compile(ProductName, BDS Companion)
-#pragma compile(ProductVersion, 0.1.2)
-#pragma compile(FileVersion, 0.1.2)
+#pragma compile(ProductVersion, 0.1.1)
+#pragma compile(FileVersion, 0.1.1)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
 #pragma compile(OriginalFilename, BDS-Companion.exe)
@@ -39,14 +39,14 @@
 #include "UDF/Zip.au3"
 #include "UDF/WinHttp.au3"
 
-Global Const $currentVersionNumber = "100"
-Global Const $guiTitle = "BDS Companion - V1.0.0"
+Global Const $currentVersionNumber = "101"
+Global Const $guiTitle = "BDS Companion - V1.0.1"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
-;Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
-;Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
-;Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 464, 598, 17)
-;Global $gui_abtVerNum = GUICtrlCreateLabel("" & $guiTitle & "", 24, 460, 254, 17)
+; Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
+; Global $gui_serverStatusIndicator = GUICtrlCreateLabel("Offline", 88, 32, 250, 17)
+; Global $gui_serverPropertiesLabel = GUICtrlCreateLabel("gui_serverPropertiesLabel", 24, 464, 598, 17)
+; Global $gui_abtVerNum = GUICtrlCreateLabel("" & $guiTitle & "", 24, 460, 254, 17)
 
 #Region ### START Koda GUI section ### Form=d:\06 code\bds-companion\gui.kxf
 Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
@@ -77,6 +77,8 @@ Global $gui_autoRestartCheck = GUICtrlCreateCheckbox("Auto Restarts Enabled", 21
 Global $gui_backupDuringRestartCheck = GUICtrlCreateCheckbox("Backup During Restart", 21, 72, 129, 17)
 Global $gui_autoRestartEgText = GUICtrlCreateLabel("E.G. 6,12,18,24", 616, 48, 79, 17)
 Global $gui_zipServerBackup = GUICtrlCreateCheckbox("Add to ZIP folder", 160, 48, 105, 17)
+Global $gui_maxBackupsLabel = GUICtrlCreateLabel("Max Backups:", 365, 72, 72, 17)
+Global $gui_maxBackupsInput = GUICtrlCreateInput("", 445, 72, 169, 21)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $gui_saveSettingsBtn = GUICtrlCreateButton("Save Settings", 600, 456, 107, 33)
 Global $gui_dirSettingGroup = GUICtrlCreateGroup("File Paths", 16, 112, 689, 153)
@@ -184,6 +186,12 @@ Func loadConf()
 	Global $cfg_backupsDir = IniRead($settingsFile, "dirs", "backupsDir", @ScriptDir & "\Backups")
 	GUICtrlSetData($gui_backupsDirInput, $cfg_backupsDir)
 
+	If IniRead($settingsFile, "general", "maxBackups", "") = "" Then ;For first time ran
+		IniWrite($settingsFile, "general", "maxBackups", "10")
+	EndIf
+	Global $cfg_maxBackups = IniRead($settingsFile, "general", "maxBackups", "10")
+	GUICtrlSetData($gui_maxBackupsInput, $cfg_maxBackups)
+
 	Global $cfg_discOutputNotifs = IniRead($settingsFile, "discordIntegration", "outputNotifs", "False")
 	If $cfg_discOutputNotifs = "True" Then
 		GUICtrlSetState($gui_discNotifCheck, $GUI_CHECKED)
@@ -247,6 +255,9 @@ Func saveConf()
 
 	$cfg_backupsDir = GUICtrlRead($gui_backupsDirInput)
 	IniWrite($settingsFile, "dirs", "backupsDir", $cfg_backupsDir)
+
+	$cfg_maxBackups = GUICtrlRead($gui_maxBackupsInput)
+	IniWrite($settingsFile, "general", "maxBackups", $cfg_maxBackups)
 
 	If GUICtrlRead($gui_discNotifCheck) = $GUI_CHECKED Then
 		$cfg_discOutputNotifs = "True"
@@ -725,6 +736,7 @@ Func trimConsoleOutput($maxLines)
 		Next
 
 		GUICtrlSetData($gui_console, $newText)
+		logWrite(0, "Trimmed console output window")
 	EndIf
 EndFunc   ;==>trimConsoleOutput
 
@@ -883,6 +895,8 @@ Func backupServer()
 
 		Local $backupFolderName = $cfg_backupsDir & "\" & @YEAR & "-" & @MON & "-" & @MDAY & "_" & @HOUR & "-" & @MIN & "-" & @SEC
 
+		deleteOldBackups() ; Delete old backups first so we don't fill up the storage
+
 		;COPY DIRS TO TMP DIR
 		logWrite(0, "Copying....")
 		setServerStatus($COLOR_ORANGE, "Copying folders (1/5)")
@@ -940,6 +954,68 @@ Func backupServer()
 	WEnd
 	outputToDiscNotif(":blue_square: Server backup complete")
 EndFunc   ;==>backupServer
+
+Func deleteOldBackups()
+	logWrite(0, "Checking old backups")
+	Local $backupsList = _FileListToArray($cfg_backupsDir, "*", 0)
+	If @error Then
+		Return -1 ; No files
+		logWrite(0, "No files found in backup directory")
+	EndIf
+
+
+	If $backupsList[0] <= $cfg_maxBackups Then
+		Return ;Hasn't reached max backups yet
+		logWrite(0, "Backup limit not reached yet, no files to delete")
+	EndIf
+
+	; Build [path, ticks, attrib] array
+	Local $items[$backupsList[0]][3]
+	For $i = 1 To $backupsList[0]
+		If $backupsList[$i] = "." Or $backupsList[$i] = ".." Then ContinueLoop
+		Local $path = $cfg_backupsDir & "\" & $backupsList[$i]
+		Local $aTime = FileGetTime($path, 0)
+		If @error Then ContinueLoop
+		$items[$i - 1][0] = $path
+		$items[$i - 1][1] = _DateToTicks($aTime)
+		$items[$i - 1][2] = FileGetAttrib($path)
+	Next
+
+	; Sort by ticks ascending (oldest first)
+	_ArraySort($items, 0, 0, 0, 1)
+
+	; Calculate how many to delete
+	Local $toDelete = $backupsList[0] - $cfg_maxBackups
+	logWrite(0, "Found " & $toDelete & " backups to delete")
+	Local $deleted = 0
+
+	For $i = 0 To UBound($items) - 1
+		If $deleted >= $toDelete Then ExitLoop
+		If $items[$i][0] = "" Then ContinueLoop ; skip empty
+
+		If StringInStr($items[$i][2], "D") Then
+			; Folder
+			If DirRemove($items[$i][0], 1) Then $deleted += 1
+		Else
+			; File
+			If FileDelete($items[$i][0]) Then $deleted += 1
+		EndIf
+		logWrite(0, "Deleted " & $deleted & " backups")
+	Next
+
+	If $deleted = 0 Then
+		Return
+	Else
+		logWrite(0, "Total backups deleted: " & $deleted)
+		outputToConsole("Deleted " & $deleted & "backups")
+	EndIf
+EndFunc   ;==>deleteOldBackups
+
+Func _DateToTicks($aTime) ;Convert AutoIt time array to comparable ticks
+	; Format: [Year, Month, Day, Hour, Min, Sec]
+	Return $aTime[0] * 10000000000 + $aTime[1] * 100000000 + $aTime[2] * 1000000 + _
+			$aTime[3] * 10000 + $aTime[4] * 100 + $aTime[5]
+EndFunc   ;==>_DateToTicks
 
 Func sendServerCommand($content)
 	If $serverRunning = False Then
