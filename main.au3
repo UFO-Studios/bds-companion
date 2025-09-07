@@ -716,7 +716,7 @@ Func updateConsole() ;not logging for this one
 				GUICtrlSetData($gui_console, $line, 1)
 				BDSlogWrite($line)
 
-				trimConsoleOutput(199990) ;Delete old lines to stop it reaching the max, otherwise it won't be able to write anymore lines
+				trimConsoleOutput(1000) ;Delete old lines to stop it reaching the max, otherwise it won't be able to write anymore lines
 
 			EndIf
 		EndIf
