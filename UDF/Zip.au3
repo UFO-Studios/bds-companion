@@ -1,5 +1,4 @@
 ;#AutoIt3Wrapper_au3check_parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
-;AW2C FILEPROTECT @ 24.02.24. MARKED AS SAFE
 #include <array.au3>
 ; ------------------------------------------------------------------------------
 ;
@@ -62,9 +61,9 @@ EndFunc   ;==>_Zip_Create
 Func _Zip_AddFile($hZipFile, $hFile2Add, $flag = 1)
 	Local $DLLChk = _Zip_DllChk()
 	Local $files = _Zip_Count($hZipFile)
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered")
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	$oApp = ObjCreate("Shell.Application")
 	$copy = $oApp.NameSpace($hZipFile).CopyHere($hFile2Add)
 	While 1
@@ -99,18 +98,18 @@ EndFunc   ;==>_Zip_AddFile
 ;===============================================================================
 Func _Zip_AddFolder($hZipFile, $hFolder, $flag = 1); Added error handling - Nicey @ 11.06.24
     Local $DLLChk = _Zip_DllChk()
-    If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
-    If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-    If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+    If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered");no dll
+    If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+    If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
     If StringRight($hFolder, 1) <> "\" Then $hFolder &= "\"
     $files = _Zip_Count($hZipFile)
     $oApp = ObjCreate("Shell.Application")
     
     Local $oZipFolder = $oApp.NameSpace($hZipFile)
-    If Not IsObj($oZipFolder) Then Return SetError(5, 0, 0) ;unable to get Shell Folder for zip file
+    If Not IsObj($oZipFolder) Then Return SetError(5, 0, "Unable to get Shell Folder for ZIP file (possibly corrupt)") ;unable to get Shell Folder for zip file
     
     Local $oFolder = $oApp.Namespace($hFolder)
-    If Not IsObj($oFolder) Then Return SetError(6, 0, 0) ;unable to get Shell Folder for folder to be added
+    If Not IsObj($oFolder) Then Return SetError(6, 0, "Unable to get Shell Folder for folder to be added (possibly missing)") ;unable to get Shell Folder for folder to be added
     
     $oCopy = $oZipFolder.CopyHere($oFolder)
     While 1
@@ -142,9 +141,9 @@ EndFunc   ;==>_Zip_AddFolder
 ;===============================================================================
 Func _Zip_AddFolderContents($hZipFile, $hFolder, $flag)
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered");no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	If StringRight($hFolder, 1) <> "\" Then $hFolder &= "\"
 	$files = _Zip_Count($hZipFile)
 	$oApp = ObjCreate("Shell.Application")
@@ -180,9 +179,9 @@ EndFunc   ;==>_Zip_AddFolderContents
 ;===============================================================================
 Func _Zip_Delete($hZipFile, $hFilename, $flag = 1)
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered");no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	$list = _Zip_List($hZipFile)
 	$dir = @TempDir & "\tmp" & Floor(Random(0,100))
 	For $i = 1 to $list[0]
@@ -215,9 +214,9 @@ EndFunc
 ;===============================================================================
 Func _Zip_UnzipAll($hZipFile, $hDestPath, $flag = 1)
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0);no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(2, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered");no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(2, 0, "ZIP file does not exist") ;no zip file
 	If Not FileExists($hDestPath) Then DirCreate($hDestPath)
 	Local $aArray[1]
 	$oApp = ObjCreate("Shell.Application")
@@ -257,9 +256,9 @@ EndFunc   ;==>_Zip_UnzipAll
 ;===============================================================================
 Func _Zip_Unzip($hZipFile, $hFilename, $hDestPath, $flag = 1)
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0) ;no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered") ;no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	If Not FileExists($hDestPath) Then DirCreate($hDestPath)
 	$oApp = ObjCreate("Shell.Application")
 	$hFolderitem = $oApp.NameSpace($hZipFile).Parsename($hFilename)
@@ -290,9 +289,9 @@ EndFunc   ;==>_Zip_Unzip
 ;===============================================================================
 Func _Zip_Count($hZipFile)
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0) ;no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered") ;no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	$items = _Zip_List($hZipFile)
 	Return UBound($items) - 1
 EndFunc   ;==>_Zip_Count
@@ -308,14 +307,14 @@ EndFunc   ;==>_Zip_Count
 ;					@error = 1 no Zip file
 ;					@error = 2 no dll
 ;					@error = 3 dll isn't registered
-; Author(s):        torels_, Smashly
+; Author(s):        torels_, Smashley
 ;
 ;===============================================================================
 Func _Zip_CountAll($hZipFile)
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0) ;no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered") ;no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
     $oApp = ObjCreate("Shell.Application")
     $oDir = $oApp.NameSpace(StringLeft($hZipFile, StringInStr($hZipFile, "\", 0, -1)))
     $sZipInf = $oDir.GetDetailsOf($oDir.ParseName(StringTrimLeft($hZipFile, StringInStr($hZipFile, "\", 0, -1))), -1)
@@ -341,13 +340,13 @@ EndFunc
 Func _Zip_List($hZipFile)
 	local $aArray[1]
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0) ;no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered") ;no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	$oApp = ObjCreate("Shell.Application")
 
 	Local $oZipFolder = $oApp.Namespace($hZipFile)
-	If Not IsObj($oZipFolder) Then Return SetError(5, 0, 0) ;unable to get Shell Folder for zip file
+	If Not IsObj($oZipFolder) Then Return SetError(5, 0, "Unable to get Shell Folder for ZIP file (possibly corrupt)") ;unable to get Shell Folder for zip file
     
 	$hList = $oZipFolder.Items
 	For $item in $hList
@@ -373,9 +372,9 @@ EndFunc   ;==>_Zip_List
 Func _Zip_Search($hZipFile, $sSearchString)
 	local $aArray
 	Local $DLLChk = _Zip_DllChk()
-	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, 0) ;no dll
-	If not _IsFullPath($hZipFile) then Return SetError(4,0) ;zip file isn't a full path
-	If Not FileExists($hZipFile) Then Return SetError(1, 0, 0) ;no zip file
+	If $DLLChk <> 0 Then Return SetError($DLLChk, 0, "Required DLL missing or not registered") ;no dll
+	If not _IsFullPath($hZipFile) then Return SetError(4,0,"ZIP file path is not a full path") ;zip file isn't a full path
+	If Not FileExists($hZipFile) Then Return SetError(1, 0, "ZIP file does not exist") ;no zip file
 	$list = _Zip_List($hZipFile)
 	for $i = 0 to UBound($list) - 1
 		if StringInStr($list[$i],$sSearchstring) > 0 Then
@@ -383,7 +382,7 @@ Func _Zip_Search($hZipFile, $sSearchString)
 		EndIf
 	Next
 	if UBound($aArray) - 1 = 0 Then
-		Return SetError(1,0,0)
+		Return SetError(1,0,"No file found matching search string")
 	Else
 		Return $aArray
 	EndIf
@@ -413,7 +412,7 @@ Func _Zip_SearchInFile($hZipFile, $sSearchString)
 		EndIf
 	Next
 	if UBound($aArray) - 1 = 0 Then
-		Return SetError(1,0,1)
+		Return SetError(1,0,"No file found containing search string")
 	Else
 		Return $aArray
 	EndIf
