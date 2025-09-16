@@ -20,7 +20,7 @@
 #pragma compile(FileVersion, 0.1.1)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS-Companion.exe)
+#pragma compile(OriginalFilename, BDS-Companion-V1.0.0.exe)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
@@ -736,7 +736,9 @@ Func trimConsoleOutput($maxLines)
 		Next
 
 		GUICtrlSetData($gui_console, $newText)
-		logWrite(0, "Trimmed console output window")
+		
+		Local $lineCount = _GUICtrlEdit_GetLineCount($gui_console) ;Get line count
+		_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Reset scroll to the button
 	EndIf
 EndFunc   ;==>trimConsoleOutput
 
@@ -1028,7 +1030,7 @@ EndFunc   ;==>sendServerCommand
 
 
 If FileExists(@ScriptDir & "\LICENSE.txt") = 0 Then ;License re-download
-	InetGet("https://updates.thealiendoctor.com/license/bds-companion.txt", @ScriptDir & "\LICENSE.txt") ;Temp license until public
+	InetGet("https://updates.thealiendoctor.com/license/bds-companion.txt", @ScriptDir & "\LICENSE.txt")
 	logWrite(0, "Re-downloaded license")
 EndIf
 
