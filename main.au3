@@ -383,7 +383,7 @@ Func BDSlogWrite($content)
 		Else
 			$newContent = StringReplace($content, @CRLF, "\n")
 			HttpPost($cfg_discConsoleUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "[BDS-Companion]: ' & $newContent & '"}', "application/json")
-			logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+			logWrite(0, 'Sent a message to Discord console channel.')
 		EndIf
 	EndIf
 
@@ -513,7 +513,7 @@ Func outputToDiscNotif($content) ;Sends server notfications to Discord webhook
 
 	If $cfg_discOutputNotifs = "True" Then
 		HttpPost($cfg_discNotifUrl, '{"username": "' & $guiTitle & '", "avatar_url": "https://thealiendoctor.com/img/download-icons/bds-companion.png", "content": "' & $content & '"}', "application/json")
-		logWrite(0, 'Sent "' & $content & '" to Discord notifcation channel')
+		logWrite(0, 'Sent a message to Discord console channel.')
 	EndIf
 EndFunc   ;==>outputToDiscNotif
 
@@ -736,7 +736,7 @@ Func trimConsoleOutput($maxLines)
 		Next
 
 		GUICtrlSetData($gui_console, $newText)
-		
+
 		Local $lineCount = _GUICtrlEdit_GetLineCount($gui_console) ;Get line count
 		_GUICtrlEdit_LineScroll($gui_console, 0, $lineCount) ;Reset scroll to the button
 	EndIf
