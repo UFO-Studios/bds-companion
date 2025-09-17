@@ -37,7 +37,7 @@
 #include <WinAPI.au3>
 
 #include "UDF/Zip.au3"
-#include "UDF/WinHttp.au3"
+#include "UDF/WinNet.au3"
 
 Global Const $currentVersionNumber = "101"
 Global Const $guiTitle = "BDS Companion - V1.0.1"
@@ -523,7 +523,7 @@ Func UploadLog()
 	logWrite(0, "Uploading log (" & $cfg_logsDir & "\log.latest) to server...")
 	Local $logFile = FileOpen($cfg_logsDir & "\log.latest", 0)
 	$logFile = FileRead($logFile)
-	$res = HttpPost("https://api.mclo.gs/1/log", "content=" & $logFile)
+	$res = HttpPost("https://api.mclo.gs/1/log", "content=" & $logFile, "text/plain")
 	logWrite(0, "Log uploaded to server. Getting url...")
 	$tmp = StringSplit($res, '"')
 	$url = $tmp[10]
