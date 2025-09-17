@@ -1,4 +1,4 @@
-Global $User_Agent = "BDS-COMPANION_1.0.1" ;HTTP user agent - update with release
+Global $User_Agent = "BDS-COMPANION_1.0.2" ;HTTP user agent - update with release
 
 ;===============================================================================
 ;

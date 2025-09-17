@@ -16,11 +16,11 @@
 #pragma compile(Compatibility, XP, vista, win7, win8, win81, win10, win11)
 #pragma compile(FileDescription, BDS Companion)
 #pragma compile(ProductName, BDS Companion)
-#pragma compile(ProductVersion, 0.1.1)
-#pragma compile(FileVersion, 0.1.1)
+#pragma compile(ProductVersion, 1.0.2)
+#pragma compile(FileVersion, 1.0.2)
 #pragma compile(LegalCopyright, ©UFO Studios)
 #pragma compile(CompanyName, UFO Studios)
-#pragma compile(OriginalFilename, BDS-Companion-V1.0.0.exe)
+#pragma compile(OriginalFilename, BDS-Companion-V1.0.2.exe)
 
 #include <Array.au3>
 #include <ButtonConstants.au3>
@@ -39,8 +39,8 @@
 #include "UDF/Zip.au3"
 #include "UDF/WinNet.au3"
 
-Global Const $currentVersionNumber = "101"
-Global Const $guiTitle = "BDS Companion - V1.0.1"
+Global Const $currentVersionNumber = "102"
+Global Const $guiTitle = "BDS Companion - V1.0.2"
 
 ; Koda doesn't let you set certain things, so change to match the below manually:
 ; Global $gui_mainWindow = GUICreate("" & $guiTitle & "", 722, 528)
@@ -115,7 +115,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateTabItem("")
 Global $gui_copyright = GUICtrlCreateLabel("© UFO Studios 2024", 8, 504, 103, 17)
 GUICtrlSetCursor(-1, 0)
-Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.1", 640, 504, 69, 17)
+Global $gui_versionNum = GUICtrlCreateLabel("Version: 1.0.2", 640, 504, 69, 17)
 Global $gui_githubLabel = GUICtrlCreateLabel("View source code, report bugs and contribute on GitHub", 248, 504, 270, 17)
 GUICtrlSetCursor(-1, 0)
 GUISetState(@SW_SHOW)
